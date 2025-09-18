@@ -1,47 +1,18 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Dashboard from './pages/Blackboard/Dashboard'
+import Models from './pages/Blackboard/Models'
+import FavoritesPage from './pages/Blackboard/FavoritesPage'
+import Profile from './pages/Blackboard/Profile'
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [apiStatus, setApiStatus] = useState<string>('checking...')
-
-  useEffect(() => {
-    fetch('/api/health/')
-      .then((res) => res.json())
-      .then((data) => {
-        setApiStatus(data.status ?? 'unknown')
-      })
-      .catch(() => setApiStatus('error'))
-  }, [])
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <div className="card">
-        <p>Backend health: {apiStatus}</p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/models" element={<Models />} />
+      <Route path="/favorites" element={<FavoritesPage />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
