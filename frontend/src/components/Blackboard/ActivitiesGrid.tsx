@@ -5,15 +5,16 @@ export type Activity = {
   id: string
   title: string
   description: string
-  icon?: 'bars' | 'cloud' | 'image' | 'text'
+  emoji?: string
   favorite?: boolean
+  imageUrl?: string
 }
 
 const initialActivities: Activity[] = [
-  { id: 'a1', title: 'Clasificador de Sentimientos', description: 'Analiza polaridad en reseñas de texto.', icon: 'text' },
-  { id: 'a2', title: 'Detección de Objetos', description: 'Identifica objetos en imágenes.', icon: 'image' },
-  { id: 'a3', title: 'Predicción de Series Temporales', description: 'Proyecta tendencias y valores futuros.', icon: 'bars' },
-  { id: 'a4', title: 'Clasificación de Nubes', description: 'Categoriza tipos de nubes meteorológicas.', icon: 'cloud' },
+  { id: 'a1', title: 'Clasificador de Sentimientos', description: 'Analiza polaridad en reseñas de texto.', emoji: '📝', imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'a2', title: 'Detección de Objetos', description: 'Identifica objetos en imágenes.', emoji: '🖼️', imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'a3', title: 'Predicción de Series Temporales', description: 'Proyecta tendencias y valores futuros.', emoji: '📈', imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'a4', title: 'Clasificación de Nubes', description: 'Categoriza tipos de nubes meteorológicas.', emoji: '☁️', imageUrl: '/src/assets/placeholder.svg' },
 ]
 
 export default function ActivitiesGrid({ onFavoriteChange }: { onFavoriteChange?: (id: string, fav: boolean) => void }) {
@@ -37,8 +38,9 @@ export default function ActivitiesGrid({ onFavoriteChange }: { onFavoriteChange?
             key={a.id}
             title={a.title}
             description={a.description}
-            icon={a.icon}
+            emoji={a.emoji}
             favorite={a.favorite}
+            imageUrl={a.imageUrl}
             onToggleFavorite={() => toggleFavorite(a.id)}
             onTrain={() => {/* hook into route or action later */}}
           />

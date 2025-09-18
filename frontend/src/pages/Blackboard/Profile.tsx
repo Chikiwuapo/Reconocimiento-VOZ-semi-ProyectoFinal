@@ -18,15 +18,15 @@ export default function Profile() {
               </div>
             </div>
             <div className="mt-4">
-              <button className="btn-primary">Guardar cambios</button>
+              <button className="btn-accent-purple btn-lg">Guardar cambios</button>
             </div>
           </div>
           <div className="card">
             <h2 className="text-lg font-semibold text-header">Seguridad</h2>
             <p className="text-sm text-slate-600 mt-1">Actualiza tu contraseña periódicamente.</p>
             <div className="mt-4 flex flex-col gap-3">
-              <button className="btn-primary">Cambiar contraseña</button>
-              <button className="text-sm text-slate-600 hover:text-header transition">Configurar 2FA</button>
+              <button className="btn-accent-purple">Cambiar contraseña</button>
+              <button className="btn-accent-cyan">Configurar 2FA</button>
             </div>
           </div>
         </div>

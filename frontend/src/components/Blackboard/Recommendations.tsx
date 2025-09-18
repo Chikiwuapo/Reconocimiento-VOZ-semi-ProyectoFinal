@@ -7,8 +7,8 @@ export default function Recommendations() {
           Ya que probaste modelos de texto, te recomendamos este de reconocimiento de imágenes.
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <button className="btn-primary">Probar reconocimiento de imágenes</button>
-          <button className="text-sm text-slate-600 hover:text-header transition">Ver más sugerencias</button>
+          <button className="btn-accent-cyan btn-lg">Probar reconocimiento de imágenes 🚀</button>
+          <button className="btn">Ver más sugerencias</button>
         </div>
       </div>
     </section>

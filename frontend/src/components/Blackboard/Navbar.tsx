@@ -21,7 +21,7 @@ export default function Navbar({ notifications = 0 }: { notifications?: number }
               <path d="M4 7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1h2a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3h-2v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/>
             </svg>
           </span>
-          <span className="font-montserrat font-bold text-lg text-header">Blackboard</span>
+          <span className="font-poppins font-bold text-lg text-header">Blackboard</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
@@ -57,7 +57,8 @@ export default function Navbar({ notifications = 0 }: { notifications?: number }
               <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
             )}
           </button>
-          <div className="h-10 w-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold select-none">U</div>
+          <img src="/src/assets/avatar.svg" alt="Avatar" className="h-10 w-10 rounded-full border border-slate-200" />
+          <button className="hidden sm:inline-flex items-center gap-1 text-sm text-slate-600 hover:text-header transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md px-2 py-1" onClick={() => alert('Cerrar sesión')}>📤 Cerrar sesión</button>
         </div>
       </div>
     </header>

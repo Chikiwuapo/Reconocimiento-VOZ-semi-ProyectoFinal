@@ -2,8 +2,8 @@ import ActivityCard from './ActivityCard'
 import type { Activity } from './ActivitiesGrid'
 
 const favorites: Activity[] = [
-  { id: 'f1', title: 'Clasificador de Sentimientos', description: 'Tu último modelo entrenado de texto.', icon: 'text', favorite: true },
-  { id: 'f2', title: 'Detección de Objetos', description: 'Entrenado hace 2 días.', icon: 'image', favorite: true },
+  { id: 'f1', title: 'Clasificador', description: 'Tu último modelo clasificador.', emoji: '📝', favorite: true, imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'f2', title: 'Detector', description: 'Tu último modelo detector.', emoji: '🖼️', favorite: true, imageUrl: '/src/assets/placeholder.svg' },
 ]
 
 export default function Favorites() {
@@ -19,14 +19,11 @@ export default function Favorites() {
             <ActivityCard
               title={f.title}
               description={f.description}
-              icon={f.icon}
+              emoji={f.emoji}
+              imageUrl={f.imageUrl}
               favorite
               onTrain={() => {/* train again */}}
             />
-            <div className="flex gap-3 mt-3">
-              <button className="btn-primary">Entrenar de nuevo</button>
-              <button className="text-sm text-slate-600 hover:text-header transition">Ver resultados previos</button>
-            </div>
           </div>
         ))}
       </div>

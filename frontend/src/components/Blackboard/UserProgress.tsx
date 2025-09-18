@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 type Stats = {
   trained: number
   completed: number
@@ -9,24 +11,31 @@ export default function UserProgress({ trained, completed, progressPercent, leve
   const radius = 44
   const circumference = 2 * Math.PI * radius
   const progress = Math.max(0, Math.min(100, progressPercent))
-  const dash = (progress / 100) * circumference
+  const targetDash = (progress / 100) * circumference
+  const [dash, setDash] = useState(0)
+
+  useEffect(() => {
+    const t = setTimeout(() => setDash(targetDash), 50)
+    return () => clearTimeout(t)
+  }, [targetDash])
 
   return (
     <section className="container-page mt-8 animate-slide-up">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="card flex items-center gap-5">
           <div className="relative h-28 w-28">
-            <svg viewBox="0 0 120 120" className="h-28 w-28 -rotate-90">
+            <svg viewBox="0 0 120 120" className="h-28 w-28">
               <circle cx="60" cy="60" r={radius} stroke="#F1F5F9" strokeWidth="10" fill="none" />
               <circle
                 cx="60" cy="60" r={radius}
                 stroke="#62B6CB" strokeWidth="10" fill="none"
+                style={{ transition: 'stroke-dasharray 800ms ease-out' }}
                 strokeDasharray={`${dash} ${circumference - dash}`}
                 strokeLinecap="round"
               />
             </svg>
-            <div className="absolute inset-0 rotate-90 flex items-center justify-center">
-              <span className="font-montserrat font-semibold text-header">{progress}%</span>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="font-poppins font-semibold text-header">{progress}%</span>
             </div>
           </div>
           <div>
@@ -40,9 +49,12 @@ export default function UserProgress({ trained, completed, progressPercent, leve
         </div>
 
         <div className="card flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-header">Nivel actual</h3>
-            <p className="text-sm text-slate-600">Sigue aprendiendo para subir de nivel.</p>
+          <div className="flex items-center gap-3">
+            <img src="/src/assets/avatar.svg" alt="Avatar" className="h-10 w-10 rounded-full" />
+            <div>
+              <h3 className="font-semibold text-header">Nivel actual</h3>
+              <p className="text-sm text-slate-600">Sigue aprendiendo para subir de nivel.</p>
+            </div>
           </div>
           <span className="badge">{level}</span>
         </div>

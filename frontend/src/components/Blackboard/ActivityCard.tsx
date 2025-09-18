@@ -1,50 +1,22 @@
 type ActivityCardProps = {
   title: string
   description: string
-  icon?: 'bars' | 'cloud' | 'image' | 'text'
+  emoji?: string // Ej: "🤖", "🖼️", "📈", "☁️"
   favorite?: boolean
   onToggleFavorite?: () => void
   onTrain?: () => void
+  imageUrl?: string
 }
 
-function Icon({ name }: { name: ActivityCardProps['icon'] }) {
-  switch (name) {
-    case 'bars':
-      return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-          <path d="M5 3h2v18H5zM11 9h2v12h-2zM17 5h2v16h-2z" />
-        </svg>
-      )
-    case 'cloud':
-      return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-          <path d="M7 18a5 5 0 1 1 .9-9.9A7 7 0 0 1 21 11a4 4 0 0 1-1 7H7z" />
-        </svg>
-      )
-    case 'image':
-      return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-          <path d="M4 5h16v14H4zM7 8.5A1.5 1.5 0 1 0 7 11a1.5 1.5 0 0 0 0-2.5Zm12 8.5-4.5-5.5-3.5 4.5-2.5-3-3.5 4v0Z" />
-        </svg>
-      )
-    case 'text':
-      return (
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
-          <path d="M4 6V4h16v2h-7v14h-2V6H4z" />
-        </svg>
-      )
-    default:
-      return null
-  }
-}
-
-export default function ActivityCard({ title, description, icon = 'bars', favorite, onToggleFavorite, onTrain }: ActivityCardProps) {
+export default function ActivityCard({ title, description, emoji = '🤖', favorite, onToggleFavorite, onTrain, imageUrl = '/src/assets/placeholder.svg' }: ActivityCardProps) {
   return (
-    <div className="card hover:shadow-lg transition-shadow group">
-      <div className="flex items-start justify-between">
+    <div className="card p-0 overflow-hidden h-[280px] transition-all duration-300 group hover:-translate-y-0.5 hover:shadow-lg relative flex flex-col">
+      {favorite && <span className="ribbon-fav">⭐ FAVORITO</span>}
+      <img src={imageUrl} alt="Vista previa" className="h-28 w-full object-cover" />
+      <div className="p-5 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-            <Icon name={icon} />
+          <div className="h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-2xl">
+            <span aria-hidden>{emoji}</span>
           </div>
           <div>
             <h3 className="font-semibold text-header">{title}</h3>
@@ -61,8 +33,8 @@ export default function ActivityCard({ title, description, icon = 'bars', favori
           </svg>
         </button>
       </div>
-      <div className="mt-4 flex items-center gap-3">
-        <button className="btn-primary" onClick={onTrain}>Entrenar modelo</button>
+      <div className="mt-auto p-5 pt-0 flex items-center gap-3">
+        <button className="btn-accent-purple transition-colors duration-300 group-hover:!bg-[var(--accent-cyan)]" onClick={onTrain}>Entrenar</button>
         <button className="text-sm text-slate-600 hover:text-header transition">Ver detalles</button>
       </div>
     </div>
