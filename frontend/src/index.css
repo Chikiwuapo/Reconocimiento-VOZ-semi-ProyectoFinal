@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/udemy-cards.css";
 
 :root {
   --color-background: #FFFFFF;
@@ -65,7 +66,71 @@ html, body, #root {
   .font-poppins { font-family: var(--font-poppins); }
   .font-inter { font-family: var(--font-inter); }
 
-  .card { @apply p-5 bg-white; box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-radius: 14px; }
+  .card { 
+    @apply p-5 bg-white; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
+    border-radius: 14px; 
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+  }
+  .card:hover::before {
+    left: 100%;
+  }
+  .card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  }
+  
+  /* Estilos para carrusel de cursos */
+  .courses-carousel,
+  .models-carousel {
+    display: flex;
+    gap: 1rem;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    padding: 1rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: grab;
+    user-select: none;
+  }
+  .courses-carousel:active,
+  .models-carousel:active {
+    cursor: grabbing;
+  }
+  .courses-carousel::-webkit-scrollbar,
+  .models-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .course-card {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+
+  .course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Removed auto-scroll animations for manual navigation */
   /* Base de botones unificada */
   .btn { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none; height: 40px; padding: 0 16px; border-radius: 0.5rem; }
   .btn-lg { height: 48px; padding: 0 20px; }
@@ -73,6 +138,8 @@ html, body, #root {
   .btn-accent-green { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-white; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: var(--accent-green); }
   .btn-accent-purple { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-white; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: var(--accent-purple); }
   .btn-accent-cyan { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-header; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: var(--accent-cyan); }
+  .btn-secondary { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-slate-600 border border-slate-300 hover:bg-slate-50; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: white; }
+  .btn-accent-red { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-white; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: #DC2626; }
   .badge { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold; background-color: var(--color-alt); color: var(--color-header); }
 
   /* Cinta para favoritos */
@@ -80,6 +147,49 @@ html, body, #root {
 
   @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
   @keyframes slide-up { from { transform: translateY(12px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+  @keyframes slide-in-left { from { transform: translateX(-30px); opacity: 0 } to { transform: translateX(0); opacity: 1 } }
+  @keyframes slide-in-right { from { transform: translateX(30px); opacity: 0 } to { transform: translateX(0); opacity: 1 } }
+  @keyframes bounce-in { 
+    0% { transform: scale(0.3); opacity: 0 }
+    50% { transform: scale(1.05) }
+    70% { transform: scale(0.9) }
+    100% { transform: scale(1); opacity: 1 }
+  }
+  @keyframes float { 
+    0%, 100% { transform: translateY(0px) }
+    50% { transform: translateY(-6px) }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(98, 182, 203, 0.3) }
+    50% { box-shadow: 0 0 20px rgba(98, 182, 203, 0.6), 0 0 30px rgba(98, 182, 203, 0.4) }
+  }
+  @keyframes scroll-infinite {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  
   .animate-fade-in { animation: fade-in 500ms ease-out both; }
   .animate-slide-up { animation: slide-up 500ms ease-out both; }
+  .animate-slide-in-left { animation: slide-in-left 600ms ease-out both; }
+  .animate-slide-in-right { animation: slide-in-right 600ms ease-out both; }
+  .animate-bounce-in { animation: bounce-in 700ms ease-out both; }
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+  .animate-scroll-infinite { animation: scroll-infinite 30s linear infinite; }
+  
+  /* Delays para animaciones escalonadas */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  
+  /* Utilidad para truncar texto */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 }

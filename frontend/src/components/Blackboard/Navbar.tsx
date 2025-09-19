@@ -3,7 +3,9 @@ import { Link, NavLink } from 'react-router-dom'
 
 const navItems = [
   { to: '/', label: 'Inicio' },
-  { to: '/models', label: 'Mis Modelos' },
+  { to: '/models', label: 'Modelos' },
+  { to: '/training', label: 'Entrenar' },
+  { to: '/test', label: 'Probar' },
   { to: '/favorites', label: 'Favoritos' },
   { to: '/profile', label: 'Perfil' },
 ]
