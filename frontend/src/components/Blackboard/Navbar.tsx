@@ -1,19 +1,30 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import ProfileModal from './ProfileModal'
 
 const navItems = [
   { to: '/', label: 'Inicio' },
   { to: '/models', label: 'Modelos' },
-  { to: '/training', label: 'Entrenar' },
-  { to: '/test', label: 'Probar' },
-  { to: '/favorites', label: 'Favoritos' },
-  { to: '/profile', label: 'Perfil' },
 ]
 
 export default function Navbar({ notifications = 0 }: { notifications?: number }) {
-  const hasNotifications = useMemo(() => notifications > 0, [notifications])
+  const [notifCount, setNotifCount] = useState(notifications)
+  const [lastMessage, setLastMessage] = useState<string>('')
+  const hasNotifications = useMemo(() => notifCount > 0, [notifCount])
+  const [openProfile, setOpenProfile] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent<string>
+      if (typeof ce.detail === 'string') setLastMessage(ce.detail)
+      setNotifCount((n) => n + 1)
+    }
+    window.addEventListener('app:notify', handler as EventListener)
+    return () => window.removeEventListener('app:notify', handler as EventListener)
+  }, [])
 
   return (
+    <>
     <header className="bg-white/80 backdrop-blur sticky top-0 z-40 border-b border-slate-100">
       <div className="container-page flex items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
@@ -50,19 +61,28 @@ export default function Navbar({ notifications = 0 }: { notifications?: number }
         </nav>
 
         <div className="flex items-center gap-3">
-          <button className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-alt text-header hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Notificaciones">
+          <button className="relative inline-flex h-10 w-10 items-center justify-center rounded-full bg-alt text-header hover:opacity-90 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label="Notificaciones" title={lastMessage || 'Notificaciones'}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
               <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2Z"/>
               <path d="M18 16V11a6 6 0 1 0-12 0v5l-2 2h16Z"/>
             </svg>
             {hasNotifications && (
-              <span className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white" />
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 ring-2 ring-white text-[10px] leading-[14px] text-white flex items-center justify-center">{Math.min(notifCount, 9)}</span>
             )}
           </button>
-          <img src="/src/assets/avatar.svg" alt="Avatar" className="h-10 w-10 rounded-full border border-slate-200" />
+          <button onClick={() => setOpenProfile(true)} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
+            <img src="/src/assets/avatar.svg" alt="Avatar" className="h-10 w-10 rounded-full border border-slate-200" />
+          </button>
           <button className="hidden sm:inline-flex items-center gap-1 text-sm text-slate-600 hover:text-header transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md px-2 py-1" onClick={() => alert('Cerrar sesión')}>📤 Cerrar sesión</button>
         </div>
       </div>
     </header>
+    {openProfile && (
+      <ProfileModal onClose={() => setOpenProfile(false)} onConfirm={() => {
+        window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Perfil actualizado' }))
+        setOpenProfile(false)
+      }} />
+    )}
+  </>
   )
 }

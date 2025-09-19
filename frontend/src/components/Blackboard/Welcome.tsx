@@ -1,36 +1,44 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 type WelcomeProps = {
   userName: string
   progress: number // 0-100 (no se muestra, se mantiene para compatibilidad)
+  models?: Array<{ id: string; title: string; detail?: string; color?: string; favorite?: boolean; imageUrl?: string }>
+  watchedCourses?: Array<{ id: string; title: string; progress: string; img: string }>
+  testedModels?: Array<{ id: string; title: string; result: string; color?: string }>
 }
 
-export default function Welcome({ userName, progress: _progress }: WelcomeProps) {
+import DailyMissions from './DailyMissions'
+
+export default function Welcome({ userName, progress: _progress, models = [], watchedCourses, testedModels }: WelcomeProps) {
   const [active, setActive] = useState<'creados'|'favoritos'|'vistos'|'probados' | null>(null)
+
+  const createdModels = models
+  const favoriteModels = useMemo(() => createdModels.filter(m => !!m.favorite), [createdModels])
 
   const stats = {
     creados: {
       title: 'Modelos creados',
       desc: 'Tus modelos que has creado en la plataforma.',
-      value: 8,
-      items: ['Detector de manos', 'Clasificador de gestos', 'Embeddings faciales', 'STT básico'],
+      value: createdModels.length,
+      items: createdModels.map(m => m.title),
     },
     favoritos: {
       title: 'Modelos favoritos',
       desc: 'Modelos que has marcado como favoritos para acceso rápido.',
-      value: 3,
-      items: ['Reconocimiento facial', 'Chatbot IA', 'Segmentador'],
+      value: favoriteModels.length,
+      items: favoriteModels.map(m => m.title),
     },
     vistos: {
       title: 'Cursos vistos',
       desc: 'Cursos que has visto en la plataforma.',
-      value: 5,
-      items: ['Reconocimiento Facial', 'MediaPipe Hands', 'Chatbots', 'Agentes IA', 'STT'],
+      value: (watchedCourses?.length ?? 0),
+      items: watchedCourses?.map(c => c.title) ?? [],
     },
     probados: {
       title: 'Modelos probados',
       desc: 'Modelos que has probado en la plataforma.',
-      value: 12,
-      items: ['Demo voz', 'Demo rostro', 'Pruebas de mediapipe', 'ONNX runtime'],
+      value: (testedModels?.length ?? 0),
+      items: testedModels?.map(t => t.title) ?? [],
     },
   }
 
@@ -40,21 +48,13 @@ export default function Welcome({ userName, progress: _progress }: WelcomeProps)
     { id: 'c3', title: 'Chatbot Automatizado con IA', img: 'https://website-assets-fd.freshworks.com/attachments/cjr7cheqv01aq92g00a0z7onq-ai-chatbot-04-2x.one-half.png', tag: 'Proyecto' },
   ]
 
-  const createdModels = [
-    { id: 'm1', title: 'Detector de manos', detail: 'MediaPipe + TS', color: '#3B82F6' },
-    { id: 'm2', title: 'Embeddings faciales', detail: 'ONNX', color: '#10B981' },
-    { id: 'm3', title: 'Clasif. de gestos', detail: 'SVM', color: '#8B5CF6' },
-  ]
-
-  const testedModels = [
+  const testedModelsLocal = testedModels ?? [
     { id: 't1', title: 'Demo voz', result: 'WER 12%', color: '#F59E0B' },
     { id: 't2', title: 'Demo rostro', result: 'Acc 94%', color: '#06B6D4' },
-    { id: 't3', title: 'Segmentador', result: 'IoU 0.71', color: '#EF4444' },
   ]
 
-  const watchedCourses = [
+  const watchedCoursesLocal = watchedCourses ?? [
     { id: 'w1', title: 'MediaPipe Hands', progress: '60%', img: 'https://i.blogs.es/2b36a7/algoritmo/1366_2000.png' },
-    { id: 'w2', title: 'Agentes IA', progress: '30%', img: 'https://nocodestartup.io/wp-content/uploads/2025/02/o-que-e-um-agente-de-ia-e-como-ele-funciona-1024x701.jpg' },
   ]
 
   const renderDetail = () => {
@@ -86,8 +86,8 @@ export default function Welcome({ userName, progress: _progress }: WelcomeProps)
           {createdModels.map(m => (
             <div key={m.id} className="p-4 rounded-xl border bg-white shadow-soft" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
               <div className="text-slate-600 text-xs">Modelo</div>
-              <div className="mt-1 font-semibold" style={{ color: m.color }}>{m.title}</div>
-              <div className="text-slate-600 text-sm">{m.detail}</div>
+              <div className="mt-1 font-semibold" style={{ color: m.color ?? '#3B82F6' }}>{m.title}</div>
+              {m.detail && <div className="text-slate-600 text-sm">{m.detail}</div>}
               <div className="mt-3 flex justify-end">
                 <button className="btn-secondary">Abrir</button>
               </div>
@@ -99,7 +99,7 @@ export default function Welcome({ userName, progress: _progress }: WelcomeProps)
     if (active === 'probados') {
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {testedModels.map(t => (
+          {testedModelsLocal.map(t => (
             <div key={t.id} className="p-4 rounded-xl border bg-white shadow-soft" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
               <div className="text-slate-600 text-xs">Resultado</div>
               <div className="mt-1 font-semibold" style={{ color: t.color }}>{t.title}</div>
@@ -115,7 +115,7 @@ export default function Welcome({ userName, progress: _progress }: WelcomeProps)
     if (active === 'vistos') {
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {watchedCourses.map(w => (
+          {watchedCoursesLocal.map(w => (
             <div key={w.id} className="overflow-hidden rounded-xl border bg-white shadow-soft" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
               <div className="relative h-28 bg-slate-100">
                 <img src={w.img} alt={w.title} className="w-full h-full object-cover" />
@@ -135,6 +135,7 @@ export default function Welcome({ userName, progress: _progress }: WelcomeProps)
     return null
   }
   return (
+    <>
     <section className="mt-6 animate-slide-up">
       <div className="bg-hero-gradient">
         <div className="container-page py-8">
@@ -206,5 +207,10 @@ export default function Welcome({ userName, progress: _progress }: WelcomeProps)
         </div>
       </div>
     </section>
-  )
+    <section className="container-page">
+      <DailyMissions />
+    </section>
+  </>
+)
+
 }

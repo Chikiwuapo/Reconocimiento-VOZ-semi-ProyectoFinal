@@ -11,25 +11,34 @@ export type Activity = {
 }
 
 const initialActivities: Activity[] = [
-  { id: 'a1', title: 'Clasificador de Sentimientos', description: 'Analiza polaridad en reseñas de texto.', emoji: '📝', imageUrl: '/src/assets/placeholder.svg' },
-  { id: 'a2', title: 'Detección de Objetos', description: 'Identifica objetos en imágenes.', emoji: '🖼️', imageUrl: '/src/assets/placeholder.svg' },
-  { id: 'a3', title: 'Predicción de Series Temporales', description: 'Proyecta tendencias y valores futuros.', emoji: '📈', imageUrl: '/src/assets/placeholder.svg' },
-  { id: 'a4', title: 'Clasificación de Nubes', description: 'Categoriza tipos de nubes meteorológicas.', emoji: '☁️', imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'a1', title: 'Modelo de entrenamiento para Vocales', description: 'Crea un modelo para reconocer vocales habladas.', emoji: '🗣️', imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'a2', title: 'Modelo de entrenamiento para Abecedario', description: 'Entrena un modelo para letras del abecedario.', emoji: '🔤', imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'a3', title: 'Modelo de entrenamiento para Palabras', description: 'Reconoce palabras clave frecuentes.', emoji: '📝', imageUrl: '/src/assets/placeholder.svg' },
+  { id: 'a4', title: 'Modelo de entrenamiento para Operaciones aritméticas básicas', description: 'Suma, resta, multiplicación y división.', emoji: '➕', imageUrl: '/src/assets/placeholder.svg' },
 ]
 
 export default function ActivitiesGrid({ onFavoriteChange }: { onFavoriteChange?: (id: string, fav: boolean) => void }) {
   const [activities, setActivities] = useState<Activity[]>(initialActivities)
 
   const toggleFavorite = (id: string) => {
-    setActivities((prev) => prev.map((a) => (a.id === id ? { ...a, favorite: !a.favorite } : a)))
+    setActivities((prev) => {
+      const next = prev.map((a) => (a.id === id ? { ...a, favorite: !a.favorite } : a))
+      next.sort((x, y) => Number(!!y.favorite) - Number(!!x.favorite))
+      return next
+    })
     const updated = activities.find((a) => a.id === id)
     if (updated && onFavoriteChange) onFavoriteChange(id, !updated.favorite)
+    const toggled = activities.find(a => a.id === id)
+    if (toggled) {
+      const msg = !toggled.favorite ? `Añadido a favoritos: ${toggled.title}` : `Quitado de favoritos: ${toggled.title}`
+      window.dispatchEvent(new CustomEvent('app:notify', { detail: msg }))
+    }
   }
 
   return (
     <section className="container-page mt-8 animate-slide-up">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Modelos para entrenar</h2>
+        <h2 className="text-xl font-semibold">Tus modelos</h2>
         <button className="text-sm text-slate-600 hover:text-header transition">Ver todos</button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

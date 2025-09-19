@@ -23,6 +23,52 @@ export type Lesson = {
   videoId?: string
 }
 
+function AccordionRow({ idx, lesson, onSelect }: { idx: number; lesson: Lesson; onSelect: () => void }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <li>
+      <button
+        className="w-full flex items-center justify-between py-3 text-left"
+        onClick={() => { setOpen(o => !o); onSelect() }}
+      >
+        <div>
+          <div className="font-medium text-header">{idx + 1}. {lesson.title}</div>
+          <div className="text-xs text-slate-500">Tipo: {lesson.type}{lesson.duration ? ` • ${lesson.duration}` : ''}</div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className={`badge ${lesson.status === 'completed' ? 'bg-green-100 text-green-700' : ''}`}>{lesson.status === 'completed' ? 'Completada' : 'Pendiente'}</span>
+          <svg viewBox="0 0 20 20" className={`h-5 w-5 text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`}><path d="M5 8l5 5 5-5" fill="currentColor"/></svg>
+        </div>
+      </button>
+      {open && (
+        <div className="pb-3 pl-1 text-sm text-slate-600">
+          <p>{lesson.description}</p>
+          {lesson.timestamps && lesson.timestamps.length > 0 && (
+            <div className="mt-2">
+              <div className="text-xs font-semibold text-slate-500">Marcadores</div>
+              <ul className="mt-1 grid grid-cols-2 gap-2">
+                {lesson.timestamps.map((t, i) => (
+                  <li key={i} className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-700">{t.time} — {t.label}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {lesson.attachments && lesson.attachments.length > 0 && (
+            <div className="mt-2">
+              <div className="text-xs font-semibold text-slate-500">Adjuntos</div>
+              <ul className="mt-1 grid grid-cols-2 gap-2">
+                {lesson.attachments.map((a, i) => (
+                  <li key={i}><a href={a.url} className="text-primary hover:underline text-xs">{a.name}</a></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </li>
+  )
+}
+
 export default function CoursePage() {
   const { slug } = useParams<{ slug: string }>()
   const courseTitle = useMemo(() => {
@@ -131,6 +177,7 @@ export default function CoursePage() {
 
   const markCompleted = () => {
     setLessons(prev => prev.map((l, i) => i === currentIndex ? { ...l, status: 'completed' } : l))
+    window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Lección marcada como completada' }))
   }
 
   const markPending = () => {
@@ -139,6 +186,7 @@ export default function CoursePage() {
 
   const advanceNext = () => {
     setCurrentIndex((idx) => Math.min(idx + 1, lessons.length - 1))
+    window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Has avanzado a la siguiente lección' }))
   }
 
   return (
@@ -150,7 +198,7 @@ export default function CoursePage() {
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-100">{courseTitle}</h1>
             <p className="text-slate-300 mt-1">Aprende paso a paso con lecciones prácticas, recursos descargables y proyecto final.</p>
           </div>
-          <button className="btn-accent-cyan">Iniciar Curso</button>
+          <button className="btn-accent-cyan btn-lg">Iniciar curso</button>
         </div>
         <div className="mt-4">
           <div className="flex items-center gap-3">
@@ -164,6 +212,8 @@ export default function CoursePage() {
       
       </section>
 
+      {/* Acordeón movido al sidebar */}
+
       <section className="container-page mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Columna principal */}
@@ -175,6 +225,11 @@ export default function CoursePage() {
             className="lg:col-span-2 bg-slate-900 rounded-xl p-4 shadow-soft border border-slate-800"
           >
             <VideoPlayer videoId={current.videoId} src={current.videoUrl} />
+
+            <div className="mt-4 flex items-center gap-2">
+              <button className="btn-accent-purple" onClick={markCompleted}>Marcar completada</button>
+              <button className="btn-accent-cyan" onClick={advanceNext}>Continuar</button>
+            </div>
 
             <LessonContent 
               lesson={current}
@@ -216,11 +271,21 @@ export default function CoursePage() {
             <LessonSidebar 
               lessons={lessons}
               currentId={current.id}
-              onSelect={(id: string) => {
-                const idx = lessons.findIndex(l => l.id === id)
-                if (idx >= 0) setCurrentIndex(idx)
+              onSelect={() => {
+                // No cambia el video; sólo informativo
+                window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Lección seleccionada (vista previa)' }))
               }}
             />
+
+            <div className="h-3" />
+            <div className="bg-white rounded-xl p-4 shadow-soft">
+              <h3 className="text-header text-base font-semibold">Lecciones que aprenderás</h3>
+              <ul className="mt-3 divide-y divide-slate-100">
+                {lessons.map((l, i) => (
+                  <AccordionRow key={l.id} idx={i} lesson={l} onSelect={() => { /* no cambia video */ }} />
+                ))}
+              </ul>
+            </div>
           </motion.aside>
         </div>
       </section>

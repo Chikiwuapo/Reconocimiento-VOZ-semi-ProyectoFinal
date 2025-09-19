@@ -1,4 +1,5 @@
 import Navbar from './Navbar'
+import NotificationCenter from './NotificationCenter'
 
 type LayoutProps = {
   children: React.ReactNode
@@ -25,13 +26,9 @@ export default function Layout({ children, pageTitle, pageSubtitle, notification
       <footer className="mt-16 border-t border-slate-100">
         <div className="container-page py-8 text-sm text-slate-500 flex items-center justify-between">
           <span>© {new Date().getFullYear()} Blackboard · Plataforma ML</span>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-header transition">Privacidad</a>
-            <a href="#" className="hover:text-header transition">Términos</a>
-            <a href="#" className="hover:text-header transition">Soporte</a>
-          </div>
         </div>
       </footer>
+      <NotificationCenter />
     </div>
   )
 }

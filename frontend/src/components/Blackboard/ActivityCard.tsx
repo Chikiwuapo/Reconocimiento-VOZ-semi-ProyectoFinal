@@ -6,11 +6,12 @@ type ActivityCardProps = {
   onToggleFavorite?: () => void
   onTrain?: () => void
   imageUrl?: string
+  onViewDetails?: () => void
 }
 
-export default function ActivityCard({ title, description, emoji = '🤖', favorite, onToggleFavorite, onTrain, imageUrl = '/src/assets/placeholder.svg' }: ActivityCardProps) {
+export default function ActivityCard({ title, description, emoji = '🤖', favorite, onToggleFavorite, onTrain, imageUrl = '/src/assets/placeholder.svg', onViewDetails }: ActivityCardProps) {
   return (
-    <div className="card p-0 overflow-hidden h-[280px] transition-all duration-300 group hover:-translate-y-0.5 hover:shadow-lg relative flex flex-col">
+    <div className="card p-0 overflow-hidden h-[320px] transition-all duration-300 group hover:-translate-y-0.5 hover:shadow-lg relative flex flex-col">
       {favorite && <span className="ribbon-fav">⭐ FAVORITO</span>}
       <img src={imageUrl} alt="Vista previa" className="h-28 w-full object-cover" />
       <div className="p-5 flex items-start justify-between">
@@ -35,7 +36,7 @@ export default function ActivityCard({ title, description, emoji = '🤖', favor
       </div>
       <div className="mt-auto p-5 pt-0 flex items-center gap-3">
         <button className="btn-accent-purple transition-colors duration-300 group-hover:!bg-[var(--accent-cyan)]" onClick={onTrain}>Entrenar</button>
-        <button className="text-sm text-slate-600 hover:text-header transition">Ver detalles</button>
+        <button className="text-sm text-slate-600 hover:text-header transition" onClick={onViewDetails}>Ver detalles</button>
       </div>
     </div>
   )
