@@ -1,7 +1,6 @@
 import Layout from '../../components/Blackboard/Layout'
 import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Welcome from '../../components/Blackboard/Welcome'
 import ActivitiesGrid from '../../components/Blackboard/ActivitiesGrid'
 import UserProgress from '../../components/Blackboard/UserProgress'
@@ -12,109 +11,25 @@ import TrainedModels from '../../components/Blackboard/TrainedModels'
 
 export default function Dashboard() {
   const userName = 'Usuario'
-  // Hero Carousel
-  const slides = [
-    {
-      title: 'Aprende IA aplicada',
-      subtitle: 'Modelos, visión computacional y agentes inteligentes con proyectos reales.',
-      cta: { label: 'Explorar cursos', to: '#cursos' },
-      bg: 'from-slate-900 via-indigo-950 to-slate-900',
-      media: { kind: 'image' as const, src: 'https://images.unsplash.com/photo-1555255707-c07966088b7b?q=80&w=1600&auto=format&fit=crop', alt: 'Inteligencia Artificial aplicada' },
-    },
-    {
-      title: 'Reconocimiento y Automatización',
-      subtitle: 'Manos, voz, rostro y chatbots con pipelines modernos.',
-      cta: { label: 'Ver catálogo', to: '#cursos' },
-      bg: 'from-slate-900 via-fuchsia-950 to-slate-900',
-      media: { kind: 'image' as const, src: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1600&auto=format&fit=crop', alt: 'Robótica y automatización' },
-    },
-    {
-      title: 'Explora en 3D',
-      subtitle: 'Visualiza modelos 3D interactivos y comprende conceptos complejos de forma intuitiva.',
-      cta: { label: 'Comenzar ahora', to: '#cursos' },
-      bg: 'from-slate-900 via-cyan-950 to-slate-900',
-      media: { kind: 'model' as const, src: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb', alt: 'Modelo 3D astronauta' },
-    },
-  ] as const
-  const [idx, setIdx] = useState(0)
-  useEffect(() => {
-    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 6000)
-    return () => clearInterval(t)
-  }, [slides.length])
-  const prev = () => setIdx((i) => (i - 1 + slides.length) % slides.length)
-  const next = () => setIdx((i) => (i + 1) % slides.length)
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08, delayChildren: 0.1 }
+    }
+  }
+  const card = {
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0 }
+  }
   return (
     <Layout notifications={3}>
-      {/* Hero Carousel full-screen */}
-      <section className="relative min-h-[90vh] rounded-3xl overflow-hidden border border-slate-200/60 bg-gradient-to-br shadow-soft">
-        <AnimatePresence mode="wait">
-          <motion.div key={idx} 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.55 }}
-            className={`absolute inset-0 bg-gradient-to-br ${slides[idx].bg}`}
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.06),transparent_60%)]" />
-          </motion.div>
-        </AnimatePresence>
-        <div className="relative z-10 h-full grid grid-cols-1 lg:grid-cols-2 items-center gap-6 px-6 py-14">
-          {/* Texto */}
-          <div className="text-center lg:text-left">
-          <motion.h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: .2 }}
-          >
-            {slides[idx].title}
-          </motion.h1>
-          <motion.p className="mt-3 max-w-3xl text-slate-200 text-base md:text-lg"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: .3 }}
-          >
-            {slides[idx].subtitle}
-          </motion.p>
-          <motion.div className="mt-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: .35 }}
-          >
-            <a href={slides[idx].cta.to} className="btn-accent-purple btn-lg">{slides[idx].cta.label}</a>
-          </motion.div>
-
-          </div>
-          {/* Media */}
-          <motion.div className="w-full flex items-center justify-center"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: .25 }}
-          >
-            {slides[idx].media.kind === 'image' ? (
-              <img src={slides[idx].media.src} alt={slides[idx].media.alt} className="w-full max-w-2xl rounded-2xl border border-white/10 shadow-2xl object-cover" />
-            ) : (
-              // 3D model viewer
-              // @ts-ignore - model-viewer is a web component
-              <model-viewer src={slides[idx].media.src} autoplay auto-rotate camera-controls interaction-prompt="none" style={{ width: '100%', maxWidth: '720px', height: '420px', background: 'transparent' }}></model-viewer>
-            )}
-          </motion.div>
-          {/* Controls */}
-          <div className="absolute bottom-6 left-0 right-0 flex items-center justify-between px-6">
-            <button onClick={prev} className="px-3 py-2 rounded-full bg-white/10 text-white hover:bg-white/20">‹</button>
-            <div className="flex gap-2">
-              {slides.map((_, i) => (
-                <button key={i} onClick={() => setIdx(i)} className={`h-2 rounded-full transition-all ${i===idx? 'w-8 bg-white':'w-2 bg-white/50'}`} />
-              ))}
-            </div>
-            <button onClick={next} className="px-3 py-2 rounded-full bg-white/10 text-white hover:bg-white/20">›</button>
-          </div>
-        </div>
-      </section>
-
-      <div className="h-8" />
-
-      <Welcome userName={userName} progress={64} />
       
+      <Welcome userName={userName} progress={64} />
+
+      {/* Modelos para entrenar (movido arriba) */}
+      <TrainedModels />
+
       {/* Sección de Cursos de IA y Reconocimiento */}
         <section className="container-page mt-8 animate-slide-up">
           <div className="flex items-center justify-between mb-6 animate-fade-in">
@@ -122,16 +37,19 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-header animate-slide-in-left">Cursos de IA y Reconocimiento</h2>
               <p className="text-slate-600 mt-1 animate-slide-in-left delay-100">Explora nuestros cursos especializados en inteligencia artificial</p>
             </div>
-            <button className="btn-accent-purple btn-lg animate-slide-in-right animate-pulse-glow">
-              Explorar todos los cursos
-            </button>
           </div>
           
           {/* Grid estático de cursos con animaciones */}
-          <div id="cursos" className="courses-grid animate-fade-in delay-200">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
+          <div id="cursos" className="courses-grid">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch"
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.1 }}
+            >
               {/* Reconocimiento de Manos con MediaPipe */}
-              <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
+              <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
                 <div className="relative h-40 bg-gradient-to-br from-emerald-400 to-teal-600 overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                   <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
@@ -168,10 +86,10 @@ export default function Dashboard() {
                     <Link to="/courses/hand-recognition" className="cta">Ver curso</Link>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Reconocimiento Facial Avanzado */}
-              <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
+              <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
                 <div className="relative h-40 bg-gradient-to-br from-blue-500 to-indigo-700 overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                   <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
@@ -208,7 +126,7 @@ export default function Dashboard() {
                     <Link to="/courses/face-recognition" className="cta">Ver curso</Link>
                   </div>
                  </div>
-               </div>
+               </motion.div>
 
               {/* Reconocimiento de Voz con IA */}
               <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
@@ -290,7 +208,7 @@ export default function Dashboard() {
                </div>
 
                {/* Desarrollo de Agente IA */}
-               <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
+               <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
                   <div className="relative h-40 bg-gradient-to-br from-indigo-500 to-purple-700 overflow-hidden">
                     <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                    <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
@@ -327,10 +245,10 @@ export default function Dashboard() {
                       <Link to="/courses/ai-agent" className="cta">Ver curso</Link>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
                {/* Chatbot Automatizado */}
-               <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
+               <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
                   <div className="relative h-40 bg-gradient-to-br from-teal-500 to-cyan-600 overflow-hidden">
                     <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                    <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
@@ -366,10 +284,10 @@ export default function Dashboard() {
                       <Link to="/courses/chatbot-automation" className="cta">Ver curso</Link>
                     </div>
                   </div>
-               </div>
+                </motion.div>
 
               {/* Detección de Emociones en Voz – PRÓXIMAMENTE */}
-              <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full">
+              <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full">
                 <div className="relative h-40 bg-gradient-to-br from-fuchsia-500 to-rose-600 overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                   <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-bold">PRÓXIMAMENTE</div>
@@ -392,10 +310,10 @@ export default function Dashboard() {
                     <button className="cta disabled" disabled>Próximamente</button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Traducción Automática en Tiempo Real – PRÓXIMAMENTE */}
-              <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full">
+              <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full">
                 <div className="relative h-40 bg-gradient-to-br from-cyan-500 to-blue-600 overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                   <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-bold">PRÓXIMAMENTE</div>
@@ -418,8 +336,8 @@ export default function Dashboard() {
                     <button className="cta disabled" disabled>Próximamente</button>
                   </div>
                 </div>
-              </div>
-             </div>
+              </motion.div>
+             </motion.div>
            </div>
       </section>
 

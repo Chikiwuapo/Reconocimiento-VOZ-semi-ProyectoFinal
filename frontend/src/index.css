@@ -8,12 +8,8 @@
   --color-alt: #F5F5F5;
 }
 
-/* Tailwind v4: define tokens de tema para poder usar clases como text-primary/bg-alt */
-@theme {
-  --color-background: #FFFFFF;
-  --color-header: #1B4965;
-  --color-primary: #62B6CB;
-  --color-alt: #F5F5F5;
+/* Variables de tema (sin @theme para evitar warnings del linter) */
+:root {
   --accent-green: #28A745;
   --accent-purple: #8A2BE2;
   --accent-cyan: #00FFFF;
@@ -46,7 +42,16 @@ html, body, #root {
 
 @layer components {
   .container-page {
-    @apply w-full max-w-none px-4 sm:px-6 lg:px-8;
+    width: 100%;
+    max-width: none;
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem;
+  }
+  @media (min-width: 640px) { /* sm */
+    .container-page { padding-left: 1.5rem; padding-right: 1.5rem; } /* px-6 */
+  }
+  @media (min-width: 1024px) { /* lg */
+    .container-page { padding-left: 2rem; padding-right: 2rem; } /* px-8 */
   }
 }
 
@@ -67,7 +72,8 @@ html, body, #root {
   .font-inter { font-family: var(--font-inter); }
 
   .card { 
-    @apply p-5 bg-white; 
+    padding: 1.25rem; /* p-5 */
+    background: #fff; /* bg-white */
     box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
     border-radius: 14px; 
     transition: all 0.3s ease;
@@ -132,15 +138,48 @@ html, body, #root {
 
   /* Removed auto-scroll animations for manual navigation */
   /* Base de botones unificada */
-  .btn { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none; height: 40px; padding: 0 16px; border-radius: 0.5rem; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* gap-2 */
+    font-weight: 500; /* font-medium */
+    transition: all .2s ease; /* transition */
+    user-select: none; /* select-none */
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 0.5rem;
+  }
   .btn-lg { height: 48px; padding: 0 20px; }
-  .btn-primary { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-white; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: var(--color-primary); }
-  .btn-accent-green { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-white; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: var(--accent-green); }
-  .btn-accent-purple { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-white; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: var(--accent-purple); }
-  .btn-accent-cyan { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-header; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: var(--accent-cyan); }
-  .btn-secondary { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-slate-600 border border-slate-300 hover:bg-slate-50; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: white; }
-  .btn-accent-red { @apply inline-flex items-center justify-center gap-2 font-medium transition select-none text-white; height: 40px; padding: 0 16px; border-radius: 0.5rem; background-color: #DC2626; }
-  .badge { @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold; background-color: var(--color-alt); color: var(--color-header); }
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--color-primary);
+  }
+  .btn-accent-green {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--accent-green);
+  }
+  .btn-accent-purple {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--accent-purple);
+  }
+  .btn-accent-cyan {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: var(--color-header); height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--accent-cyan);
+  }
+  .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #475569; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: #fff; border: 1px solid #cbd5e1;
+  }
+  .btn-secondary:hover { background-color: #f8fafc; }
+  .btn-accent-red {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: #DC2626;
+  }
+  .badge {
+    display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;
+    background-color: var(--color-alt); color: var(--color-header);
+  }
 
   /* Cinta para favoritos */
   .ribbon-fav { position: absolute; top: 12px; right: -6px; background: linear-gradient(135deg, #FBBF24, #F59E0B); color: #1F2937; font-weight: 700; font-size: 10px; padding: 4px 10px; transform: rotate(45deg); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
@@ -191,5 +230,7 @@ html, body, #root {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    /* Añadimos la propiedad estándar para compatibilidad con linters */
+    line-clamp: 2;
   }
 }
