@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
 interface HeaderProps {
@@ -8,19 +8,67 @@ interface HeaderProps {
 
 const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
   const [scrolled, setScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
+  // Función para ocultar/mostrar el header al hacer scroll
+  const hideOnScroll = useCallback(() => {
+    const currentScrollY = window.scrollY;
+    const threshold = 5; // Umbral para evitar cambios con scroll mínimos
+    
+    // No ocultar si estamos muy cerca del top
+    if (currentScrollY < 50) {
+      setIsVisible(true);
+      setScrolled(false);
+    } else {
+      setScrolled(true);
+      
+      // Comparar posición actual con la anterior
+      if (currentScrollY > lastScrollY + threshold) {
+        // Scroll hacia abajo - ocultar header
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY - threshold) {
+        // Scroll hacia arriba - mostrar header
+        setIsVisible(true);
+      }
+    }
+    
+    // Actualizar la última posición de scroll
+    setLastScrollY(currentScrollY);
+  }, [lastScrollY]);
+
+  // Implementar debounce para limitar la frecuencia de ejecución
   useEffect(() => {
+    let timeoutId: number | null = null;
+    
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      if (timeoutId) {
+        window.cancelAnimationFrame(timeoutId);
+      }
+      
+      // Usar requestAnimationFrame para optimización del rendimiento
+      timeoutId = window.requestAnimationFrame(() => {
+        hideOnScroll();
+      });
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeoutId) {
+        window.cancelAnimationFrame(timeoutId);
+      }
+    };
+  }, [hideOnScroll]);
+
+  // Resetear la visibilidad cuando se hace click en enlaces de anchor
+  const handleAnchorClick = () => {
+    setIsVisible(true);
+  };
 
   return (
     <header 
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed w-full z-50 transition-transform duration-300 ${
         scrolled 
           ? isDarkMode 
             ? 'bg-[#121212] shadow-lg shadow-purple-900/20' 
@@ -28,21 +76,22 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
           : isDarkMode 
             ? 'bg-transparent' 
             : 'bg-transparent'
-      }`}
+      } ${isVisible ? 'transform-none' : 'transform -translate-y-full'}`}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`}>
-            ML Voice
+            Ares digital soft
           </h1>
         </div>
         
         <div className="flex items-center gap-6">
-          <nav>
+          <nav className="hidden md:block">
             <ul className="flex space-x-8">
               <li>
                 <a 
                   href="#beneficios" 
+                  onClick={handleAnchorClick}
                   className={`font-medium hover:opacity-80 transition-opacity ${
                     isDarkMode ? 'text-white' : 'text-[#1B4965]'
                   }`}
@@ -53,6 +102,7 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
               <li>
                 <a 
                   href="#ejemplos" 
+                  onClick={handleAnchorClick}
                   className={`font-medium hover:opacity-80 transition-opacity ${
                     isDarkMode ? 'text-white' : 'text-[#1B4965]'
                   }`}
@@ -63,6 +113,7 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
               <li>
                 <a 
                   href="#como-funciona" 
+                  onClick={handleAnchorClick}
                   className={`font-medium hover:opacity-80 transition-opacity ${
                     isDarkMode ? 'text-white' : 'text-[#1B4965]'
                   }`}
@@ -72,6 +123,13 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
               </li>
             </ul>
           </nav>
+          
+          {/* Menú móvil */}
+          <button className="md:hidden p-2" aria-label="Menú">
+            <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           
           <div className="flex items-center gap-4">
             {toggleDarkMode && (

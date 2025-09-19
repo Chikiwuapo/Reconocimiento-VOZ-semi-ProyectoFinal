@@ -14,18 +14,7 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
         { name: "Características", href: "#beneficios" },
         { name: "Ejemplos", href: "#ejemplos" },
         { name: "Cómo funciona", href: "#como-funciona" },
-        { name: "Precios", href: "#" },
         { name: "Actualizaciones", href: "#" }
-      ]
-    },
-    {
-      title: "Recursos",
-      links: [
-        { name: "Documentación", href: "#" },
-        { name: "Tutoriales", href: "#" },
-        { name: "Blog", href: "#" },
-        { name: "API", href: "#" },
-        { name: "Soporte", href: "#" }
       ]
     },
     {
@@ -33,9 +22,7 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
       links: [
         { name: "Acerca de", href: "#" },
         { name: "Equipo", href: "#" },
-        { name: "Contacto", href: "#" },
-        { name: "Prensa", href: "#" },
-        { name: "Trabaja con nosotros", href: "#" }
+        { name: "Contacto", href: "#" }
       ]
     },
     {
@@ -43,8 +30,7 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
       links: [
         { name: "Términos de servicio", href: "#" },
         { name: "Política de privacidad", href: "#" },
-        { name: "Cookies", href: "#" },
-        { name: "Seguridad", href: "#seguridad" }
+        { name: "Cookies", href: "#" }
       ]
     }
   ];
@@ -76,7 +62,7 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
         fontWeight="bold" 
         fill={isDarkMode ? "white" : "#1B4965"}
       >
-        VoiceRec
+        Ares digital soft
       </text>
       <text 
         x="70" 
