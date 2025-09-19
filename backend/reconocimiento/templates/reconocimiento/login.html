@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Facial - Reconocimiento</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'reconocimiento/css/styles.css' %}">
+    
+    <!-- Mediapipe CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🔐 Login Facial</h1>
+            <p>Posiciona tu rostro dentro del recuadro para verificar tu identidad</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Video Container -->
+            <div class="video-container">
+                <div class="video-wrapper">
+                    <video id="video" autoplay muted playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    
+                    <!-- Recuadro guía con esquinas -->
+                    <div class="face-guide-overlay">
+                        <div class="face-guide-box">
+                            <div class="corner corner-top-left"></div>
+                            <div class="corner corner-top-right"></div>
+                            <div class="corner corner-bottom-left"></div>
+                            <div class="corner corner-bottom-right"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Instrucciones dinámicas -->
+                    <div class="face-instruction" id="face-instruction">
+                        Mantén tu rostro dentro del recuadro
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Container -->
+            <div class="status-container">
+                <div id="status-message" class="status-message default">
+                    Mantén tu rostro dentro del recuadro
+                </div>
+                
+                <!-- Información adicional -->
+                <div class="info-panel">
+                    <div class="info-item">
+                        <span class="info-label">Frames requeridos:</span>
+                        <span class="info-value">7</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Intento actual:</span>
+                        <span id="attempt-counter" class="info-value">0/3</span>
+                    </div>
+                </div>
+                
+                <!-- Progreso de captura -->
+                <div class="capture-progress" id="capture-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">0/8 frames capturados</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="start-btn" class="btn btn-primary">
+                    🎬 Iniciar Reconocimiento
+                </button>
+                <button id="stop-btn" class="btn btn-danger" disabled>
+                    ⏹️ Detener
+                </button>
+                <a href="{% url 'reconocimiento:register' %}" class="btn btn-secondary">
+                    📝 Registro
+                </a>
+            </div>
+
+            <!-- Instrucciones -->
+            <div class="instructions">
+                <h3>📋 Instrucciones:</h3>
+                <ul>
+                    <li>✅ Mantén tu rostro centrado en el recuadro</li>
+                    <li>💡 Asegúrate de tener buena iluminación</li>
+                    <li>📱 Mantén el dispositivo estable</li>
+                    <li>👀 Mira directamente a la cámara</li>
+                    <li>⏱️ El sistema capturará 7 frames automáticamente</li>
+                </ul>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h3>Validando identidad...</h3>
+                <p>Procesando frames capturados con sistema de voting</p>
+                <div class="progress-info">
+                    <span id="processing-step">Analizando frames...</span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="nav-links">
+                <a href="{% url 'reconocimiento:register' %}?from=login" class="link">📝 Registro</a>
+                <a href="{% url 'reconocimiento:maintenance' %}" class="link">🔧 Mantenimiento</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'reconocimiento/js/phase1.js' %}"></script>
+</body>
+</html>

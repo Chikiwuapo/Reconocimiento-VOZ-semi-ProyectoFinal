@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mantenimiento - Reconocimiento</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'reconocimiento/css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="user-info">
+                {% if is_authenticated %}
+                    <div class="user-id-display">
+                        <span class="user-label">👤 Usuario:</span>
+                        <span class="user-id">{{ username }} (ID: {{ user_id }})</span>
+                    </div>
+                {% else %}
+                    <div class="user-id-display">
+                        <span class="user-label">⚠️ No autenticado</span>
+                    </div>
+                {% endif %}
+            </div>
+            <h1>🔧 Mantenimiento del Sistema</h1>
+            <p>Herramientas de diagnóstico y configuración</p>
+        </header>
+
+        <main class="main-content">
+            <div class="maintenance-grid">
+                <div class="maintenance-card">
+                    <h3>📊 Estadísticas</h3>
+                    <p>Próximamente: Ver estadísticas de reconocimiento</p>
+                    <div class="stats-placeholder">
+                        <div class="stat-item">
+                            <span class="stat-label">Intentos totales:</span>
+                            <span class="stat-value">--</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Éxito promedio:</span>
+                            <span class="stat-value">--%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="maintenance-card">
+                    <h3>🎯 Calibración</h3>
+                    <p>Próximamente: Ajustar parámetros del sistema</p>
+                    <div class="calibration-placeholder">
+                        <div class="param-item">
+                            <span class="param-label">Threshold:</span>
+                            <span class="param-value">0.7</span>
+                        </div>
+                        <div class="param-item">
+                            <span class="param-label">Frames requeridos:</span>
+                            <span class="param-value">7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="maintenance-card">
+                    <h3>🔍 Diagnóstico</h3>
+                    <p>Próximamente: Herramientas de diagnóstico</p>
+                    <div class="diagnostic-placeholder">
+                        <div class="diagnostic-item">
+                            <span class="diagnostic-label">Cámara:</span>
+                            <span class="diagnostic-status">✅ OK</span>
+                        </div>
+                        <div class="diagnostic-item">
+                            <span class="diagnostic-label">Mediapipe:</span>
+                            <span class="diagnostic-status">✅ OK</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                {% if is_authenticated %}
+                    <a href="{% url 'reconocimiento:logout' %}" class="btn btn-primary">
+                        🚪 Cerrar Sesión
+                    </a>
+                {% else %}
+                    <a href="{% url 'reconocimiento:login' %}" class="btn btn-primary">
+                        🔐 Volver a Login
+                    </a>
+                {% endif %}
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="nav-links">
+                <a href="{% url 'reconocimiento:login' %}" class="link">🔐 Login</a>
+                <a href="{% url 'reconocimiento:register' %}" class="link">📝 Registro</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

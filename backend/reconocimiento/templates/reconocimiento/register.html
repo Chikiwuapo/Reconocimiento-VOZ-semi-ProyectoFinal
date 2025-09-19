@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Facial - Reconocimiento</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'reconocimiento/css/styles.css' %}">
+    
+    <!-- Mediapipe CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📝 Registro Facial</h1>
+            <p>Completa tus datos y registra tu rostro desde múltiples ángulos</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Formulario de Registro -->
+            <div id="registration-form" class="form-container">
+                <form id="user-form" class="user-form">
+                    <div class="form-group">
+                        <label for="username">👤 Nombre de Usuario:</label>
+                        <input type="text" id="username" name="username" required 
+                               placeholder="Ingresa tu nombre de usuario" maxlength="150">
+                        <small class="form-help">Debe ser único en el sistema</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">📧 Correo Electrónico:</label>
+                        <input type="email" id="email" name="email" required 
+                               placeholder="tu@email.com">
+                        <small class="form-help">Debe ser único en el sistema</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dni">🆔 DNI/Documento:</label>
+                        <input type="text" id="dni" name="dni" required 
+                               placeholder="Número de documento" maxlength="20">
+                        <small class="form-help">Solo números y letras, debe ser único</small>
+                    </div>
+                    
+                    <div class="form-buttons">
+                        <button type="button" id="proceed-to-camera" class="btn btn-primary">
+                            📷 Continuar con Captura Facial
+                        </button>
+                        <button type="button" id="clear-form" class="btn btn-secondary">
+                            🗑️ Limpiar Formulario
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Video Container (inicialmente oculto) -->
+            <div id="camera-section" class="video-container" style="display: none;">
+                <div class="video-wrapper">
+                    <video id="video" autoplay muted playsinline></video>
+                    <canvas id="canvas"></canvas>
+                </div>
+                
+                <!-- Progreso de captura -->
+                <div class="capture-progress">
+                    <h3>📸 Captura de Rostro</h3>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="captured-count">0</span> / <span id="required-count">8</span> imágenes capturadas
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Container -->
+            <div class="status-container">
+                <div id="status-message" class="status-message default">
+                    Completa el formulario para comenzar
+                </div>
+                
+                <!-- Información adicional -->
+                <div class="info-panel">
+                    <div class="info-item">
+                        <span class="info-label">Imágenes requeridas:</span>
+                        <span class="info-value">8</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ángulos diferentes:</span>
+                        <span class="info-value">Frontal, izquierda, derecha</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="start-capture" class="btn btn-primary" style="display: none;">
+                    🎬 Iniciar Captura
+                </button>
+                <button id="stop-capture" class="btn btn-danger" style="display: none;" disabled>
+                    ⏹️ Detener
+                </button>
+                <button id="edit-info" class="btn btn-warning" style="display: none;">
+                    ✏️ Editar Información
+                </button>
+                <button id="register-user" class="btn btn-success" style="display: none;" disabled>
+                    ✅ Completar Registro
+                </button>
+                <a href="{% url 'reconocimiento:login' %}" class="btn btn-secondary">
+                    🔐 Ir a Login
+                </a>
+            </div>
+
+            <!-- Instrucciones dinámicas -->
+            <div class="instructions">
+                <div id="form-instructions">
+                    <h3>📋 Instrucciones de Registro:</h3>
+                    <ul>
+                        <li>✅ Completa todos los campos del formulario</li>
+                        <li>📧 Usa un email válido y único</li>
+                        <li>🆔 El DNI debe ser único en el sistema</li>
+                        <li>👤 El nombre de usuario debe ser único</li>
+                        <li>📷 Después capturaremos tu rostro desde diferentes ángulos</li>
+                    </ul>
+                </div>
+                
+                <div id="camera-instructions" style="display: none;">
+                    <h3>📸 Instrucciones de Captura:</h3>
+                    <ul>
+                        <li>✅ Mantén tu rostro centrado en el recuadro</li>
+                        <li>💡 Asegúrate de tener buena iluminación</li>
+                        <li>📱 Mantén el dispositivo estable</li>
+                        <li>👀 Mira directamente a la cámara</li>
+                        <li>🔄 Gira ligeramente la cabeza para diferentes ángulos</li>
+                        <li>⏱️ Se capturarán 8 imágenes automáticamente</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h3 id="loading-title">Procesando registro...</h3>
+                <p id="loading-description">Generando embeddings faciales y guardando en base de datos</p>
+                <div class="progress-info">
+                    <span id="processing-step">Validando datos...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="success-modal" class="modal" style="display: none;">
+            <div class="modal-content success">
+                <h2>🎉 ¡Registro Exitoso!</h2>
+                <div class="success-details">
+                    <p><strong>Usuario:</strong> <span id="success-username"></span></p>
+                    <p><strong>Email:</strong> <span id="success-email"></span></p>
+                    <p><strong>DNI:</strong> <span id="success-dni"></span></p>
+                    <p><strong>Imágenes procesadas:</strong> <span id="success-images"></span></p>
+                </div>
+                <p>✅ <strong>Datos guardados en base de datos MySQL</strong></p>
+                <p>🔄 Redirigiendo automáticamente a mantenimiento en 3 segundos...</p>
+                <button id="continue-to-maintenance" class="btn btn-primary">
+                    🔧 Ir Ahora a Mantenimiento
+                </button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="nav-links">
+                <a href="{% url 'reconocimiento:login' %}" class="link">🔐 Login</a>
+                <a href="{% url 'reconocimiento:maintenance' %}" class="link">🔧 Mantenimiento</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'reconocimiento/js/register.js' %}"></script>
+</body>
+</html>

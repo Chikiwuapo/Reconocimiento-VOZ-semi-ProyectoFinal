@@ -1,205 +1,242 @@
-# Proyecto Full‑Stack: React + Vite + TypeScript (Frontend) / Django + DRF + MySQL (Backend)
+# 🔐 Sistema de Reconocimiento Facial
 
-Este repositorio contiene una plantilla full‑stack con:
+## 📋 ¿Qué es el proyecto?
 
-- Frontend: React + Vite + TypeScript (`frontend/`)
-- Backend: Django + Django REST Framework + CORS (`backend/`)
-- Base de datos en desarrollo: SQLite por defecto (para iniciar rápido)
-- Base de datos en producción/real: MySQL (conmutación por `.env`)
+Este es un sistema completo de **reconocimiento facial** desarrollado con Django y React que permite a los usuarios registrarse y autenticarse utilizando su rostro como método de identificación biométrica.
 
----
+## 🎯 ¿Qué función tiene?
 
-## Requisitos previos
+El sistema implementa dos funcionalidades principales:
 
-- Node.js 18+ y npm
-- Python 3.10+ (Windows: `py` launcher recomendado)
-- MySQL Server (opcional para desarrollo inicial; requerido si vas a usar MySQL de inmediato)
+### 🔑 **Autenticación Facial**
+- **Registro de usuarios:** Captura múltiples fotos del rostro para crear un perfil biométrico único
+- **Login facial:** Autenticación mediante reconocimiento facial en tiempo real
+- **Sistema de voting:** Utiliza 7 frames con algoritmo de voting para mayor precisión en el reconocimiento
 
-> Nota Windows: PowerShell es recomendado. Si usas `cmd`, adapta los comandos de activación del entorno virtual.
+### 🛡️ **Seguridad Biométrica**
+- Procesamiento de embeddings faciales con **Mediapipe**
+- Almacenamiento seguro en base de datos **MySQL**
+- Integración completa con el sistema de autenticación de **Django**
 
----
+## ⚙️ ¿Qué se hace?
 
-## Estructura del proyecto
+1. **Registro:** El usuario proporciona sus datos personales y toma múltiples fotos de su rostro
+2. **Procesamiento:** El sistema genera embeddings faciales únicos usando Mediapipe
+3. **Almacenamiento:** Los datos se guardan en MySQL con relación Usuario↔Persona
+4. **Login:** El usuario se posiciona frente a la cámara para el reconocimiento
+5. **Reconocimiento:** El sistema compara el rostro actual con todos los embeddings almacenados
+6. **Autenticación:** Si hay match exitoso, el usuario queda autenticado automáticamente
 
+## 🔌 Endpoints para Postman
+
+### 📝 **Endpoint de Registro**
+
+**POST** `http://localhost:8000/api/reconocimiento/register/`
+
+**Headers:**
 ```
-Reconocimiento-de-voz/
-├─ backend/
-│  ├─ api/
-│  │  ├─ urls.py           # rutas de la API (incluye /health/)
-│  │  └─ views.py          # vistas DRF/JSON (endpoint de salud)
-│  ├─ server/
-│  │  ├─ __init__.py       # pymysql.install_as_MySQLdb()
-│  │  ├─ settings.py       # configuración Django, DRF, CORS, DB
-│  │  └─ urls.py           # rutas raíz (incluye api.urls)
-│  ├─ manage.py
-│  ├─ venv/                # entorno virtual (local)
-│  └─ .env                 # variables de entorno del backend
-└─ frontend/
-   ├─ src/
-   │  └─ App.tsx           # ejemplo: consulta GET /api/health/
-   ├─ vite.config.ts       # proxy /api -> http://127.0.0.1:8000
-   └─ package.json
+Content-Type: application/json
 ```
 
----
-
-## Inicio rápido (desarrollo)
-
-### 1) Backend (Django)
-
-Desde `backend/`:
-
-- Crear/activar entorno virtual (si no está activo):
-  - PowerShell:
-    ```powershell
-    py -m venv venv
-    .\venv\Scripts\Activate.ps1
-    ```
-- Instalar dependencias:
-  ```powershell
-  python -m pip install --upgrade pip
-  pip install django djangorestframework django-cors-headers pymysql django-environ
-  ```
-- Migraciones (usa SQLite por defecto):
-  ```powershell
-  python manage.py migrate
-  ```
-- Arrancar servidor:
-  ```powershell
-  python manage.py runserver
-  ```
-- Probar endpoint de salud:
-  - http://127.0.0.1:8000/api/health/
-
-### 2) Frontend (Vite)
-
-Desde `frontend/`:
-
-- Instalar dependencias:
-  ```powershell
-  npm install
-  ```
-- Arrancar servidor de desarrollo:
-  ```powershell
-  npm run dev
-  ```
-- Abrir en el navegador:
-  - http://localhost:5173/
-  - En pantalla verás “Backend health: ok” si el backend está arriba.
-
-> El proxy de Vite redirige cualquier llamada que empiece con `/api` hacia `http://127.0.0.1:8000`. Configurado en `frontend/vite.config.ts`.
-
----
-
-## Variables de entorno (backend/.env)
-
-Archivo `backend/.env` de ejemplo (ya creado):
-
-```
-# Django
-DEBUG=True
-SECRET_KEY=dev-secret-key-change-me
-ALLOWED_HOSTS=localhost,127.0.0.1
-
-# Database engine: sqlite (default) o mysql
-DB_ENGINE=sqlite
-
-# MySQL (solo si usas DB_ENGINE=mysql)
-MYSQL_DATABASE=app_db
-MYSQL_USER=root
-MYSQL_PASSWORD=
-MYSQL_HOST=127.0.0.1
-MYSQL_PORT=3306
-
-# CORS (Vite dev server)
-CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+**Body (JSON):**
+```json
+{
+    "username": "juan_perez",
+    "email": "juan@email.com",
+    "dni": "12345678",
+    "images": [
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+        "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
+    ]
+}
 ```
 
-> Cambia `SECRET_KEY` en producción. En desarrollo puedes dejarlo así.
+**Response (Éxito):**
+```json
+{
+    "status": "ok",
+    "person_id": 1,
+    "user_id": 1,
+    "username": "juan_perez",
+    "email": "juan@email.com",
+    "dni": "12345678",
+    "images_saved": 3,
+    "message": "Registro exitoso. Se procesaron 3 imágenes."
+}
+```
 
----
+### 🔐 **Endpoint de Login Facial**
 
-## Cambiar a MySQL
+**POST** `http://localhost:8000/api/reconocimiento/phase1/`
 
-1) Asegúrate de que MySQL Server esté corriendo y crea base de datos/usuario (ejemplo):
-   ```sql
-   CREATE DATABASE app_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-   CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'tu_password';
-   GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'localhost';
-   FLUSH PRIVILEGES;
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Body (JSON):**
+```json
+{
+    "frames": [
+        {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+            "timestamp": 1640995200000,
+            "frame_number": 1
+        },
+        {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+            "timestamp": 1640995200500,
+            "frame_number": 2
+        },
+        {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+            "timestamp": 1640995201000,
+            "frame_number": 3
+        },
+        {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+            "timestamp": 1640995201500,
+            "frame_number": 4
+        },
+        {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+            "timestamp": 1640995202000,
+            "frame_number": 5
+        },
+        {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+            "timestamp": 1640995202500,
+            "frame_number": 6
+        },
+        {
+            "image_data": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...",
+            "timestamp": 1640995203000,
+            "frame_number": 7
+        }
+    ],
+    "user_id": "test_user",
+    "session_id": "session_test_123"
+}
+```
+
+**Response (Reconocimiento Exitoso):**
+```json
+{
+    "status": "ok",
+    "matched": true,
+    "person_id": 1,
+    "score": 0.85,
+    "confidence": 0.92,
+    "frames_processed": 7,
+    "current_attempts": 0,
+    "max_attempts": 3,
+    "message": "¡Bienvenido juan_perez! Reconocimiento exitoso.",
+    "username": "juan_perez"
+}
+```
+
+**Response (Reconocimiento Fallido):**
+```json
+{
+    "status": "ok",
+    "matched": false,
+    "person_id": null,
+    "score": 0.45,
+    "confidence": 0.52,
+    "frames_processed": 7,
+    "current_attempts": 1,
+    "max_attempts": 3,
+    "message": "No se pudo verificar tu identidad. Verifica la iluminación y posición del rostro."
+}
+```
+
+## 🚀 Cómo ejecutar el proyecto
+
+### 1️⃣ **Crear Entorno Virtual**
+```bash
+python -m venv env
+```
+
+### 2️⃣ **Activar Entorno Virtual**
+```bash
+.\env\Scripts\activate
+```
+
+### 3️⃣ **Navegar al Backend**
+```bash
+cd backend
+```
+
+### 4️⃣ **Instalar Dependencias**
+```bash
+pip install -r requirements.txt
+```
+
+### 5️⃣ **Configurar Variables de Entorno**
+
+Copia el archivo `.env.example` y renómbralo a `.env`:
+```bash
+copy .env.example .env
+```
+
+**🗄️ Configuración de Base de Datos:**
+
+El proyecto está configurado para usar **SQLite por defecto** (no requiere instalación adicional).
+
+**Para usar SQLite (Recomendado para desarrollo):**
+- No necesitas cambiar nada en el archivo `.env`
+- El archivo `db.sqlite3` se creará automáticamente
+
+**Para usar MySQL (Opcional):**
+1. Instala MySQL en tu sistema
+2. Crea una base de datos llamada `reconocimiento_voz_db`
+3. Edita el archivo `.env` y cambia:
    ```
-
-2) Edita `backend/.env`:
-   ```env
    DB_ENGINE=mysql
-   MYSQL_DATABASE=app_db
-   MYSQL_USER=app_user
-   MYSQL_PASSWORD=tu_password
-   MYSQL_HOST=127.0.0.1
-   MYSQL_PORT=3306
+   DB_NAME=reconocimiento_voz_db
+   DB_USER=tu_usuario_mysql
+   DB_PASSWORD=tu_password_mysql
    ```
 
-3) Reinicia el servidor de Django y aplica migraciones contra MySQL:
-   ```powershell
-   python manage.py migrate
-   ```
+### 6️⃣ **Crear Migraciones**
+```bash
+python manage.py makemigrations
+```
 
-> La configuración de DB en `backend/server/settings.py` conmuta en función de `DB_ENGINE`.
+### 7️⃣ **Aplicar Migraciones**
+```bash
+python manage.py migrate
+```
 
----
+### 8️⃣ **Ejecutar Servidor Backend**
+```bash
+python manage.py runserver
+```
 
-## Comandos útiles
+### 9️⃣ **Configurar Frontend (Opcional)**
 
-- Backend:
-  - Activar venv (PowerShell): `./venv/Scripts/Activate.ps1`
-  - Migraciones: `python manage.py makemigrations && python manage.py migrate`
-  - Superusuario: `python manage.py createsuperuser`
-  - Correr servidor: `python manage.py runserver`
+Si quieres ejecutar también el frontend React:
 
-- Frontend:
-  - Instalar deps: `npm install`
-  - Dev server: `npm run dev`
-  - Build: `npm run build`
-  - Preview build: `npm run preview`
+1. **Abrir nueva terminal** y navegar al frontend:
+```bash
+cd frontend
+```
 
----
+2. **Instalar dependencias de Node.js:**
+```bash
+npm install
+```
 
-## Endpoints iniciales
+3. **Ejecutar servidor de desarrollo:**
+```bash
+npm run dev
+```
 
-- `GET /api/health/` → `{ "status": "ok" }`
-
-> Agrega más rutas en `backend/api/urls.py` y vistas en `backend/api/views.py`. Recuerda incluirlas en `server/urls.py` si creas nuevos módulos.
-
----
-
-## CORS y Proxy
-
-- CORS: Configurado en `backend/server/settings.py` con `django-cors-headers`.
-- Proxy Vite: Configurado en `frontend/vite.config.ts` para evitar problemas de CORS en desarrollo (`/api` → `http://127.0.0.1:8000`).
-
----
-
-## Solución de problemas (Troubleshooting)
-
-- Error de conexión MySQL durante `migrate`:
-  - Verifica que el servicio MySQL esté activo y que `DB_ENGINE=mysql` junto con credenciales en `.env` sean correctos.
-  - Si solo estás desarrollando el frontend/backend, usa `DB_ENGINE=sqlite` para avanzar sin MySQL.
-
-- Vite no arranca en 5173:
-  - Verifica si hay otro proceso ocupando el puerto o usa: `npm run dev -- --port 5174 --host`.
-
-- CORS bloqueado:
-  - Asegura que `CORS_ALLOWED_ORIGINS` contenga el origen del frontend (`http://localhost:5173`).
-
-- No carga el endpoint `/api/health/` desde el frontend:
-  - Verifica que el backend esté corriendo en `http://127.0.0.1:8000`.
-  - Revisa el proxy en `vite.config.ts`.
+### ✅ **¡Listo!**
+- **Backend:** `http://127.0.0.1:8000/`
+- **Frontend:** `http://localhost:5173/` (si ejecutaste el frontend)
 
 ---
 
-## Siguientes pasos sugeridos
-
-- Crear un CRUD de ejemplo con DRF (por ejemplo, `tasks`).
-- Autenticación con JWT (djangorestframework-simplejwt) y consumo desde el frontend.
-- Configuración de producción (servir frontend compilado, Nginx, Gunicorn/Uvicorn, etc.).
-- Docker/Docker Compose para orquestar backend, frontend y MySQL.
+**🎯 Sistema desarrollado con Django + MySQL + Mediapipe para reconocimiento facial biométrico**

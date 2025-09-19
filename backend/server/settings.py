@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "corsheaders",
     # Local apps
     "api",
+    "reconocimiento",
 ]
 
 MIDDLEWARE = [
@@ -93,11 +94,11 @@ if DB_ENGINE == "mysql":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": env("MYSQL_DATABASE", default="app_db"),
-            "USER": env("MYSQL_USER", default="root"),
-            "PASSWORD": env("MYSQL_PASSWORD", default=""),
-            "HOST": env("MYSQL_HOST", default="127.0.0.1"),
-            "PORT": env("MYSQL_PORT", default="3306"),
+            "NAME": env("DB_NAME", default="app_db"),
+            "USER": env("DB_USER", default="root"),
+            "PASSWORD": env("DB_PASSWORD", default="mysql"),
+            "HOST": env("DB_HOST", default="127.0.0.1"),
+            "PORT": env("DB_PORT", default="3306"),
             "OPTIONS": {
                 "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
             },
@@ -157,12 +158,14 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# CORS Configuration (allow Vite dev server)
+# CORS Configuration (allow Vite dev server and Django dev server)
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
     ],
 )
 
@@ -171,4 +174,33 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
+}
+
+# Logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'reconocimiento': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
 }
