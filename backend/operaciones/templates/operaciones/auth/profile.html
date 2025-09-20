@@ -1,0 +1,685 @@
+{% extends 'operaciones/base.html' %}
+
+{% block title %}Perfil de Usuario - Sistema de Reconocimiento de Gestos{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .profile-info {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .profile-stats {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        background: #f8f9fa;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        display: block;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+    
+    .activity-item {
+        padding: 15px;
+        border-left: 4px solid #667eea;
+        background: #f8f9fa;
+        border-radius: 0 10px 10px 0;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .activity-time {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .settings-section {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .form-floating > .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+    }
+    
+    .form-floating > .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 10px 25px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        color: white;
+    }
+    
+    .achievement-badge {
+        display: inline-block;
+        padding: 8px 15px;
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        color: #333;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin: 5px;
+        box-shadow: 0 2px 5px rgba(255, 215, 0, 0.3);
+    }
+    
+    .progress-ring {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 15px;
+    }
+    
+    .progress-ring-circle {
+        stroke: #667eea;
+        stroke-width: 4;
+        fill: transparent;
+        stroke-dasharray: 251.2;
+        stroke-dashoffset: 251.2;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+        transition: stroke-dashoffset 0.5s ease-in-out;
+    }
+    
+    .tab-content {
+        padding: 20px 0;
+    }
+    
+    .nav-pills .nav-link {
+        border-radius: 10px;
+        margin-right: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .gesture-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+    
+    .gesture-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .gesture-accuracy {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #28a745;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="col-12">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                <div class="profile-avatar mx-auto">
+                    {% if user.first_name %}
+                        {{ user.first_name.0 }}{{ user.last_name.0|default:'' }}
+                    {% else %}
+                        {{ user.username.0|upper }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="profile-info">
+                    <h1 class="h2 mb-2">
+                        {% if user.first_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </h1>
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2"></i>{{ user.email }}
+                    </p>
+                    <p class="mb-2">
+                        <i class="fas fa-calendar me-2"></i>Miembro desde {{ user.date_joined|date:"F Y" }}
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-clock me-2"></i>Última actividad: {{ user.last_login|timesince }} atrás
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Stats -->
+    <div class="profile-stats">
+        <h4 class="mb-4">
+            <i class="fas fa-chart-bar me-2"></i>Estadísticas de Actividad
+        </h4>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <span class="stat-number">{{ user_stats.total_gestures|default:0 }}</span>
+                    <div class="stat-label">Gestos Creados</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <span class="stat-number">{{ user_stats.total_recognitions|default:0 }}</span>
+                    <div class="stat-label">Reconocimientos</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <span class="stat-number">{{ user_stats.training_sessions|default:0 }}</span>
+                    <div class="stat-label">Sesiones de Entrenamiento</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-item">
+                    <span class="stat-number">{{ user_stats.avg_accuracy|default:0 }}%</span>
+                    <div class="stat-label">Precisión Promedio</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-pills mb-4" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" 
+                    data-bs-target="#overview" type="button" role="tab">
+                <i class="fas fa-tachometer-alt me-2"></i>Resumen
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="gestures-tab" data-bs-toggle="pill" 
+                    data-bs-target="#gestures" type="button" role="tab">
+                <i class="fas fa-hand-rock me-2"></i>Mis Gestos
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="activity-tab" data-bs-toggle="pill" 
+                    data-bs-target="#activity" type="button" role="tab">
+                <i class="fas fa-history me-2"></i>Actividad
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="settings-tab" data-bs-toggle="pill" 
+                    data-bs-target="#settings" type="button" role="tab">
+                <i class="fas fa-cog me-2"></i>Configuración
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="profileTabsContent">
+        <!-- Overview Tab -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Recent Activity -->
+                    <div class="settings-section">
+                        <h5 class="mb-4">
+                            <i class="fas fa-clock me-2"></i>Actividad Reciente
+                        </h5>
+                        {% if recent_activities %}
+                            {% for activity in recent_activities %}
+                                <div class="activity-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ activity.description }}</strong>
+                                            <div class="activity-time">{{ activity.timestamp|timesince }} atrás</div>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-{{ activity.icon }} text-primary"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p>No hay actividad reciente</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <!-- Achievements -->
+                    <div class="settings-section">
+                        <h5 class="mb-4">
+                            <i class="fas fa-trophy me-2"></i>Logros
+                        </h5>
+                        <div class="text-center">
+                            <div class="achievement-badge">
+                                <i class="fas fa-star me-1"></i>Primer Gesto
+                            </div>
+                            <div class="achievement-badge">
+                                <i class="fas fa-fire me-1"></i>Entrenador
+                            </div>
+                            <div class="achievement-badge">
+                                <i class="fas fa-bullseye me-1"></i>Precisión 90%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="settings-section">
+                        <h5 class="mb-4">
+                            <i class="fas fa-chart-line me-2"></i>Progreso
+                        </h5>
+                        <div class="text-center">
+                            <svg class="progress-ring">
+                                <circle class="progress-ring-circle" cx="40" cy="40" r="36"></circle>
+                            </svg>
+                            <div class="h4 text-primary">75%</div>
+                            <div class="text-muted">Perfil Completado</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gestures Tab -->
+        <div class="tab-pane fade" id="gestures" role="tabpanel">
+            <div class="row">
+                {% if user_gestures %}
+                    {% for gesture in user_gestures %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card gesture-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <h6 class="card-title">{{ gesture.name }}</h6>
+                                        <span class="badge bg-{% if gesture.is_active %}success{% else %}secondary{% endif %}">
+                                            {% if gesture.is_active %}Activo{% else %}Inactivo{% endif %}
+                                        </span>
+                                    </div>
+                                    <p class="card-text text-muted small">{{ gesture.description|truncatechars:60 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="gesture-accuracy">{{ gesture.accuracy|default:0 }}%</div>
+                                        <div>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-hand-paper fa-3x mb-3"></i>
+                            <h5>No tienes gestos creados</h5>
+                            <p>Comienza creando tu primer gesto personalizado</p>
+                            <a href="{% url 'operaciones:gesture_create' %}" class="btn btn-gradient">
+                                <i class="fas fa-plus me-2"></i>Crear Gesto
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Activity Tab -->
+        <div class="tab-pane fade" id="activity" role="tabpanel">
+            <div class="settings-section">
+                <h5 class="mb-4">
+                    <i class="fas fa-history me-2"></i>Historial Completo
+                </h5>
+                {% if all_activities %}
+                    {% for activity in all_activities %}
+                        <div class="activity-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ activity.description }}</strong>
+                                    <div class="activity-time">{{ activity.timestamp|date:"d/m/Y H:i" }}</div>
+                                </div>
+                                <div>
+                                    <i class="fas fa-{{ activity.icon }} text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                        <p>No hay actividad registrada</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-pane fade" id="settings" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Profile Settings -->
+                    <div class="settings-section">
+                        <h5 class="mb-4">
+                            <i class="fas fa-user me-2"></i>Información Personal
+                        </h5>
+                        <form method="post" action="{% url 'operaciones:profile_update' %}">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="first_name" 
+                                               name="first_name" value="{{ user.first_name }}" placeholder="Nombre">
+                                        <label for="first_name">Nombre</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="last_name" 
+                                               name="last_name" value="{{ user.last_name }}" placeholder="Apellido">
+                                        <label for="last_name">Apellido</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="email" 
+                                       name="email" value="{{ user.email }}" placeholder="Email">
+                                <label for="email">Correo Electrónico</label>
+                            </div>
+                            <button type="submit" class="btn btn-gradient">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="settings-section">
+                        <h5 class="mb-4">
+                            <i class="fas fa-lock me-2"></i>Cambiar Contraseña
+                        </h5>
+                        <form method="post" action="{% url 'operaciones:change_password' %}">
+                            {% csrf_token %}
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="old_password" 
+                                       name="old_password" placeholder="Contraseña actual">
+                                <label for="old_password">Contraseña Actual</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="new_password1" 
+                                       name="new_password1" placeholder="Nueva contraseña">
+                                <label for="new_password1">Nueva Contraseña</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="new_password2" 
+                                       name="new_password2" placeholder="Confirmar nueva contraseña">
+                                <label for="new_password2">Confirmar Nueva Contraseña</label>
+                            </div>
+                            <button type="submit" class="btn btn-gradient">
+                                <i class="fas fa-key me-2"></i>Cambiar Contraseña
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <!-- Preferences -->
+                    <div class="settings-section">
+                        <h5 class="mb-4">
+                            <i class="fas fa-sliders-h me-2"></i>Preferencias
+                        </h5>
+                        <form>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="notifications" checked>
+                                <label class="form-check-label" for="notifications">
+                                    Recibir notificaciones
+                                </label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="email_updates">
+                                <label class="form-check-label" for="email_updates">
+                                    Actualizaciones por email
+                                </label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="auto_save" checked>
+                                <label class="form-check-label" for="auto_save">
+                                    Guardado automático
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="theme" class="form-label">Tema</label>
+                                <select class="form-select" id="theme">
+                                    <option value="light">Claro</option>
+                                    <option value="dark">Oscuro</option>
+                                    <option value="auto">Automático</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-gradient">
+                                <i class="fas fa-save me-2"></i>Guardar Preferencias
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="settings-section border-danger">
+                        <h5 class="mb-4 text-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Zona Peligrosa
+                        </h5>
+                        <p class="text-muted mb-3">
+                            Estas acciones son permanentes y no se pueden deshacer.
+                        </p>
+                        <button class="btn btn-outline-danger me-2" onclick="exportData()">
+                            <i class="fas fa-download me-2"></i>Exportar Datos
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash me-2"></i>Eliminar Cuenta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize progress ring
+    function setProgress(percent) {
+        const circle = document.querySelector('.progress-ring-circle');
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        const offset = circumference - percent / 100 * circumference;
+        
+        circle.style.strokeDasharray = circumference;
+        circle.style.strokeDashoffset = offset;
+    }
+    
+    // Set progress on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        setProgress(75); // Set to actual completion percentage
+    });
+    
+    // Export user data
+    function exportData() {
+        if (confirm('¿Estás seguro de que quieres exportar todos tus datos?')) {
+            // Create export request
+            fetch('/operaciones/api/export-data/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'my_gesture_data.json';
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error exporting data:', error);
+                alert('Error al exportar los datos');
+            });
+        }
+    }
+    
+    // Delete account
+    function deleteAccount() {
+        const confirmation = prompt('Para confirmar la eliminación de tu cuenta, escribe "ELIMINAR":');
+        if (confirmation === 'ELIMINAR') {
+            if (confirm('¿Estás absolutamente seguro? Esta acción no se puede deshacer.')) {
+                // Redirect to account deletion
+                window.location.href = '/operaciones/auth/delete-account/';
+            }
+        }
+    }
+    
+    // Form validation for password change
+    document.querySelector('form[action*="change_password"]').addEventListener('submit', function(e) {
+        const newPassword1 = document.getElementById('new_password1').value;
+        const newPassword2 = document.getElementById('new_password2').value;
+        
+        if (newPassword1 !== newPassword2) {
+            e.preventDefault();
+            alert('Las nuevas contraseñas no coinciden');
+            return;
+        }
+        
+        if (newPassword1.length < 8) {
+            e.preventDefault();
+            alert('La nueva contraseña debe tener al menos 8 caracteres');
+            return;
+        }
+    });
+    
+    // Auto-save preferences
+    document.querySelectorAll('#settings input[type="checkbox"], #settings select').forEach(element => {
+        element.addEventListener('change', function() {
+            // Save preference to localStorage or send to server
+            const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            preferences[this.id] = this.type === 'checkbox' ? this.checked : this.value;
+            localStorage.setItem('userPreferences', JSON.stringify(preferences));
+        });
+    });
+    
+    // Load saved preferences
+    document.addEventListener('DOMContentLoaded', function() {
+        const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+        Object.keys(preferences).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                if (element.type === 'checkbox') {
+                    element.checked = preferences[key];
+                } else {
+                    element.value = preferences[key];
+                }
+            }
+        });
+    });
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}
