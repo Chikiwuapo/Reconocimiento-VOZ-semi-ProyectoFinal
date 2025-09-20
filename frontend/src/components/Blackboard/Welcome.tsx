@@ -7,7 +7,7 @@ type WelcomeProps = {
   testedModels?: Array<{ id: string; title: string; result: string; color?: string }>
 }
 
-import DailyMissions from './DailyMissions'
+
 
 export default function Welcome({ userName, progress: _progress, models = [], watchedCourses, testedModels }: WelcomeProps) {
   const [active, setActive] = useState<'creados'|'favoritos'|'vistos'|'probados' | null>(null)
@@ -208,7 +208,6 @@ export default function Welcome({ userName, progress: _progress, models = [], wa
       </div>
     </section>
     <section className="container-page">
-      <DailyMissions />
     </section>
   </>
 )

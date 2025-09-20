@@ -106,6 +106,7 @@ export default function Models() {
       duration: '~10 min',
       difficulty: 'Básica',
       type: 'Vocales',
+      isActive: false,
       image: 'https://images.unsplash.com/photo-1589254065878-42c9da997008?w=300&h=200&fit=crop&crop=center'
     },
     {
@@ -118,6 +119,7 @@ export default function Models() {
       duration: '~25 min',
       difficulty: 'Intermedia',
       type: 'Letras',
+      isActive: false,
       image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop&crop=center'
     },
     {
@@ -130,6 +132,7 @@ export default function Models() {
       duration: '~20 min',
       difficulty: 'Intermedia',
       type: 'Palabras',
+      isActive: false,
       image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=300&h=200&fit=crop&crop=center'
     },
     {
@@ -142,6 +145,7 @@ export default function Models() {
       duration: '~15 min',
       difficulty: 'Básica',
       type: 'Matemáticas',
+      isActive: false,
       image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=300&h=200&fit=crop&crop=center'
     }
   ]
