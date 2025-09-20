@@ -1,0 +1,30 @@
+# Dependencias principales del proyecto
+Django==5.2.6
+djangorestframework==3.15.2
+
+# Base de datos
+psycopg2-binary==2.9.9
+
+# Procesamiento de imágenes y machine learning
+opencv-python==4.10.0.84
+mediapipe==0.10.14
+numpy==1.26.4
+scikit-learn==1.5.1
+joblib==1.4.2
+Pillow==10.4.0
+
+# Utilidades para desarrollo
+python-dotenv==1.0.1
+requests==2.32.3
+
+# CORS para desarrollo frontend
+django-cors-headers==4.4.0
+
+# Validación y serialización
+marshmallow==3.22.0
+
+# Logging y debugging
+colorlog==6.8.2
+
+# Utilidades del sistema
+psutil==6.0.0

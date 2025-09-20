@@ -1,205 +1,300 @@
-# Proyecto Full‑Stack: React + Vite + TypeScript (Frontend) / Django + DRF + MySQL (Backend)
+# 🤖 Sistema de Reconocimiento de Gestos con MediaPipe
 
-Este repositorio contiene una plantilla full‑stack con:
+Un sistema completo de reconocimiento de gestos de manos desarrollado con **Django** y **MediaPipe** que permite entrenar gestos personalizados y ejecutar acciones automáticamente.
 
-- Frontend: React + Vite + TypeScript (`frontend/`)
-- Backend: Django + Django REST Framework + CORS (`backend/`)
-- Base de datos en desarrollo: SQLite por defecto (para iniciar rápido)
-- Base de datos en producción/real: MySQL (conmutación por `.env`)
+## 🌟 Características
 
----
+- ✅ **Reconocimiento en tiempo real** de gestos de manos
+- ✅ **Entrenamiento personalizado** de nuevos gestos
+- ✅ **Ejecución automática** de funciones asociadas a gestos
+- ✅ **Interfaz web moderna** con MediaPipe desde CDN
+- ✅ **API REST** completa para integración
+- ✅ **Sistema de autenticación** de usuarios
+- ✅ **Gestión de modelos** de machine learning
+- ✅ **Estadísticas y métricas** de rendimiento
 
-## Requisitos previos
+## 🛠️ Tecnologías Utilizadas
 
-- Node.js 18+ y npm
-- Python 3.10+ (Windows: `py` launcher recomendado)
-- MySQL Server (opcional para desarrollo inicial; requerido si vas a usar MySQL de inmediato)
+### Backend
+- **Django 5.2.6** - Framework web
+- **Django REST Framework** - API REST
+- **MediaPipe 0.10.14** - Detección de landmarks de manos
+- **OpenCV 4.10.0** - Procesamiento de imágenes
+- **Scikit-learn 1.5.1** - Machine Learning
+- **PostgreSQL** - Base de datos
 
-> Nota Windows: PowerShell es recomendado. Si usas `cmd`, adapta los comandos de activación del entorno virtual.
+### Frontend
+- **MediaPipe desde CDN** - Detección en tiempo real
+- **HTML5/CSS3/JavaScript** - Interfaz de usuario
+- **Canvas API** - Visualización de landmarks
 
----
+## 📋 Requisitos Previos
 
-## Estructura del proyecto
+- **Python 3.8+**
+- **PostgreSQL 12+**
+- **Navegador web moderno** (Chrome, Firefox, Edge)
+- **Cámara web** para captura de gestos
 
+## 🚀 Instalación y Configuración
+
+### 1. Clonar el Repositorio
+
+```bash
+git clone <url-del-repositorio>
+cd Reconocimiento-VOZ-semi-ProyectoFinal
 ```
-Reconocimiento-de-voz/
-├─ backend/
-│  ├─ api/
-│  │  ├─ urls.py           # rutas de la API (incluye /health/)
-│  │  └─ views.py          # vistas DRF/JSON (endpoint de salud)
-│  ├─ server/
-│  │  ├─ __init__.py       # pymysql.install_as_MySQLdb()
-│  │  ├─ settings.py       # configuración Django, DRF, CORS, DB
-│  │  └─ urls.py           # rutas raíz (incluye api.urls)
-│  ├─ manage.py
-│  ├─ venv/                # entorno virtual (local)
-│  └─ .env                 # variables de entorno del backend
-└─ frontend/
-   ├─ src/
-   │  └─ App.tsx           # ejemplo: consulta GET /api/health/
-   ├─ vite.config.ts       # proxy /api -> http://127.0.0.1:8000
-   └─ package.json
+
+### 2. Configurar el Entorno Virtual
+
+```bash
+# Crear entorno virtual
+python -m venv venv
+
+# Activar entorno virtual
+# En Windows:
+venv\Scripts\activate
+# En Linux/Mac:
+source venv/bin/activate
 ```
 
----
+### 3. Instalar Dependencias
 
-## Inicio rápido (desarrollo)
-
-### 1) Backend (Django)
-
-Desde `backend/`:
-
-- Crear/activar entorno virtual (si no está activo):
-  - PowerShell:
-    ```powershell
-    py -m venv venv
-    .\venv\Scripts\Activate.ps1
-    ```
-- Instalar dependencias:
-  ```powershell
-  python -m pip install --upgrade pip
-  pip install django djangorestframework django-cors-headers pymysql django-environ
-  ```
-- Migraciones (usa SQLite por defecto):
-  ```powershell
-  python manage.py migrate
-  ```
-- Arrancar servidor:
-  ```powershell
-  python manage.py runserver
-  ```
-- Probar endpoint de salud:
-  - http://127.0.0.1:8000/api/health/
-
-### 2) Frontend (Vite)
-
-Desde `frontend/`:
-
-- Instalar dependencias:
-  ```powershell
-  npm install
-  ```
-- Arrancar servidor de desarrollo:
-  ```powershell
-  npm run dev
-  ```
-- Abrir en el navegador:
-  - http://localhost:5173/
-  - En pantalla verás “Backend health: ok” si el backend está arriba.
-
-> El proxy de Vite redirige cualquier llamada que empiece con `/api` hacia `http://127.0.0.1:8000`. Configurado en `frontend/vite.config.ts`.
-
----
-
-## Variables de entorno (backend/.env)
-
-Archivo `backend/.env` de ejemplo (ya creado):
-
+```bash
+cd backend
+pip install -r requirements.txt
 ```
-# Django
+
+### 4. Configurar Base de Datos
+
+#### Opción A: PostgreSQL (Recomendado)
+
+1. **Instalar PostgreSQL** y crear una base de datos:
+```sql
+CREATE DATABASE gesture_recognition;
+CREATE USER gesture_user WITH PASSWORD 'tu_password';
+GRANT ALL PRIVILEGES ON DATABASE gesture_recognition TO gesture_user;
+```
+
+2. **Configurar variables de entorno** (crear archivo `.env` en `/backend/`):
+```env
 DEBUG=True
-SECRET_KEY=dev-secret-key-change-me
-ALLOWED_HOSTS=localhost,127.0.0.1
-
-# Database engine: sqlite (default) o mysql
-DB_ENGINE=sqlite
-
-# MySQL (solo si usas DB_ENGINE=mysql)
-MYSQL_DATABASE=app_db
-MYSQL_USER=root
-MYSQL_PASSWORD=
-MYSQL_HOST=127.0.0.1
-MYSQL_PORT=3306
-
-# CORS (Vite dev server)
-CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+SECRET_KEY=tu_clave_secreta_aqui
+DB_NAME=gesture_recognition
+DB_USER=gesture_user
+DB_PASSWORD=tu_password
+DB_HOST=localhost
+DB_PORT=5432
 ```
 
-> Cambia `SECRET_KEY` en producción. En desarrollo puedes dejarlo así.
+#### Opción B: SQLite (Para desarrollo rápido)
+
+Si prefieres usar SQLite, modifica `backend/server/settings.py`:
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+```
+
+### 5. Ejecutar Migraciones
+
+```bash
+cd backend
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 6. Crear Superusuario (Opcional)
+
+```bash
+python manage.py createsuperuser
+```
+
+## 🎯 Ejecución del Proyecto
+
+### 1. Iniciar el Servidor de Desarrollo
+
+```bash
+cd backend
+python manage.py runserver
+```
+
+El servidor estará disponible en: **http://127.0.0.1:8000/**
+
+### 2. Acceder a la Aplicación
+
+Abre tu navegador y navega a:
+- **Página principal**: http://127.0.0.1:8000/
+- **Dashboard**: http://127.0.0.1:8000/dashboard/
+- **Entrenamiento**: http://127.0.0.1:8000/training/
+- **Reconocimiento**: http://127.0.0.1:8000/interaction/
+
+## 📱 Uso del Sistema
+
+### 1. Registro e Inicio de Sesión
+
+1. Accede a la página principal
+2. Regístrate con un nuevo usuario o inicia sesión
+3. Serás redirigido al dashboard
+
+### 2. Entrenar un Nuevo Gesto
+
+1. Ve a la sección **"Entrenamiento"**
+2. Ingresa un nombre para tu gesto
+3. Haz clic en **"Iniciar Cámara"**
+4. Permite el acceso a la cámara cuando se solicite
+5. Realiza el gesto frente a la cámara
+6. Haz clic en **"Capturar Muestra"** múltiples veces (mínimo 10 muestras)
+7. Haz clic en **"Entrenar Modelo"** para crear el clasificador
+
+### 3. Reconocimiento en Tiempo Real
+
+1. Ve a la sección **"Interacción"**
+2. Selecciona un gesto entrenado del dropdown
+3. Haz clic en **"Iniciar Reconocimiento"**
+4. Realiza el gesto frente a la cámara
+5. El sistema detectará automáticamente el gesto y ejecutará la función asociada
+
+### 4. Configurar Funciones de Gestos
+
+Los gestos pueden ejecutar diferentes tipos de acciones:
+- **Abrir aplicaciones** (calculadora, notepad, etc.)
+- **Comandos del sistema** (apagar, reiniciar, etc.)
+- **Acciones web** (abrir URLs)
+- **Control de medios** (reproducir, pausar, etc.)
+- **Scripts personalizados**
+- **Notificaciones del sistema**
+
+## 🔧 API Endpoints
+
+### Autenticación
+- `POST /auth/register/` - Registro de usuario
+- `POST /auth/login/` - Inicio de sesión
+- `POST /auth/logout/` - Cerrar sesión
+
+### Gestos
+- `GET /api/gestures/` - Listar gestos del usuario
+- `POST /api/gestures/` - Crear nuevo gesto
+- `DELETE /api/gestures/{id}/` - Eliminar gesto
+
+### Entrenamiento
+- `POST /api/training/start/` - Iniciar sesión de entrenamiento
+- `POST /api/training/capture/` - Capturar muestra
+- `POST /api/training/train/` - Entrenar modelo
+
+### Reconocimiento
+- `POST /api/recognize/` - Reconocer gesto
+- `GET /api/available-gestures/` - Gestos disponibles
+- `GET /api/statistics/` - Estadísticas de uso
+
+## 📁 Estructura del Proyecto
+
+```
+Reconocimiento-VOZ-semi-ProyectoFinal/
+├── backend/
+│   ├── api/                    # Configuración de API
+│   ├── operaciones/           # App principal
+│   │   ├── models.py         # Modelos de base de datos
+│   │   ├── views.py          # Vistas web
+│   │   ├── api_views.py      # API endpoints
+│   │   ├── gesture_recognition.py  # Lógica de ML
+│   │   ├── gesture_functions.py   # Funciones ejecutables
+│   │   └── templates/        # Templates HTML
+│   ├── server/               # Configuración Django
+│   ├── static/              # Archivos estáticos
+│   ├── gesture_models/      # Modelos entrenados
+│   ├── manage.py
+│   └── requirements.txt
+├── frontend/                # Frontend alternativo (React)
+└── README.md
+```
+
+## 🐛 Solución de Problemas
+
+### Error de Cámara
+- **Problema**: "No se puede acceder a la cámara"
+- **Solución**: Asegúrate de permitir el acceso a la cámara en tu navegador
+
+### Error de MediaPipe
+- **Problema**: "MediaPipe no se carga"
+- **Solución**: Verifica tu conexión a internet (MediaPipe se carga desde CDN)
+
+### Error de Base de Datos
+- **Problema**: "No se puede conectar a la base de datos"
+- **Solución**: Verifica que PostgreSQL esté ejecutándose y las credenciales sean correctas
+
+### Error de Dependencias
+- **Problema**: "ModuleNotFoundError"
+- **Solución**: Ejecuta `pip install -r requirements.txt` nuevamente
+
+## 🔒 Consideraciones de Seguridad
+
+- Las claves secretas deben configurarse en variables de entorno
+- No subir archivos `.env` al repositorio
+- Usar HTTPS en producción
+- Configurar CORS apropiadamente para producción
+
+## 🚀 Despliegue en Producción
+
+### Variables de Entorno Requeridas
+```env
+DEBUG=False
+SECRET_KEY=clave_secreta_muy_segura
+ALLOWED_HOSTS=tu-dominio.com
+DB_NAME=gesture_recognition_prod
+DB_USER=usuario_prod
+DB_PASSWORD=password_seguro
+DB_HOST=host_base_datos
+DB_PORT=5432
+```
+
+### Comandos de Despliegue
+```bash
+# Recopilar archivos estáticos
+python manage.py collectstatic
+
+# Aplicar migraciones
+python manage.py migrate
+
+# Usar servidor WSGI (Gunicorn)
+pip install gunicorn
+gunicorn server.wsgi:application
+```
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 👥 Autores
+
+- **Tu Nombre** - *Desarrollo inicial* - [Tu GitHub](https://github.com/tu-usuario)
+
+## 🙏 Agradecimientos
+
+- **MediaPipe** por la tecnología de detección de landmarks
+- **Django** por el framework web
+- **OpenCV** por el procesamiento de imágenes
+- **Scikit-learn** por las herramientas de machine learning
 
 ---
 
-## Cambiar a MySQL
+## 📞 Soporte
 
-1) Asegúrate de que MySQL Server esté corriendo y crea base de datos/usuario (ejemplo):
-   ```sql
-   CREATE DATABASE app_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-   CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'tu_password';
-   GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'localhost';
-   FLUSH PRIVILEGES;
-   ```
+Si tienes problemas o preguntas:
 
-2) Edita `backend/.env`:
-   ```env
-   DB_ENGINE=mysql
-   MYSQL_DATABASE=app_db
-   MYSQL_USER=app_user
-   MYSQL_PASSWORD=tu_password
-   MYSQL_HOST=127.0.0.1
-   MYSQL_PORT=3306
-   ```
+1. Revisa la sección de **Solución de Problemas**
+2. Busca en los **Issues** del repositorio
+3. Crea un nuevo **Issue** con detalles del problema
+4. Incluye logs de error y pasos para reproducir
 
-3) Reinicia el servidor de Django y aplica migraciones contra MySQL:
-   ```powershell
-   python manage.py migrate
-   ```
-
-> La configuración de DB en `backend/server/settings.py` conmuta en función de `DB_ENGINE`.
-
----
-
-## Comandos útiles
-
-- Backend:
-  - Activar venv (PowerShell): `./venv/Scripts/Activate.ps1`
-  - Migraciones: `python manage.py makemigrations && python manage.py migrate`
-  - Superusuario: `python manage.py createsuperuser`
-  - Correr servidor: `python manage.py runserver`
-
-- Frontend:
-  - Instalar deps: `npm install`
-  - Dev server: `npm run dev`
-  - Build: `npm run build`
-  - Preview build: `npm run preview`
-
----
-
-## Endpoints iniciales
-
-- `GET /api/health/` → `{ "status": "ok" }`
-
-> Agrega más rutas en `backend/api/urls.py` y vistas en `backend/api/views.py`. Recuerda incluirlas en `server/urls.py` si creas nuevos módulos.
-
----
-
-## CORS y Proxy
-
-- CORS: Configurado en `backend/server/settings.py` con `django-cors-headers`.
-- Proxy Vite: Configurado en `frontend/vite.config.ts` para evitar problemas de CORS en desarrollo (`/api` → `http://127.0.0.1:8000`).
-
----
-
-## Solución de problemas (Troubleshooting)
-
-- Error de conexión MySQL durante `migrate`:
-  - Verifica que el servicio MySQL esté activo y que `DB_ENGINE=mysql` junto con credenciales en `.env` sean correctos.
-  - Si solo estás desarrollando el frontend/backend, usa `DB_ENGINE=sqlite` para avanzar sin MySQL.
-
-- Vite no arranca en 5173:
-  - Verifica si hay otro proceso ocupando el puerto o usa: `npm run dev -- --port 5174 --host`.
-
-- CORS bloqueado:
-  - Asegura que `CORS_ALLOWED_ORIGINS` contenga el origen del frontend (`http://localhost:5173`).
-
-- No carga el endpoint `/api/health/` desde el frontend:
-  - Verifica que el backend esté corriendo en `http://127.0.0.1:8000`.
-  - Revisa el proxy en `vite.config.ts`.
-
----
-
-## Siguientes pasos sugeridos
-
-- Crear un CRUD de ejemplo con DRF (por ejemplo, `tasks`).
-- Autenticación con JWT (djangorestframework-simplejwt) y consumo desde el frontend.
-- Configuración de producción (servir frontend compilado, Nginx, Gunicorn/Uvicorn, etc.).
-- Docker/Docker Compose para orquestar backend, frontend y MySQL.
+**¡Disfruta creando gestos personalizados! 🎉**
