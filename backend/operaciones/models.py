@@ -20,13 +20,25 @@ class TipoGesto(models.TextChoices):
     DIVISION = '/', 'División (/)'
     IGUAL = '=', 'Igual (=)'
 
+class TipoMano(models.TextChoices):
+    """Tipos de mano para el reconocimiento"""
+    IZQUIERDA = 'left', 'Mano Izquierda'
+    DERECHA = 'right', 'Mano Derecha'
+    AMBAS = 'both', 'Ambas Manos'
+
 class GestoMano(models.Model):
     """Modelo para almacenar gestos de mano entrenados"""
     tipo_gesto = models.CharField(
         max_length=20,
         choices=TipoGesto.choices,
-        unique=True,
         help_text="Tipo de gesto (número u operación)"
+    )
+    
+    tipo_mano = models.CharField(
+        max_length=10,
+        choices=TipoMano.choices,
+        default=TipoMano.DERECHA,
+        help_text="Tipo de mano utilizada para el gesto"
     )
     
     nombre_display = models.CharField(
@@ -37,6 +49,23 @@ class GestoMano(models.Model):
     landmarks_data = models.TextField(
         help_text="Datos de landmarks de MediaPipe en formato JSON",
         validators=[MinLengthValidator(10)]
+    )
+    
+    landmarks_mano_izquierda = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Landmarks específicos de la mano izquierda"
+    )
+    
+    landmarks_mano_derecha = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Landmarks específicos de la mano derecha"
+    )
+    
+    numero_muestras = models.IntegerField(
+        default=0,
+        help_text="Número de muestras capturadas durante el entrenamiento"
     )
     
     fecha_creacion = models.DateTimeField(
@@ -62,7 +91,8 @@ class GestoMano(models.Model):
     class Meta:
         verbose_name = "Gesto de Mano"
         verbose_name_plural = "Gestos de Mano"
-        ordering = ['tipo_gesto']
+        ordering = ['tipo_gesto', 'tipo_mano']
+        unique_together = ['tipo_gesto', 'tipo_mano']
 
     def __str__(self):
         return f"{self.get_tipo_gesto_display()}"

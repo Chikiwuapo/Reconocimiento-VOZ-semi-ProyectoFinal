@@ -29,6 +29,10 @@ def vista_entrenamiento(request):
     """Redirige a la vista principal"""
     return index(request)
 
+def frontend_view(request):
+    """Vista específica para el frontend de reconocimiento de gestos"""
+    return index(request)
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def guardar_gesto(request):
@@ -38,6 +42,10 @@ def guardar_gesto(request):
         tipo_gesto = data.get('tipo_gesto')
         landmarks_data = data.get('landmarks_data')
         precision = data.get('precision', 0.0)
+        tipo_mano = data.get('tipo_mano', 'right')  # Por defecto mano derecha
+        numero_muestras = data.get('numero_muestras', 0)
+        landmarks_izquierda = data.get('landmarks_mano_izquierda')
+        landmarks_derecha = data.get('landmarks_mano_derecha')
         
         if not tipo_gesto or not landmarks_data:
             return JsonResponse({
@@ -59,10 +67,14 @@ def guardar_gesto(request):
         # Crear o actualizar el gesto
         gesto, created = GestoMano.objects.update_or_create(
             tipo_gesto=tipo_gesto,
+            tipo_mano=tipo_mano,
             defaults={
                 'nombre_display': nombre_display,
                 'landmarks_data': json.dumps(landmarks_data),
                 'precision_entrenamiento': precision,
+                'numero_muestras': numero_muestras,
+                'landmarks_mano_izquierda': json.dumps(landmarks_izquierda) if landmarks_izquierda else None,
+                'landmarks_mano_derecha': json.dumps(landmarks_derecha) if landmarks_derecha else None,
                 'activo': True
             }
         )
@@ -176,10 +188,14 @@ def gestos_entrenados(request):
             gestos_data.append({
                 'id': gesto.id,
                 'tipo_gesto': gesto.tipo_gesto,
+                'tipo_mano': gesto.tipo_mano,
                 'nombre_display': gesto.nombre_display,
-                'landmarks': json.loads(gesto.landmarks_json) if gesto.landmarks_json else [],
+                'landmarks': json.loads(gesto.landmarks_data) if gesto.landmarks_data else [],
+                'landmarks_izquierda': json.loads(gesto.landmarks_mano_izquierda) if gesto.landmarks_mano_izquierda else None,
+                'landmarks_derecha': json.loads(gesto.landmarks_mano_derecha) if gesto.landmarks_mano_derecha else None,
+                'numero_muestras': gesto.numero_muestras,
                 'fecha_creacion': gesto.fecha_creacion.isoformat(),
-                'precision': gesto.precision
+                'precision': gesto.precision_entrenamiento
             })
         
         return JsonResponse({
@@ -195,21 +211,26 @@ def gestos_entrenados(request):
             'error': 'Error al cargar gestos entrenados'
         }, status=500)
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def eliminar_gesto(request, gesto_id):
-    """Vista para eliminar un gesto entrenado"""
+    """API para eliminar un gesto entrenado"""
     try:
         gesto = get_object_or_404(GestoMano, id=gesto_id)
         nombre_gesto = gesto.nombre_display
         gesto.delete()
         
-        messages.success(request, f'Gesto "{nombre_gesto}" eliminado exitosamente')
-        return redirect('operaciones:entrenamiento')
+        return JsonResponse({
+            'success': True,
+            'message': f'Gesto "{nombre_gesto}" eliminado exitosamente'
+        })
         
     except Exception as e:
         logger.error(f"Error al eliminar gesto: {str(e)}")
-        messages.error(request, 'Error al eliminar el gesto')
-        return redirect('operaciones:entrenamiento')
+        return JsonResponse({
+            'success': False,
+            'error': 'Error al eliminar el gesto'
+        }, status=500)
 
 @csrf_exempt
 @require_http_methods(["POST"])
