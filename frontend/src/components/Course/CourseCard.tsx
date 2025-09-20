@@ -41,15 +41,15 @@ export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '',
         <div className="course-title">{title}</div>
         <div className="course-subtitle">{subtitle}</div>
         <div className="course-footer">
-          {completed ? (
-            <div className="flex items-center justify-center gap-2 py-2 text-green-600 font-semibold">
-              <span>✓</span>
-              <span>Completado</span>
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <Link to={to} className="btn-accent-cyan flex-1 text-center">Ver curso</Link>
-              {onComplete && (
+          <div className="flex gap-2 items-center">
+            <Link to={to} className="btn-accent-cyan flex-1 text-center">Ver curso</Link>
+            {completed ? (
+              <div className="flex items-center justify-center gap-2 py-2 text-green-600 font-semibold">
+                <span>✓</span>
+                <span>Completado</span>
+              </div>
+            ) : (
+              onComplete && (
                 <button 
                   onClick={(e) => {
                     e.preventDefault()
@@ -60,9 +60,9 @@ export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '',
                 >
                   ✓
                 </button>
-              )}
-            </div>
-          )}
+              )
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Zap, Target, Brain, ChevronDown, ChevronUp, Hand, Eye, Mic, Calculator, Bot, MessageCircle, Heart, Globe } from "lucide-react";
+import { useUserStore } from "../../auth/userStore";
 
 // Definición de tipos
 interface Model {
@@ -13,16 +14,17 @@ interface Model {
   features: string[];
 }
 
+type MissionType = 'training' | 'optimization' | 'deployment' | 'validation' | 'course' | 'future' | 'master' | 'ultimate'
+
 interface Mission {
   id: number;
   title: string;
   description: string;
-  type: string;
+  type: MissionType;
   progress: number;
   completed: boolean;
-  icon: React.ComponentType<any>;
   reward: string;
-  difficulty: string;
+  difficulty: 'Fácil' | 'Medio' | 'Difícil' | 'Experto' | 'Legendario';
 }
 
 interface MissionsPanelProps {
@@ -31,285 +33,161 @@ interface MissionsPanelProps {
 
 const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [missions, setMissions] = useState<Mission[]>([
-    // Misiones de Modelos de Entrenamiento
-    {
-      id: 1,
-      title: "Entrenar Modelo de Vocales",
-      description: "Completa el entrenamiento del modelo de reconocimiento de vocales con 1200 audios",
-      type: "training",
-      progress: 0,
-      completed: false,
-      icon: Mic,
-      reward: "🎯 +100 XP",
-      difficulty: "Fácil"
-    },
-    {
-      id: 2,
-      title: "Optimizar Modelo de Abecedario",
-      description: "Mejora la precisión del modelo de letras (A-Z + Ñ) al 95%",
-      type: "optimization",
-      progress: 0,
-      completed: false,
-      icon: Target,
-      reward: "⚡ +150 XP",
-      difficulty: "Medio"
-    },
-    {
-      id: 3,
-      title: "Implementar Modelo de Palabras",
-      description: "Despliega el modelo de reconocimiento de palabras clave con streaming",
-      type: "deployment",
-      progress: 0,
-      completed: false,
-      icon: Zap,
-      reward: "🚀 +200 XP",
-      difficulty: "Difícil"
-    },
-    {
-      id: 4,
-      title: "Validar Operaciones Aritméticas",
-      description: "Prueba y valida el modelo de operaciones matemáticas básicas",
-      type: "validation",
-      progress: 0,
-      completed: false,
-      icon: Calculator,
-      reward: "💎 +250 XP",
-      difficulty: "Experto"
-    },
-    
-    // Misiones de Cursos de IA
-    {
-      id: 5,
-      title: "Dominar Reconocimiento de Manos",
-      description: "Completa el curso de MediaPipe para reconocimiento de gestos",
-      type: "course",
-      progress: 0,
-      completed: false,
-      icon: Hand,
-      reward: "🤖 +180 XP",
-      difficulty: "Medio"
-    },
-    {
-      id: 6,
-      title: "Especialista en Reconocimiento Facial",
-      description: "Finaliza el curso avanzado de detección y reconocimiento facial",
-      type: "course",
-      progress: 0,
-      completed: false,
-      icon: Eye,
-      reward: "👁️ +220 XP",
-      difficulty: "Difícil"
-    },
-    {
-      id: 7,
-      title: "Maestro de Voz con IA",
-      description: "Completa el curso especializado en reconocimiento de voz",
-      type: "course",
-      progress: 0,
-      completed: false,
-      icon: Mic,
-      reward: "🎤 +200 XP",
-      difficulty: "Difícil"
-    },
-    {
-      id: 8,
-      title: "Operaciones Matemáticas Gestuales",
-      description: "Domina las operaciones matemáticas con reconocimiento de manos",
-      type: "course",
-      progress: 0,
-      completed: false,
-      icon: Calculator,
-      reward: "🧮 +190 XP",
-      difficulty: "Medio"
-    },
-    {
-      id: 9,
-      title: "Desarrollador de Agente IA",
-      description: "Crea tu propio agente de inteligencia artificial avanzado",
-      type: "course",
-      progress: 0,
-      completed: false,
-      icon: Bot,
-      reward: "🤖 +300 XP",
-      difficulty: "Experto"
-    },
-    {
-      id: 10,
-      title: "Constructor de Chatbots",
-      description: "Desarrolla chatbots automatizados con IA conversacional",
-      type: "course",
-      progress: 0,
-      completed: false,
-      icon: MessageCircle,
-      reward: "💬 +250 XP",
-      difficulty: "Difícil"
-    },
-    
-    // Misiones Futuras (Próximamente)
-    {
-      id: 11,
-      title: "Detector de Emociones",
-      description: "Prepárate para el curso de detección de emociones en voz",
-      type: "future",
-      progress: 0,
-      completed: false,
-      icon: Heart,
-      reward: "❤️ +350 XP",
-      difficulty: "Experto"
-    },
-    {
-      id: 12,
-      title: "Traductor Universal",
-      description: "Anticípate al curso de traducción automática en tiempo real",
-      type: "future",
-      progress: 0,
-      completed: false,
-      icon: Globe,
-      reward: "🌍 +400 XP",
-      difficulty: "Legendario"
-    },
-    
-    // Misiones Maestras
-    {
-      id: 13,
-      title: "Maestro de Modelos",
-      description: "Completa todos los entrenamientos de modelos de reconocimiento",
-      type: "master",
-      progress: 0,
-      completed: false,
-      icon: Brain,
-      reward: "🧠 +500 XP",
-      difficulty: "Legendario"
-    },
-    {
-      id: 14,
-      title: "Graduado en IA",
-      description: "Finaliza todos los cursos disponibles de inteligencia artificial",
-      type: "master",
-      progress: 0,
-      completed: false,
-      icon: Trophy,
-      reward: "🎓 +800 XP",
-      difficulty: "Legendario"
-    },
-    {
-      id: 15,
-      title: "Pionero del Blackboard",
-      description: "Completa todas las misiones y conviértete en un experto total",
-      type: "ultimate",
-      progress: 0,
-      completed: false,
-      icon: Trophy,
-      reward: "👑 +1000 XP",
-      difficulty: "Legendario"
+  const { user, setMissions } = useUserStore();
+  const missions = user.missions as Mission[];
+
+  // One-time migration guard in case localStorage still has the old schema
+  useEffect(() => {
+    const needsMigration = missions.length > 0 && !(missions[0] as any).title;
+    if (needsMigration) {
+      const defaults: Mission[] = [
+        { id: 1,  title: 'Entrenar Modelo de Vocales', description: 'Completa el entrenamiento del modelo de reconocimiento de vocales con 1200 audios', type: 'training',    progress: 0, completed: false, reward: '🎯 +100 XP', difficulty: 'Fácil' },
+        { id: 2,  title: 'Optimizar Modelo de Abecedario', description: 'Mejora la precisión del modelo de letras (A-Z + Ñ) al 95%',                  type: 'optimization', progress: 0, completed: false, reward: '⚡ +150 XP', difficulty: 'Medio' },
+        { id: 3,  title: 'Implementar Modelo de Palabras', description: 'Despliega el modelo de reconocimiento de palabras clave con streaming',         type: 'deployment',   progress: 0, completed: false, reward: '🚀 +200 XP', difficulty: 'Difícil' },
+        { id: 4,  title: 'Validar Operaciones Aritméticas', description: 'Prueba y valida el modelo de operaciones matemáticas básicas',                  type: 'validation',   progress: 0, completed: false, reward: '💎 +250 XP', difficulty: 'Experto' },
+        { id: 5,  title: 'Dominar Reconocimiento de Manos', description: 'Completa el curso de MediaPipe para reconocimiento de gestos',                  type: 'course',       progress: 0, completed: false, reward: '🤖 +180 XP', difficulty: 'Medio' },
+        { id: 6,  title: 'Especialista en Reconocimiento Facial', description: 'Finaliza el curso avanzado de detección y reconocimiento facial',         type: 'course',       progress: 0, completed: false, reward: '👁️ +220 XP', difficulty: 'Difícil' },
+        { id: 7,  title: 'Maestro de Voz con IA', description: 'Completa el curso especializado en reconocimiento de voz',                                type: 'course',       progress: 0, completed: false, reward: '🎤 +200 XP', difficulty: 'Difícil' },
+        { id: 8,  title: 'Operaciones Matemáticas Gestuales', description: 'Domina las operaciones matemáticas con reconocimiento de manos',               type: 'course',       progress: 0, completed: false, reward: '🧮 +190 XP', difficulty: 'Medio' },
+        { id: 9,  title: 'Desarrollador de Agente IA', description: 'Crea tu propio agente de inteligencia artificial avanzado',                         type: 'course',       progress: 0, completed: false, reward: '🤖 +300 XP', difficulty: 'Experto' },
+        { id: 10, title: 'Constructor de Chatbots', description: 'Desarrolla chatbots automatizados con IA conversacional',                              type: 'course',       progress: 0, completed: false, reward: '💬 +250 XP', difficulty: 'Difícil' },
+        { id: 11, title: 'Detector de Emociones', description: 'Prepárate para el curso de detección de emociones en voz',                               type: 'future',       progress: 0, completed: false, reward: '❤️ +350 XP', difficulty: 'Experto' },
+        { id: 12, title: 'Traductor Universal', description: 'Anticípate al curso de traducción automática en tiempo real',                              type: 'future',       progress: 0, completed: false, reward: '🌍 +400 XP', difficulty: 'Legendario' },
+        { id: 13, title: 'Maestro de Modelos', description: 'Completa todos los entrenamientos de modelos de reconocimiento',                             type: 'master',       progress: 0, completed: false, reward: '🧠 +500 XP', difficulty: 'Legendario' },
+        { id: 14, title: 'Graduado en IA', description: 'Finaliza todos los cursos disponibles de inteligencia artificial',                               type: 'master',       progress: 0, completed: false, reward: '🎓 +800 XP', difficulty: 'Legendario' },
+        { id: 15, title: 'Pionero del Blackboard', description: 'Completa todas las misiones y conviértete en un experto total',                         type: 'ultimate',     progress: 0, completed: false, reward: '👑 +1000 XP', difficulty: 'Legendario' },
+      ];
+      setMissions(defaults);
     }
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [missions]);
 
   // Simular progreso de misiones basado en modelos y contenido del blackboard
   useEffect(() => {
-    setMissions(prevMissions => 
-      prevMissions.map(mission => {
-        let newProgress = mission.progress;
-        let newCompleted = mission.completed;
+    const updated = missions.map(mission => {
+      let newProgress = mission.progress;
+      let newCompleted = mission.completed;
 
-        switch (mission.id) {
-          // Misiones de Modelos de Entrenamiento
-          case 1: // Entrenar Modelo de Vocales
-            const vocalModel = models.find(m => m.title.toLowerCase().includes('vocal'));
-            if (vocalModel && !mission.completed) {
-              newProgress = 100;
-              newCompleted = true;
-            }
-            break;
-          case 2: // Optimizar Modelo de Abecedario
-            const abcModel = models.find(m => m.title.toLowerCase().includes('abecedario'));
-            if (abcModel && !mission.completed) {
-              newProgress = 100;
-              newCompleted = true;
-            }
-            break;
-          case 3: // Implementar Modelo de Palabras
-            const wordModel = models.find(m => m.title.toLowerCase().includes('palabra'));
-            if (wordModel && !mission.completed) {
-              newProgress = 100;
-              newCompleted = true;
-            }
-            break;
-          case 4: // Validar Operaciones Aritméticas
-            const mathModel = models.find(m => m.title.toLowerCase().includes('aritmétic') || m.title.toLowerCase().includes('operacion'));
-            if (mathModel && !mission.completed) {
-              newProgress = 100;
-              newCompleted = true;
-            }
-            break;
-            
-          // Misiones de Cursos (simuladas como disponibles)
-          case 5: // Dominar Reconocimiento de Manos
-          case 6: // Especialista en Reconocimiento Facial
-          case 7: // Maestro de Voz con IA
-          case 8: // Operaciones Matemáticas Gestuales
-          case 9: // Desarrollador de Agente IA
-          case 10: // Constructor de Chatbots
-            if (!mission.completed) {
-              newProgress = Math.floor(Math.random() * 30); // Progreso simulado 0-30%
-            }
-            break;
-            
-          // Misiones Futuras (próximamente)
-          case 11: // Detector de Emociones
-          case 12: // Traductor Universal
-            if (!mission.completed) {
-              newProgress = 0; // Aún no disponibles
-            }
-            break;
-            
-          // Misiones Maestras
-          case 13: // Maestro de Modelos
-            const completedModels = models.length;
-            if (completedModels >= 4 && !mission.completed) {
-              newProgress = 100;
-              newCompleted = true;
-            } else if (completedModels > 0) {
-              newProgress = (completedModels / 4) * 100;
-            }
-            break;
-            
-          case 14: // Graduado en IA
-            // Basado en cursos completados (simulado)
-            const availableCourses = 6; // Cursos disponibles actualmente
-            const completedCourses = prevMissions.filter(m => 
-              m.type === 'course' && m.completed && m.id >= 5 && m.id <= 10
-            ).length;
-            if (completedCourses >= availableCourses && !mission.completed) {
-              newProgress = 100;
-              newCompleted = true;
-            } else {
-              newProgress = (completedCourses / availableCourses) * 100;
-            }
-            break;
-            
-          case 15: // Pionero del Blackboard
-            // Basado en todas las misiones completadas
-            const totalCompletableMissions = prevMissions.filter(m => 
-              m.id !== 15 && m.type !== 'future'
-            ).length;
-            const totalCompleted = prevMissions.filter(m => 
-              m.completed && m.id !== 15 && m.type !== 'future'
-            ).length;
-            if (totalCompleted >= totalCompletableMissions && !mission.completed) {
-              newProgress = 100;
-              newCompleted = true;
-            } else {
-              newProgress = (totalCompleted / totalCompletableMissions) * 100;
-            }
-            break;
-        }
+      switch (mission.id) {
+        // Misiones de Modelos de Entrenamiento
+        case 1: // Entrenar Modelo de Vocales
+          const vocalModel = models.find(m => m.title.toLowerCase().includes('vocal'));
+          if (vocalModel && !mission.completed) {
+            newProgress = 100;
+            newCompleted = true;
+          }
+          break;
+        case 2: // Optimizar Modelo de Abecedario
+          const abcModel = models.find(m => m.title.toLowerCase().includes('abecedario'));
+          if (abcModel && !mission.completed) {
+            newProgress = 100;
+            newCompleted = true;
+          }
+          break;
+        case 3: // Implementar Modelo de Palabras
+          const wordModel = models.find(m => m.title.toLowerCase().includes('palabra'));
+          if (wordModel && !mission.completed) {
+            newProgress = 100;
+            newCompleted = true;
+          }
+          break;
+        case 4: // Validar Operaciones Aritméticas
+          const mathModel = models.find(m => m.title.toLowerCase().includes('aritmétic') || m.title.toLowerCase().includes('operacion'));
+          if (mathModel && !mission.completed) {
+            newProgress = 100;
+            newCompleted = true;
+          }
+          break;
+          
+        // Misiones de Cursos (simuladas como disponibles)
+        case 5: // Dominar Reconocimiento de Manos
+        case 6: // Especialista en Reconocimiento Facial
+        case 7: // Maestro de Voz con IA
+        case 8: // Operaciones Matemáticas Gestuales
+        case 9: // Desarrollador de Agente IA
+        case 10: // Constructor de Chatbots
+          if (!mission.completed && mission.progress === 0) {
+            newProgress = Math.floor(Math.random() * 30); // Progreso simulado 0-30% sólo una vez
+          }
+          break;
+          
+        // Misiones Futuras (próximamente)
+        case 11: // Detector de Emociones
+        case 12: // Traductor Universal
+          if (!mission.completed) {
+            newProgress = 0; // Aún no disponibles
+          }
+          break;
+          
+        // Misiones Maestras
+        case 13: // Maestro de Modelos
+          const completedModels = models.length;
+          if (completedModels >= 4 && !mission.completed) {
+            newProgress = 100;
+            newCompleted = true;
+          } else if (completedModels > 0) {
+            newProgress = (completedModels / 4) * 100;
+          }
+          break;
+          
+        case 14: // Graduado en IA
+          // Basado en cursos completados (simulado)
+          const availableCourses = 6; // Cursos disponibles actualmente
+          const completedCourses = missions.filter(m => 
+            m.type === 'course' && m.completed && m.id >= 5 && m.id <= 10
+          ).length;
+          if (completedCourses >= availableCourses && !mission.completed) {
+            newProgress = 100;
+            newCompleted = true;
+          } else {
+            newProgress = (completedCourses / availableCourses) * 100;
+          }
+          break;
+          
+        case 15: // Pionero del Blackboard
+          // Basado en todas las misiones completadas
+          const totalCompletableMissions = missions.filter(m => 
+            m.id !== 15 && m.type !== 'future'
+          ).length;
+          const totalCompleted = missions.filter(m => 
+            m.completed && m.id !== 15 && m.type !== 'future'
+          ).length;
+          if (totalCompleted >= totalCompletableMissions && !mission.completed) {
+            newProgress = 100;
+            newCompleted = true;
+          } else {
+            newProgress = (totalCompleted / totalCompletableMissions) * 100;
+          }
+          break;
+      }
 
-        return { ...mission, progress: newProgress, completed: newCompleted };
-      })
-    );
-  }, [models]);
+      return { ...mission, progress: newProgress, completed: newCompleted };
+    });
+
+    // Persistir sólo si hubo cambios
+    const changed = JSON.stringify(updated) !== JSON.stringify(missions);
+    if (changed) setMissions(updated);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [models, missions]);
+
+  // Mapa de íconos visuales (no se persisten)
+  const iconById: Record<number, React.ComponentType<any>> = {
+    1: Mic,
+    2: Target,
+    3: Zap,
+    4: Calculator,
+    5: Hand,
+    6: Eye,
+    7: Mic,
+    8: Calculator,
+    9: Bot,
+    10: MessageCircle,
+    11: Heart,
+    12: Globe,
+    13: Brain,
+    14: Trophy,
+    15: Trophy,
+  };
 
   const getDifficultyColor = (difficulty: string): string => {
     switch (difficulty) {
@@ -399,8 +277,8 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
                {/* Active Missions List */}
                <div className="space-y-3">
                  {activeMissions.map((mission, index) => {
-                   const IconComponent = mission.icon;
-                   return (
+                  const IconComponent = iconById[mission.id] || Trophy;
+                  return (
                      <motion.div
                        key={mission.id}
                        initial={{ opacity: 0, x: -20 }}

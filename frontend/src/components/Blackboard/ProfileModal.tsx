@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useUserStore } from '../../auth/userStore'
 
 type Props = {
   onClose: () => void
@@ -6,26 +7,43 @@ type Props = {
 }
 
 export default function ProfileModal({ onClose, onConfirm }: Props) {
+  const { user, updateProfile, setAvatar } = useUserStore()
   const [editing, setEditing] = useState(false)
-  const [name, setName] = useState('Usuario Demo')
-  const [email, setEmail] = useState('usuario@example.com')
-  const [avatarPreview, setAvatarPreview] = useState<string>('/src/assets/avatar.svg')
+  const [name, setName] = useState(user.profile.name || 'Usuario')
+  const [email, setEmail] = useState(user.profile.email || 'usuario@example.com')
+  const [avatarPreview, setAvatarPreview] = useState<string>(user.profile.avatarDataUrl || '/src/assets/avatar.svg')
+  const [avatarDataUrl, setAvatarDataUrl] = useState<string | undefined>(user.profile.avatarDataUrl)
   const fileInput = useRef<HTMLInputElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [mounted, setMounted] = useState(false)
   const dialogRef = useRef<HTMLDivElement>(null)
 
   // mount animation
-  useState(() => {
+  useEffect(() => {
     setTimeout(() => setMounted(true), 0)
-  })
+  }, [])
+
+  // Sync when user changes
+  useEffect(() => {
+    setName(user.profile.name || 'Usuario')
+    setEmail(user.profile.email || 'usuario@example.com')
+    setAvatarPreview(user.profile.avatarDataUrl || '/src/assets/avatar.svg')
+    setAvatarDataUrl(user.profile.avatarDataUrl)
+  }, [user.profile.name, user.profile.email, user.profile.avatarDataUrl])
 
   const pickFile = () => fileInput.current?.click()
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]
     if (f) {
-      const url = URL.createObjectURL(f)
-      setAvatarPreview(url)
+      const reader = new FileReader()
+      reader.onload = () => {
+        const dataUrl = typeof reader.result === 'string' ? reader.result : undefined
+        if (dataUrl) {
+          setAvatarPreview(dataUrl)
+          setAvatarDataUrl(dataUrl)
+        }
+      }
+      reader.readAsDataURL(f)
     }
   }
 
@@ -70,7 +88,13 @@ export default function ProfileModal({ onClose, onConfirm }: Props) {
               <p className="text-sm text-slate-600 mt-1">¿Deseas guardar los cambios del perfil?</p>
               <div className="mt-4 flex items-center justify-end gap-2">
                 <button className="btn" onClick={() => setShowConfirm(false)}>Cancelar</button>
-                <button className="btn-accent-purple" onClick={() => { setShowConfirm(false); onConfirm(); }}>Confirmar</button>
+                <button className="btn-accent-purple" onClick={() => { 
+                  // persist changes
+                  updateProfile({ name, email })
+                  setAvatar(avatarDataUrl)
+                  setShowConfirm(false)
+                  onConfirm()
+                }}>Confirmar</button>
               </div>
             </div>
           </div>

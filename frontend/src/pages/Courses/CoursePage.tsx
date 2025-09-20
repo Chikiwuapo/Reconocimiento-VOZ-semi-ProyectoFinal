@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Layout from '../../components/Blackboard/Layout'
 import InstructorCard from '../../components/Course/InstructorCard.tsx'
-import LessonSidebar from '../../components/Course/LessonSidebar.tsx'
 import LessonContent from '../../components/Course/LessonContent.tsx'
 import Comments from '../../components/Course/Comments.tsx'
 import VideoPlayer from '../../components/Course/VideoPlayer.tsx'
@@ -319,15 +318,6 @@ export default function CoursePage() {
             />
 
             <div className="h-3" />
-
-            <LessonSidebar 
-              lessons={lessons}
-              currentId={current.id}
-              onSelect={() => {
-                // No cambia el video; sólo informativo
-                window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Lección seleccionada (vista previa)' }))
-              }}
-            />
 
             <div className="h-3" />
             <div className="bg-white rounded-xl p-4 shadow-soft">

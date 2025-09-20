@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../../components/Blackboard/Layout'
 import type { ModelType, TrainingSession, ModelStats } from '../../types'
+import { useUserStore } from '../../auth/userStore'
 
 export default function Models() {
   const navigate = useNavigate()
@@ -12,7 +13,8 @@ export default function Models() {
   const [showModelSelection, setShowModelSelection] = useState(false)
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
   const [selectedModel, setSelectedModel] = useState<ModelType | null>(null)
-  const [createdModels, setCreatedModels] = useState<ModelType[]>([])
+  const { user, addModel, updateModel, removeModel, setModels } = useUserStore()
+  const createdModels = user.models as unknown as ModelType[]
   const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([])
   const [currentSession, setCurrentSession] = useState<TrainingSession | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -24,18 +26,18 @@ export default function Models() {
     averageAccuracy: 0
   })
 
-  // Cargar datos del localStorage al inicializar y scroll automático arriba
+  // Cargar datos del localStorage (solo sesiones) al inicializar y scroll automático arriba
   useEffect(() => {
     loadDataFromStorage()
     // Scroll automático arriba al cargar el componente
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
-  // Guardar datos en localStorage cuando cambien
+  // Guardar datos en localStorage cuando cambien (solo sesiones)
   useEffect(() => {
     saveDataToStorage()
     updateStats()
-  }, [createdModels, trainingSessions])
+  }, [user.models, trainingSessions])
 
   // Bloquear scroll cuando el modal esté abierto
   useEffect(() => {
@@ -50,19 +52,10 @@ export default function Models() {
     }
   }, [showModelSelection, showConfirmationModal, isTraining])
 
-  // Funciones de persistencia
+  // Funciones de persistencia (solo para sesiones de entrenamiento)
   const loadDataFromStorage = () => {
     try {
-      const savedModels = localStorage.getItem('voiceModels')
       const savedSessions = localStorage.getItem('trainingSessions')
-      
-      if (savedModels) {
-        const models = JSON.parse(savedModels).map((model: any) => ({
-          ...model,
-          createdAt: new Date(model.createdAt)
-        }))
-        setCreatedModels(models)
-      }
       
       if (savedSessions) {
         const sessions = JSON.parse(savedSessions).map((session: any) => ({
@@ -79,7 +72,6 @@ export default function Models() {
 
   const saveDataToStorage = () => {
     try {
-      localStorage.setItem('voiceModels', JSON.stringify(createdModels))
       localStorage.setItem('trainingSessions', JSON.stringify(trainingSessions))
     } catch (error) {
       console.error('Error saving data to storage:', error)
@@ -88,11 +80,11 @@ export default function Models() {
 
   const updateStats = () => {
     const totalModels = createdModels.length
-    const activeModels = createdModels.filter(model => model.isActive).length
+    const activeModels = createdModels.filter(model => (model as any).isActive).length
     const totalTrainingSessions = trainingSessions.length
-    const completedModels = createdModels.filter(model => model.accuracy)
+    const completedModels = createdModels.filter(model => (model as any).accuracy)
     const averageAccuracy = completedModels.length > 0 
-      ? completedModels.reduce((sum, model) => sum + (model.accuracy || 0), 0) / completedModels.length
+      ? completedModels.reduce((sum, model: any) => sum + (model.accuracy || 0), 0) / completedModels.length
       : 0
 
     setModelStats({
@@ -160,9 +152,8 @@ export default function Models() {
   }
 
   const handleModelSelect = (model: ModelType) => {
-    // Crear un nuevo modelo en la lista de modelos creados
-    const newCreatedModel = {
-      id: `model_${Date.now()}`,
+    // Crear un nuevo modelo en el store centralizado
+    addModel({
       name: model.name,
       description: model.description,
       type: model.type,
@@ -170,22 +161,18 @@ export default function Models() {
       image: model.image,
       bgColor: model.bgColor,
       color: model.color,
-      status: 'pending' as const,
+      status: 'pending',
       accuracy: 0,
       isActive: false,
-      createdAt: new Date(),
       duration: model.duration,
-      difficulty: model.difficulty
-    }
-    
-    // Agregar el modelo a la lista de modelos creados
-    setCreatedModels(prev => [...prev, newCreatedModel])
-    
+      difficulty: model.difficulty,
+    })
+
     // Cerrar el modal
     setShowModelSelection(false)
-    
-    // Mostrar mensaje de éxito (opcional)
-    console.log(`Modelo "${model.name}" agregado a tus modelos creados`)
+
+    // Notificación
+    window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
   }
 
   const handleConfirmModel = () => {
@@ -200,7 +187,21 @@ export default function Models() {
         trainingData: []
       }
       
-      setCreatedModels(prev => [...prev, newModel])
+      addModel({
+        id: newModel.id,
+        name: newModel.name,
+        description: newModel.description,
+        type: newModel.type,
+        icon: newModel.icon,
+        image: newModel.image,
+        bgColor: newModel.bgColor,
+        color: newModel.color,
+        status: 'Entrenando' as any,
+        accuracy: 0,
+        isActive: false,
+        duration: newModel.duration,
+        difficulty: newModel.difficulty,
+      })
       setShowConfirmationModal(false)
       setSelectedModel(null)
       startTraining(newModel)
@@ -249,19 +250,8 @@ export default function Models() {
   const completeTraining = (model: ModelType, session: TrainingSession) => {
     const accuracy = Math.floor(Math.random() * 20 + 80) // 80-99%
     
-    // Actualizar modelo
-    setCreatedModels(prev => 
-      prev.map(m => 
-        m.id === model.id 
-          ? { 
-              ...m, 
-              status: 'Completado', 
-              accuracy: accuracy,
-              isActive: true 
-            }
-          : m
-      )
-    )
+    // Actualizar modelo en store
+    updateModel(model.id, { status: 'Completado' as any, accuracy, isActive: true })
 
     // Finalizar sesión
     setTrainingSessions(prev => 
@@ -283,18 +273,13 @@ export default function Models() {
   }
 
   const deleteModel = (modelId: string) => {
-    setCreatedModels(prev => prev.filter(model => model.id !== modelId))
+    removeModel(modelId)
     setTrainingSessions(prev => prev.filter(session => session.modelId !== modelId))
   }
 
   const toggleModelActive = (modelId: string) => {
-    setCreatedModels(prev => 
-      prev.map(model => 
-        model.id === modelId 
-          ? { ...model, isActive: !model.isActive }
-          : model
-      )
-    )
+    const found = createdModels.find(m => m.id === modelId) as any
+    updateModel(modelId, { isActive: !found?.isActive })
   }
 
   const useModel = (modelId: string) => {
@@ -311,7 +296,7 @@ export default function Models() {
 
   const viewModel = (model: ModelType) => {
     // Guardar la información del modelo en localStorage para la página de entrenamiento
-    localStorage.setItem('selectedModel', JSON.stringify(model))
+    localStorage.setItem('selectedModelForTraining', JSON.stringify(model))
     
     // Navegar a la página de entrenamiento
     navigate('/training')
@@ -332,9 +317,8 @@ export default function Models() {
 
   const clearAllData = () => {
     if (confirm('¿Estás seguro de que quieres eliminar todos los modelos y datos? Esta acción no se puede deshacer.')) {
-      setCreatedModels([])
+      setModels([] as any)
       setTrainingSessions([])
-      localStorage.removeItem('voiceModels')
       localStorage.removeItem('trainingSessions')
     }
   }
@@ -396,14 +380,7 @@ export default function Models() {
                     </span>
                   </div>
                 </div>
-                <div className="ml-8">
-                  <button 
-                    onClick={handleStartTraining}
-                    className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                  >
-                    Comenzar Entrenamiento
-                  </button>
-                </div>
+               
               </div>
             </div>
           </div>
@@ -699,80 +676,75 @@ export default function Models() {
                 </button>
               </div>
             </div>
-
-            {/* Contenido del modal - Tarjetas flotantes */}
             <div className="p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {availableModels.map((model) => {
-                  const colors = getColorClasses(model.color)
-                  return (
-                    <div 
-                      key={model.id}
-                      onClick={() => handleModelSelect(model)}
-                      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 cursor-pointer hover:border-blue-300 overflow-hidden"
-                    >
-                      {/* Header con gradiente y círculo blanco */}
-                      <div className={`bg-gradient-to-r ${model.bgColor} h-16 relative`}>
-                        <div className="absolute top-2 left-2 w-5 h-5 bg-white/30 rounded-full"></div>
-                        <div className="absolute top-2 right-2 w-10 h-1.5 bg-white/40 rounded-full"></div>
-                        {/* Etiqueta "NUEVO" si es necesario */}
-                        {model.id === 'vocales' && (
-                          <div className="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-bl-lg">
-                            NUEVO
-                          </div>
-                        )}
+                {availableModels.map((model) => (
+                  <div 
+                    key={model.id}
+                    onClick={() => handleModelSelect(model)}
+                    className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 cursor-pointer hover:border-blue-300 overflow-hidden"
+                  >
+                    {/* Header con gradiente y círculo blanco */}
+                    <div className={`bg-gradient-to-r ${model.bgColor} h-16 relative`}>
+                      <div className="absolute top-2 left-2 w-5 h-5 bg-white/30 rounded-full"></div>
+                      <div className="absolute top-2 right-2 w-10 h-1.5 bg-white/40 rounded-full"></div>
+                      {/* Etiqueta "NUEVO" si es necesario */}
+                      {model.id === 'vocales' && (
+                        <div className="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-bl-lg">
+                          NUEVO
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="p-4">
+                      {/* Imagen del modelo */}
+                      <div className="mb-3">
+                        <img 
+                          src={model.image} 
+                          alt={model.name}
+                          className="w-full h-16 object-cover rounded-lg shadow-md"
+                        />
                       </div>
                       
-                      <div className="p-4">
-                        {/* Imagen del modelo */}
-                        <div className="mb-3">
-                          <img 
-                            src={model.image} 
-                            alt={model.name}
-                            className="w-full h-16 object-cover rounded-lg shadow-md"
-                          />
+                      {/* Ícono del modelo y estrella */}
+                      <div className="flex items-center mb-2">
+                        <div className="w-6 h-6 flex items-center justify-center mr-2">
+                          <span className="text-lg">{model.icon}</span>
                         </div>
-                        
-                        {/* Ícono del modelo y estrella */}
-                        <div className="flex items-center mb-2">
-                          <div className="w-6 h-6 flex items-center justify-center mr-2">
-                            <span className="text-lg">{model.icon}</span>
-                          </div>
-                          {/* Estrella de favorito */}
-                          <div className="ml-auto">
-                            <svg className="w-4 h-4 text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                            </svg>
-                          </div>
+                        {/* Estrella de favorito */}
+                        <div className="ml-auto">
+                          <svg className="w-4 h-4 text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                          </svg>
                         </div>
-                        
-                        <h3 className="text-sm font-bold text-gray-800 mb-2">{model.name}</h3>
-                        <p className="text-gray-600 text-xs mb-3 leading-relaxed line-clamp-2">
-                          {model.description}
-                        </p>
-                        
-                        {/* Información adicional */}
-                        <div className="grid grid-cols-2 gap-2 mb-3">
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Duración</div>
-                            <div className="text-xs font-semibold text-gray-800">{model.duration}</div>
-                          </div>
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Nivel</div>
-                            <div className="text-xs font-semibold text-gray-800">{model.difficulty}</div>
-                          </div>
+                      </div>
+                      
+                      <h3 className="text-sm font-bold text-gray-800 mb-2">{model.name}</h3>
+                      <p className="text-gray-600 text-xs mb-3 leading-relaxed line-clamp-2">
+                        {model.description}
+                      </p>
+                      
+                      {/* Información adicional */}
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="bg-gray-50 rounded-lg p-2">
+                          <div className="text-xs text-gray-500 uppercase tracking-wide">Duración</div>
+                          <div className="text-xs font-semibold text-gray-800">{model.duration}</div>
                         </div>
-                        
-                        {/* Indicador de selección */}
-                        <div className="mt-auto pt-2">
-                          <div className="text-center text-xs text-gray-500">
-                            Haz clic para seleccionar
-                          </div>
+                        <div className="bg-gray-50 rounded-lg p-2">
+                          <div className="text-xs text-gray-500 uppercase tracking-wide">Nivel</div>
+                          <div className="text-xs font-semibold text-gray-800">{model.difficulty}</div>
+                        </div>
+                      </div>
+                      
+                      {/* Indicador de selección */}
+                      <div className="mt-auto pt-2">
+                        <div className="text-center text-xs text-gray-500">
+                          Haz clic para seleccionar
                         </div>
                       </div>
                     </div>
-                  )
-                })}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

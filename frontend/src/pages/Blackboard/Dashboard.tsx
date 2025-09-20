@@ -6,73 +6,48 @@ import CourseCard from '../../components/Course/CourseCard'
 import ModelDetailsModal from '../../components/Blackboard/ModelDetailsModal'
 import HeroUnified from '../../components/Blackboard/HeroUnified'
 import MissionsPanel from '../../components/Blackboard/MissionsPanel'
+import { useUserStore } from '../../auth/userStore'
+import { Link } from 'react-router-dom'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 export default function Dashboard() { 
-  const userName = 'Usuario'
-  type Model = { id: string; title: string; description: string; emoji: string; imageUrl: string; favorite?: boolean; features: string[] }
+  const { user, toggleFavorite, recordCourseCompleted, recordModelTested } = useUserStore()
+  const userName = user.profile.name || 'Usuario'
+  type ModelView = { id: string; title: string; description: string; emoji: string; imageUrl: string; favorite?: boolean; features: string[] }
   type Course = { id: string; title: string; progress: string; img: string; completed?: boolean }
   type TestedModel = { id: string; title: string; result: string; color: string; tested?: boolean }
   
-  const [models, setModels] = useState<Model[]>([
-    { id: 'm1', title: 'Modelo de entrenamiento para Vocales', description: 'Crea un modelo para reconocer vocales habladas.', emoji: '🗣️', imageUrl: '/src/assets/placeholder.svg', favorite: true, features: ['Dataset: 1200 audios', 'Precisión esperada: 90%', 'Arquitectura: CNN 1D'] },
-    { id: 'm2', title: 'Modelo de entrenamiento para Abecedario', description: 'Entrena un modelo para letras del abecedario.', emoji: '🔤', imageUrl: '/src/assets/placeholder.svg', features: ['Clases: 27 (A-Z + Ñ)', 'MFCC + Augment', 'Batch size: 32'] },
-    { id: 'm3', title: 'Modelo de entrenamiento para Palabras', description: 'Reconoce palabras clave frecuentes.', emoji: '📝', imageUrl: '/src/assets/placeholder.svg', features: ['Wake words', 'Latencia baja', 'Streaming-ready'] },
-    { id: 'm4', title: 'Modelo de entrenamiento para Operaciones aritméticas básicas', description: 'Suma, resta, multiplicación y división.', emoji: '➕', imageUrl: '/src/assets/placeholder.svg', features: ['4 clases básicas', 'Post-procesado con reglas', 'Visor de resultados'] },
-  ])
+  // Map user models to dashboard visuals
+  const models: ModelView[] = useMemo(() => (
+    user.models.map(m => ({
+      id: m.id,
+      title: m.name,
+      description: m.description,
+      emoji: m.icon || '🧠',
+      imageUrl: m.image || '/src/assets/placeholder.svg',
+      favorite: !!m.favorite,
+      features: [m.type, m.status || 'pending']
+    }))
+  ), [user.models])
   
-  const [watchedCourses, setWatchedCourses] = useState<Course[]>([
-    { id: 'w1', title: 'MediaPipe Hands', progress: '60%', img: 'https://i.blogs.es/2b36a7/algoritmo/1366_2000.png', completed: false },
-    { id: 'w2', title: 'Agentes IA', progress: '30%', img: 'https://nocodestartup.io/wp-content/uploads/2025/02/o-que-e-um-agente-de-ia-e-como-ele-funciona-1024x701.jpg', completed: false },
-  ])
-  
-  const [testedModels, setTestedModels] = useState<TestedModel[]>([
-    { id: 't1', title: 'Demo voz', result: 'WER 12%', color: '#F59E0B', tested: true },
-    { id: 't2', title: 'Demo rostro', result: 'Acc 94%', color: '#06B6D4', tested: true },
-  ])
+  const watchedCourses: Course[] = useMemo(() => user.watchedCourses, [user.watchedCourses])
+  const testedModels: TestedModel[] = useMemo(() => user.testedModels, [user.testedModels])
   
   const [detailId, setDetailId] = useState<string | null>(null)
   const currentModel = models.find(m => m.id === detailId) || null
 
-  const toggleFavorite = (id: string) => {
-    setModels(prev => {
-      const next = prev.map(m => m.id === id ? { ...m, favorite: !m.favorite } : m)
-      next.sort((a, b) => Number(!!b.favorite) - Number(!!a.favorite))
-      return next
-    })
-    const m = models.find(m => m.id === id)
-    if (m) window.dispatchEvent(new CustomEvent('app:notify', { detail: (!m.favorite ? 'Añadido a favoritos: ' : 'Quitado de favoritos: ') + m.title }))
-  }
-
-  const completeCourse = (courseId: string) => {
-    const course = watchedCourses.find(c => c.id === courseId)
-    setWatchedCourses(prev => 
-      prev.map(course => 
-        course.id === courseId 
-          ? { ...course, completed: true, progress: '100%' }
-          : course
-      )
-    )
-    if (course) window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Curso completado: ' + course.title }))
-  }
+  // Favoritos se gestionan dentro de los componentes cuando sea necesario usando toggleFavorite
 
   const completeCourseByTitle = (title: string) => {
-    // Buscar si el curso ya existe en watchedCourses
-    const existingCourse = watchedCourses.find(c => c.title.includes(title.split(' ')[0]))
-    if (existingCourse) {
-      completeCourse(existingCourse.id)
-    } else {
-      // Crear nuevo curso completado
-      const newCourse: Course = {
-        id: `c_${Date.now()}`,
-        title: title,
-        progress: '100%',
-        img: 'https://via.placeholder.com/300x200',
-        completed: true
-      }
-      setWatchedCourses(prev => [...prev, newCourse])
-      window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Curso completado: ' + title }))
+    const newCourse: Course = {
+      id: `c_${Date.now()}`,
+      title: title,
+      progress: '100%',
+      img: 'https://via.placeholder.com/300x200',
+      completed: true
     }
+    recordCourseCompleted(newCourse)
+    window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Curso completado: ' + title }))
   }
 
   const testModel = (modelId: string) => {
@@ -85,11 +60,7 @@ export default function Dashboard() {
         color: '#10B981',
         tested: true
       }
-      setTestedModels(prev => {
-        const exists = prev.find(t => t.id === newTestedModel.id)
-        if (exists) return prev
-        return [...prev, newTestedModel]
-      })
+      recordModelTested(newTestedModel)
       window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Modelo probado: ' + model.title }))
     }
   }
@@ -106,7 +77,7 @@ export default function Dashboard() {
   }
   return (
     
-    <Layout notifications={3}>
+    <Layout>
       <HeroUnified 
         userName={userName} 
         models={models}
@@ -114,60 +85,75 @@ export default function Dashboard() {
         testedModels={testedModels}
       />
 
-      {/* Panel de Misiones */}
+      {/* Panel de Misiones (sincronizado con user store) */}
       <div className="container-page mt-8">
-        <MissionsPanel 
-          models={models} 
-        />
+        <MissionsPanel models={models} />
       </div>
 
       <div className="container-page mt-8 animate-slide-up">
         <h2 className="text-2xl font-bold text-header animate-slide-in-left">Tus modelos creados</h2>
         <p className="text-slate-600 mt-1 animate-slide-in-left delay-100">Explora tus modelos creados</p>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {models.map(m => (
-            <ActivityCard
-              key={m.id}
-              title={m.title}
-              description={m.description}
-              emoji={m.emoji}
-              imageUrl={m.imageUrl}
-              favorite={m.favorite}
-              onToggleFavorite={() => toggleFavorite(m.id)}
-              onTrain={() => window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Entrenamiento iniciado: ' + m.title }))}
-              onViewDetails={() => setDetailId(m.id)}
-            />
-          ))}
-        </div>
+        {models.length === 0 ? (
+          <div className="mt-6 card text-center p-8">
+            <p className="text-lg font-semibold text-header mb-2">No esperes más, ten la experiencia de probar los modelos que te ofrecemos</p>
+            <p className="text-slate-600 mb-4">Crea o prueba modelos y observa cómo se actualiza tu panel en tiempo real.</p>
+            <Link to="/models" className="inline-block px-6 py-3 rounded-lg bg-emerald-600 text-white font-medium shadow-soft hover:bg-emerald-700 transition-transform hover:-translate-y-0.5">
+              Quiero crear un modelo!! 🤯
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {models.map(m => (
+              <ActivityCard
+                key={m.id}
+                title={m.title}
+                description={m.description}
+                emoji={m.emoji}
+                imageUrl={m.imageUrl}
+                favorite={m.favorite}
+                onToggleFavorite={() => toggleFavorite(m.id)}
+                onTrain={() => window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Entrenamiento iniciado: ' + m.title }))}
+                onViewDetails={() => setDetailId(m.id)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Sección de Modelo Entrenado */}
       <div className="container-page mt-8 animate-slide-up">
         <h2 className="text-2xl font-bold text-header animate-slide-in-left">Modelo Entrenado</h2>
         <p className="text-slate-600 mt-1 animate-slide-in-left delay-100">Listo para probar tu creación</p>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {models.map(m => (
-            <div key={`test-${m.id}`} className="bg-white rounded-xl shadow-soft border border-slate-200 overflow-hidden group hover:shadow-lg transition-all duration-300">
-              <div className="relative h-32 bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
-                <span className="text-4xl">{m.emoji}</span>
-                <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                  Entrenado
+        {models.length === 0 ? (
+          <div className="mt-6 card text-center p-8">
+            <p className="text-lg font-semibold text-header mb-2">Aquí podras experimentar con tus modelos entrenados</p>
+            <p className="text-slate-600 mb-4">Cuando entrenes alguno, aparecerá aquí para que lo pruebes.</p>
+          </div>
+        ) : (
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {models.map(m => (
+              <div key={`test-${m.id}`} className="bg-white rounded-xl shadow-soft border border-slate-200 overflow-hidden group hover:shadow-lg transition-all duration-300">
+                <div className="relative h-32 bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                  <span className="text-4xl">{m.emoji}</span>
+                  <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                    Entrenado
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-slate-800 mb-2 line-clamp-2">{m.title}</h3>
+                  <p className="text-sm text-slate-600 mb-4 line-clamp-2">{m.description}</p>
+                  <button 
+                    onClick={() => testModel(m.id)}
+                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <span>🧪</span>
+                    Probar Modelo
+                  </button>
                 </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-slate-800 mb-2 line-clamp-2">{m.title}</h3>
-                <p className="text-sm text-slate-600 mb-4 line-clamp-2">{m.description}</p>
-                <button 
-                  onClick={() => testModel(m.id)}
-                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
-                >
-                  <span>🧪</span>
-                  Probar Modelo
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>      
       {/* Sección de Cursos de IA y Reconocimiento */}
         <section className="container-page mt-8 animate-slide-up">
