@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reconocimiento de Gestos - Operaciones Matemáticas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.2);
+        }
+        
+        .video-container {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        #videoElement {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        #canvasElement {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .btn-custom {
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary-custom {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-success-custom {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+        
+        .btn-danger-custom {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .btn-warning-custom {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+        }
+        
+        .gesture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .gesture-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gesture-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .gesture-canvas {
+            width: 150px;
+            height: 150px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 0 auto 15px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-available { background-color: #28a745; }
+        .status-trained { background-color: #ffc107; }
+        .status-recording { background-color: #dc3545; }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .nav-pills .nav-link {
+            border-radius: 25px;
+            margin: 0 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-pills .nav-link.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+        
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .progress-custom {
+            height: 8px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .progress-bar-custom {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            border-radius: 10px;
+        }
+        
+        .operation-display {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .confidence-meter {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .confidence-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #ff4b2b 0%, #ffc107 50%, #28a745 100%);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confidence-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-hand-paper text-primary me-2"></i>
+                Reconocimiento de Gestos
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-circle status-indicator" id="connectionStatus"></i>
+                    <span id="connectionText">Desconectado</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container mt-5 pt-5">
+        <!-- Navigation Tabs -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <ul class="nav nav-pills justify-content-center" id="mainTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="pill" href="#entrenamiento">
+                            <i class="fas fa-graduation-cap me-2"></i>Entrenamiento
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="pill" href="#interaccion">
+                            <i class="fas fa-calculator me-2"></i>Interacción
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="pill" href="#guia">
+                            <i class="fas fa-book me-2"></i>Guía
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Vista de Entrenamiento -->
+            <div class="tab-pane fade show active" id="entrenamiento">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0"><i class="fas fa-video me-2"></i>Cámara de Entrenamiento</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="video-container">
+                                    <video id="videoElement" autoplay muted playsinline></video>
+                                    <canvas id="canvasElement"></canvas>
+                                </div>
+                                <div class="mt-3 text-center">
+                                    <button id="startCamera" class="btn btn-custom btn-success-custom me-2">
+                                        <i class="fas fa-camera me-2"></i>Iniciar Cámara
+                                    </button>
+                                    <button id="stopCamera" class="btn btn-custom btn-danger-custom" disabled>
+                                        <i class="fas fa-stop me-2"></i>Detener Cámara
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Panel de Control</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="gestureType" class="form-label">Tipo de Gesto:</label>
+                                    <select id="gestureType" class="form-select">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="numero_0">Número 0</option>
+                                        <option value="numero_1">Número 1</option>
+                                        <option value="numero_2">Número 2</option>
+                                        <option value="numero_3">Número 3</option>
+                                        <option value="numero_4">Número 4</option>
+                                        <option value="numero_5">Número 5</option>
+                                        <option value="suma">Suma (+)</option>
+                                        <option value="resta">Resta (-)</option>
+                                        <option value="multiplicacion">Multiplicación (×)</option>
+                                        <option value="division">División (÷)</option>
+                                        <option value="igual">Igual (=)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="confidence-meter">
+                                    <label class="form-label">Confianza de Detección:</label>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-indicator" id="confidenceIndicator" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted">Confianza: <span id="confidenceText">0%</span></small>
+                                </div>
+                                
+                                <div class="d-grid gap-2 mt-3">
+                                    <button id="recordGesture" class="btn btn-custom btn-warning-custom" disabled>
+                                        <i class="fas fa-record-vinyl me-2"></i>Grabar Gesto
+                                    </button>
+                                    <button id="saveGesture" class="btn btn-custom btn-primary-custom" disabled>
+                                        <i class="fas fa-save me-2"></i>Guardar Gesto
+                                    </button>
+                                </div>
+                                
+                                <div class="loading-spinner" id="loadingSpinner">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                    <p class="mt-2">Procesando gesto...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista de Interacción -->
+            <div class="tab-pane fade" id="interaccion">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Calculadora por Gestos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="video-container">
+                                    <video id="videoElementInteraction" autoplay muted playsinline></video>
+                                    <canvas id="canvasElementInteraction"></canvas>
+                                </div>
+                                <div class="mt-3 text-center">
+                                    <button id="startInteraction" class="btn btn-custom btn-success-custom me-2">
+                                        <i class="fas fa-play me-2"></i>Iniciar Interacción
+                                    </button>
+                                    <button id="stopInteraction" class="btn btn-custom btn-danger-custom" disabled>
+                                        <i class="fas fa-stop me-2"></i>Detener
+                                    </button>
+                                    <button id="clearOperation" class="btn btn-custom btn-warning-custom ms-2">
+                                        <i class="fas fa-eraser me-2"></i>Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0"><i class="fas fa-desktop me-2"></i>Operación Actual</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="operation-display" id="operationDisplay">
+                                    Esperando gestos...
+                                </div>
+                                
+                                <div class="confidence-meter">
+                                    <label class="form-label">Reconocimiento:</label>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-indicator" id="interactionConfidence" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted">Último gesto: <span id="lastGesture">Ninguno</span></small>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <h6>Historial de Gestos:</h6>
+                                    <div id="gestureHistory" class="border rounded p-2" style="height: 150px; overflow-y: auto; background: #f8f9fa;">
+                                        <small class="text-muted">Los gestos reconocidos aparecerán aquí...</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2 mt-3">
+                                    <button id="calculateResult" class="btn btn-custom btn-success-custom">
+                                        <i class="fas fa-equals me-2"></i>Calcular Resultado
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista de Guía -->
+            <div class="tab-pane fade" id="guia">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-book me-2"></i>Guía de Gestos Entrenados</h5>
+                                <button id="refreshGestures" class="btn btn-outline-light btn-sm">
+                                    <i class="fas fa-sync-alt me-1"></i>Actualizar
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            <input type="text" id="searchGestures" class="form-control" placeholder="Buscar gestos...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select id="filterGestures" class="form-select">
+                                            <option value="">Todos los gestos</option>
+                                            <option value="numeros">Solo números</option>
+                                            <option value="operaciones">Solo operaciones</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div id="gesturesContainer" class="gesture-grid">
+                                    <!-- Los gestos se cargarán dinámicamente aquí -->
+                                </div>
+                                
+                                <div id="noGestures" class="text-center py-5" style="display: none;">
+                                    <i class="fas fa-hand-paper fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No hay gestos entrenados</h5>
+                                    <p class="text-muted">Ve a la pestaña de Entrenamiento para grabar tus primeros gestos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Acción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmMessage">¿Estás seguro de que quieres realizar esta acción?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmAction">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Resultado -->
+    <div class="modal fade" id="resultModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-calculator me-2"></i>Resultado de la Operación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="operation-display" id="resultOperation">
+                        <!-- Operación y resultado -->
+                    </div>
+                    <div class="mt-3">
+                        <h6>Detalles del Cálculo:</h6>
+                        <div id="calculationDetails" class="alert alert-info">
+                            <!-- Detalles del cálculo -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="newCalculation">Nueva Operación</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    
+    <script>
+        // Variables globales
+        let hands, camera, videoElement, canvasElement, canvasCtx;
+        let interactionHands, interactionCamera, videoElementInteraction, canvasElementInteraction, interactionCanvasCtx;
+        let isRecording = false;
+        let recordedLandmarks = [];
+        let currentOperation = [];
+        let gestureHistory = [];
+        let trainedGestures = [];
+        
+        // Configuración de MediaPipe
+        const handsConfig = {
+            locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }
+        };
+
+        // CSRF Token para Django
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        const csrftoken = getCookie('csrftoken');
+
+        // Inicialización cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            loadTrainedGestures();
+        });
+
+        function initializeApp() {
+            // Configurar elementos de video y canvas para entrenamiento
+            videoElement = document.getElementById('videoElement');
+            canvasElement = document.getElementById('canvasElement');
+            canvasCtx = canvasElement.getContext('2d');
+            
+            // Configurar elementos para interacción
+            videoElementInteraction = document.getElementById('videoElementInteraction');
+            canvasElementInteraction = document.getElementById('canvasElementInteraction');
+            interactionCanvasCtx = canvasElementInteraction.getContext('2d');
+            
+            // Inicializar MediaPipe Hands para entrenamiento
+            hands = new Hands(handsConfig);
+            hands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 1,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+            hands.onResults(onResults);
+            
+            // Inicializar MediaPipe Hands para interacción
+            interactionHands = new Hands(handsConfig);
+            interactionHands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 1,
+                minDetectionConfidence: 0.7,
+                minTrackingConfidence: 0.7
+            });
+            interactionHands.onResults(onInteractionResults);
+            
+            updateConnectionStatus(false);
+        }
+
+        function setupEventListeners() {
+            // Botones de cámara para entrenamiento
+            document.getElementById('startCamera').addEventListener('click', startCamera);
+            document.getElementById('stopCamera').addEventListener('click', stopCamera);
+            
+            // Botones de grabación
+            document.getElementById('recordGesture').addEventListener('click', toggleRecording);
+            document.getElementById('saveGesture').addEventListener('click', saveGesture);
+            
+            // Botones de interacción
+            document.getElementById('startInteraction').addEventListener('click', startInteraction);
+            document.getElementById('stopInteraction').addEventListener('click', stopInteraction);
+            document.getElementById('clearOperation').addEventListener('click', clearOperation);
+            document.getElementById('calculateResult').addEventListener('click', calculateResult);
+            
+            // Botones de guía
+            document.getElementById('refreshGestures').addEventListener('click', loadTrainedGestures);
+            document.getElementById('searchGestures').addEventListener('input', filterGesturesDisplay);
+            document.getElementById('filterGestures').addEventListener('change', filterGesturesDisplay);
+            
+            // Modal events
+            document.getElementById('newCalculation').addEventListener('click', function() {
+                clearOperation();
+                bootstrap.Modal.getInstance(document.getElementById('resultModal')).hide();
+            });
+            
+            // Selector de tipo de gesto
+            document.getElementById('gestureType').addEventListener('change', function() {
+                const recordBtn = document.getElementById('recordGesture');
+                recordBtn.disabled = !this.value || !camera;
+            });
+        }
+
+        async function startCamera() {
+            try {
+                camera = new Camera(videoElement, {
+                    onFrame: async () => {
+                        await hands.send({image: videoElement});
+                    },
+                    width: 640,
+                    height: 480
+                });
+                
+                await camera.start();
+                
+                document.getElementById('startCamera').disabled = true;
+                document.getElementById('stopCamera').disabled = false;
+                document.getElementById('recordGesture').disabled = !document.getElementById('gestureType').value;
+                
+                updateConnectionStatus(true);
+                showNotification('Cámara iniciada correctamente', 'success');
+            } catch (error) {
+                console.error('Error al iniciar la cámara:', error);
+                showNotification('Error al acceder a la cámara', 'error');
+            }
+        }
+
+        function stopCamera() {
+            if (camera) {
+                camera.stop();
+                camera = null;
+            }
+            
+            document.getElementById('startCamera').disabled = false;
+            document.getElementById('stopCamera').disabled = true;
+            document.getElementById('recordGesture').disabled = true;
+            document.getElementById('saveGesture').disabled = true;
+            
+            updateConnectionStatus(false);
+            showNotification('Cámara detenida', 'info');
+        }
+
+        function onResults(results) {
+            // Limpiar canvas
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                
+                // Dibujar landmarks
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 5});
+                drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 2});
+                
+                // Calcular confianza
+                const confidence = calculateConfidence(landmarks);
+                updateConfidenceDisplay(confidence);
+                
+                // Si está grabando, guardar landmarks
+                if (isRecording) {
+                    recordedLandmarks.push({
+                        landmarks: landmarks,
+                        timestamp: Date.now(),
+                        confidence: confidence
+                    });
+                }
+            } else {
+                updateConfidenceDisplay(0);
+            }
+            
+            canvasCtx.restore();
+        }
+
+        async function startInteraction() {
+            try {
+                interactionCamera = new Camera(videoElementInteraction, {
+                    onFrame: async () => {
+                        await interactionHands.send({image: videoElementInteraction});
+                    },
+                    width: 640,
+                    height: 480
+                });
+                
+                await interactionCamera.start();
+                
+                document.getElementById('startInteraction').disabled = true;
+                document.getElementById('stopInteraction').disabled = false;
+                
+                showNotification('Interacción iniciada', 'success');
+            } catch (error) {
+                console.error('Error al iniciar interacción:', error);
+                showNotification('Error al iniciar interacción', 'error');
+            }
+        }
+
+        function stopInteraction() {
+            if (interactionCamera) {
+                interactionCamera.stop();
+                interactionCamera = null;
+            }
+            
+            document.getElementById('startInteraction').disabled = false;
+            document.getElementById('stopInteraction').disabled = true;
+            
+            showNotification('Interacción detenida', 'info');
+        }
+
+        function onInteractionResults(results) {
+            // Limpiar canvas
+            interactionCanvasCtx.save();
+            interactionCanvasCtx.clearRect(0, 0, canvasElementInteraction.width, canvasElementInteraction.height);
+            interactionCanvasCtx.drawImage(results.image, 0, 0, canvasElementInteraction.width, canvasElementInteraction.height);
+            
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                
+                // Dibujar landmarks
+                drawConnectors(interactionCanvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 5});
+                drawLandmarks(interactionCanvasCtx, landmarks, {color: '#FF0000', lineWidth: 2});
+                
+                // Reconocer gesto
+                recognizeGesture(landmarks);
+            }
+            
+            interactionCanvasCtx.restore();
+        }
+
+        function toggleRecording() {
+            const button = document.getElementById('recordGesture');
+            const saveButton = document.getElementById('saveGesture');
+            
+            if (!isRecording) {
+                // Iniciar grabación
+                isRecording = true;
+                recordedLandmarks = [];
+                button.innerHTML = '<i class="fas fa-stop me-2"></i>Detener Grabación';
+                button.className = 'btn btn-custom btn-danger-custom';
+                saveButton.disabled = true;
+                showNotification('Grabación iniciada', 'info');
+            } else {
+                // Detener grabación
+                isRecording = false;
+                button.innerHTML = '<i class="fas fa-record-vinyl me-2"></i>Grabar Gesto';
+                button.className = 'btn btn-custom btn-warning-custom';
+                saveButton.disabled = recordedLandmarks.length === 0;
+                showNotification(`Grabación detenida. ${recordedLandmarks.length} frames capturados`, 'success');
+            }
+        }
+
+        async function saveGesture() {
+            const gestureType = document.getElementById('gestureType').value;
+            
+            if (!gestureType || recordedLandmarks.length === 0) {
+                showNotification('Selecciona un tipo de gesto y graba algunos datos', 'error');
+                return;
+            }
+            
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            loadingSpinner.style.display = 'block';
+            
+            try {
+                // Procesar landmarks para envío
+                const processedLandmarks = recordedLandmarks.map(frame => ({
+                    landmarks: frame.landmarks.map(point => ({
+                        x: point.x,
+                        y: point.y,
+                        z: point.z
+                    })),
+                    confidence: frame.confidence,
+                    timestamp: frame.timestamp
+                }));
+                
+                const response = await fetch('/operaciones/guardar_gesto/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        tipo_gesto: gestureType,
+                        landmarks_data: processedLandmarks
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Gesto guardado correctamente', 'success');
+                    document.getElementById('saveGesture').disabled = true;
+                    recordedLandmarks = [];
+                    loadTrainedGestures();
+                } else {
+                    showNotification(data.message || 'Error al guardar el gesto', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión al guardar el gesto', 'error');
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        }
+
+        async function recognizeGesture(landmarks) {
+            try {
+                const processedLandmarks = landmarks.map(point => ({
+                    x: point.x,
+                    y: point.y,
+                    z: point.z
+                }));
+                
+                const response = await fetch('/operaciones/reconocer_gesto/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        landmarks: processedLandmarks
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.gesto_reconocido) {
+                    const confidence = data.confianza || 0;
+                    updateInteractionConfidence(confidence);
+                    
+                    if (confidence > 0.7) { // Solo agregar si la confianza es alta
+                        addToOperation(data.gesto_reconocido, data.valor);
+                        updateLastGesture(data.gesto_reconocido);
+                    }
+                }
+            } catch (error) {
+                console.error('Error en reconocimiento:', error);
+            }
+        }
+
+        function addToOperation(gestureType, value) {
+            const now = Date.now();
+            
+            // Evitar duplicados rápidos (menos de 1 segundo)
+            if (gestureHistory.length > 0) {
+                const lastGesture = gestureHistory[gestureHistory.length - 1];
+                if (now - lastGesture.timestamp < 1000 && lastGesture.type === gestureType) {
+                    return;
+                }
+            }
+            
+            currentOperation.push(value);
+            gestureHistory.push({
+                type: gestureType,
+                value: value,
+                timestamp: now
+            });
+            
+            updateOperationDisplay();
+            updateGestureHistory();
+        }
+
+        function updateOperationDisplay() {
+            const display = document.getElementById('operationDisplay');
+            if (currentOperation.length === 0) {
+                display.textContent = 'Esperando gestos...';
+            } else {
+                display.textContent = currentOperation.join(' ');
+            }
+        }
+
+        function updateGestureHistory() {
+            const historyDiv = document.getElementById('gestureHistory');
+            if (gestureHistory.length === 0) {
+                historyDiv.innerHTML = '<small class="text-muted">Los gestos reconocidos aparecerán aquí...</small>';
+                return;
+            }
+            
+            const historyHTML = gestureHistory.slice(-10).map(gesture => {
+                const time = new Date(gesture.timestamp).toLocaleTimeString();
+                return `<div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="badge bg-primary">${gesture.type}</span>
+                    <span>${gesture.value}</span>
+                    <small class="text-muted">${time}</small>
+                </div>`;
+            }).join('');
+            
+            historyDiv.innerHTML = historyHTML;
+            historyDiv.scrollTop = historyDiv.scrollHeight;
+        }
+
+        function clearOperation() {
+            currentOperation = [];
+            gestureHistory = [];
+            updateOperationDisplay();
+            updateGestureHistory();
+            updateLastGesture('Ninguno');
+            showNotification('Operación limpiada', 'info');
+        }
+
+        async function calculateResult() {
+            if (currentOperation.length === 0) {
+                showNotification('No hay operación para calcular', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/operaciones/calcular_operacion/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        operacion: currentOperation
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResultModal(data.operacion_completa, data.resultado, data.detalles);
+                } else {
+                    showNotification(data.message || 'Error al calcular', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión al calcular', 'error');
+            }
+        }
+
+        function showResultModal(operation, result, details) {
+            document.getElementById('resultOperation').textContent = `${operation} = ${result}`;
+            document.getElementById('calculationDetails').textContent = details || 'Cálculo realizado correctamente';
+            
+            const modal = new bootstrap.Modal(document.getElementById('resultModal'));
+            modal.show();
+        }
+
+        async function loadTrainedGestures() {
+            try {
+                const response = await fetch('/operaciones/gestos_entrenados/');
+                const data = await response.json();
+                
+                if (data.success) {
+                    trainedGestures = data.gestos;
+                    displayGestures(trainedGestures);
+                    updateGestureTypeOptions();
+                } else {
+                    showNotification('Error al cargar gestos', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error de conexión al cargar gestos', 'error');
+            }
+        }
+
+        function displayGestures(gestures) {
+            const container = document.getElementById('gesturesContainer');
+            const noGesturesDiv = document.getElementById('noGestures');
+            
+            if (gestures.length === 0) {
+                container.style.display = 'none';
+                noGesturesDiv.style.display = 'block';
+                return;
+            }
+            
+            container.style.display = 'grid';
+            noGesturesDiv.style.display = 'none';
+            
+            container.innerHTML = gestures.map(gesture => `
+                <div class="gesture-card">
+                    <canvas class="gesture-canvas" id="gesture-${gesture.id}" width="150" height="150"></canvas>
+                    <h6>${gesture.tipo_gesto_display}</h6>
+                    <p class="text-muted small">Confianza: ${(gesture.confianza * 100).toFixed(1)}%</p>
+                    <p class="text-muted small">Creado: ${new Date(gesture.fecha_creacion).toLocaleDateString()}</p>
+                    <button class="btn btn-danger btn-sm" onclick="deleteGesture(${gesture.id})">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>
+            `).join('');
+            
+            // Dibujar landmarks en cada canvas
+            gestures.forEach(gesture => {
+                drawGesturePreview(gesture);
+            });
+        }
+
+        function drawGesturePreview(gesture) {
+            const canvas = document.getElementById(`gesture-${gesture.id}`);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (gesture.landmarks_promedio && gesture.landmarks_promedio.length > 0) {
+                const landmarks = gesture.landmarks_promedio.map(point => ({
+                    x: point.x * canvas.width,
+                    y: point.y * canvas.height
+                }));
+                
+                // Dibujar conexiones
+                ctx.strokeStyle = '#00FF00';
+                ctx.lineWidth = 2;
+                
+                // Conexiones básicas de la mano (simplificadas)
+                const connections = [
+                    [0, 1], [1, 2], [2, 3], [3, 4], // Pulgar
+                    [0, 5], [5, 6], [6, 7], [7, 8], // Índice
+                    [0, 9], [9, 10], [10, 11], [11, 12], // Medio
+                    [0, 13], [13, 14], [14, 15], [15, 16], // Anular
+                    [0, 17], [17, 18], [18, 19], [19, 20], // Meñique
+                    [5, 9], [9, 13], [13, 17] // Conexiones entre dedos
+                ];
+                
+                connections.forEach(([start, end]) => {
+                    if (landmarks[start] && landmarks[end]) {
+                        ctx.beginPath();
+                        ctx.moveTo(landmarks[start].x, landmarks[start].y);
+                        ctx.lineTo(landmarks[end].x, landmarks[end].y);
+                        ctx.stroke();
+                    }
+                });
+                
+                // Dibujar puntos
+                ctx.fillStyle = '#FF0000';
+                landmarks.forEach(point => {
+                    ctx.beginPath();
+                    ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+            }
+        }
+
+        async function deleteGesture(gestureId) {
+            const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            document.getElementById('confirmMessage').textContent = '¿Estás seguro de que quieres eliminar este gesto? Esta acción no se puede deshacer.';
+            
+            document.getElementById('confirmAction').onclick = async function() {
+                try {
+                    const response = await fetch('/operaciones/eliminar_gesto/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken
+                        },
+                        body: JSON.stringify({
+                            gesto_id: gestureId
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('Gesto eliminado correctamente', 'success');
+                        loadTrainedGestures();
+                    } else {
+                        showNotification(data.message || 'Error al eliminar el gesto', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showNotification('Error de conexión al eliminar el gesto', 'error');
+                }
+                
+                modal.hide();
+            };
+            
+            modal.show();
+        }
+
+        function filterGesturesDisplay() {
+            const searchTerm = document.getElementById('searchGestures').value.toLowerCase();
+            const filterType = document.getElementById('filterGestures').value;
+            
+            let filteredGestures = trainedGestures;
+            
+            // Filtrar por tipo
+            if (filterType === 'numeros') {
+                filteredGestures = filteredGestures.filter(g => g.tipo_gesto.startsWith('numero_'));
+            } else if (filterType === 'operaciones') {
+                filteredGestures = filteredGestures.filter(g => !g.tipo_gesto.startsWith('numero_'));
+            }
+            
+            // Filtrar por búsqueda
+            if (searchTerm) {
+                filteredGestures = filteredGestures.filter(g => 
+                    g.tipo_gesto_display.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            displayGestures(filteredGestures);
+        }
+
+        function updateGestureTypeOptions() {
+            const select = document.getElementById('gestureType');
+            const options = select.querySelectorAll('option');
+            
+            options.forEach(option => {
+                if (option.value) {
+                    const isTrained = trainedGestures.some(g => g.tipo_gesto === option.value);
+                    if (isTrained) {
+                        option.disabled = true;
+                        option.textContent += ' (Ya entrenado)';
+                    } else {
+                        option.disabled = false;
+                        option.textContent = option.textContent.replace(' (Ya entrenado)', '');
+                    }
+                }
+            });
+        }
+
+        // Funciones auxiliares
+        function calculateConfidence(landmarks) {
+            // Calcular confianza basada en la estabilidad de los landmarks
+            if (!landmarks || landmarks.length === 0) return 0;
+            
+            let totalConfidence = 0;
+            landmarks.forEach(point => {
+                // Usar la visibilidad si está disponible, sino usar 1
+                totalConfidence += point.visibility || 1;
+            });
+            
+            return Math.min(totalConfidence / landmarks.length, 1);
+        }
+
+        function updateConfidenceDisplay(confidence) {
+            const indicator = document.getElementById('confidenceIndicator');
+            const text = document.getElementById('confidenceText');
+            
+            const percentage = Math.round(confidence * 100);
+            indicator.style.width = percentage + '%';
+            text.textContent = percentage + '%';
+        }
+
+        function updateInteractionConfidence(confidence) {
+            const indicator = document.getElementById('interactionConfidence');
+            const percentage = Math.round(confidence * 100);
+            indicator.style.width = percentage + '%';
+        }
+
+        function updateLastGesture(gesture) {
+            document.getElementById('lastGesture').textContent = gesture;
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            const text = document.getElementById('connectionText');
+            
+            if (connected) {
+                status.className = 'fas fa-circle status-indicator status-available';
+                text.textContent = 'Conectado';
+            } else {
+                status.className = 'fas fa-circle status-indicator';
+                text.textContent = 'Desconectado';
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Crear notificación toast
+            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+            
+            const toastId = 'toast-' + Date.now();
+            const bgClass = {
+                'success': 'bg-success',
+                'error': 'bg-danger',
+                'warning': 'bg-warning',
+                'info': 'bg-info'
+            }[type] || 'bg-info';
+            
+            const toastHTML = `
+                <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            const toastElement = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+            
+            // Eliminar el toast después de que se oculte
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                toastElement.remove();
+            });
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '9999';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        // Redimensionar canvas cuando cambie el tamaño de la ventana
+        window.addEventListener('resize', function() {
+            if (videoElement && canvasElement) {
+                canvasElement.width = videoElement.videoWidth || 640;
+                canvasElement.height = videoElement.videoHeight || 480;
+            }
+            if (videoElementInteraction && canvasElementInteraction) {
+                canvasElementInteraction.width = videoElementInteraction.videoWidth || 640;
+                canvasElementInteraction.height = videoElementInteraction.videoHeight || 480;
+            }
+        });
+    </script>
+</body>
+</html>
