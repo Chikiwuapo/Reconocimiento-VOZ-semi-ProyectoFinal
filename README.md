@@ -1,5 +1,78 @@
 # 🔐 Sistema de Reconocimiento Facial
 
+## Resumen Rápido del Proyecto
+
+- **¿Qué es?** Aplicación web de autenticación por **reconocimiento facial** con validación de **posición**. Backend en **Django** (templates) y base de datos **MySQL** (producción). En desarrollo, funciona con **SQLite** por defecto.
+- **¿Cómo funciona?**
+  1) El usuario captura su rostro desde el navegador.
+  2) El front envía `email`, `facial_frame` (base64) y `position_data` por `POST` a `/api/login/` o al flujo de registro.
+  3) El backend genera/lee embeddings y compara únicamente contra el usuario del email, y valida posición.
+  4) Si ambas validaciones pasan, se crea sesión y se redirige a `/mantenimiento/`.
+- **¿Qué hace?**
+  - Permite **registro** (múltiples muestras del rostro) y **login facial** seguro (rostro + posición aproximada).
+  - Área de mantenimiento muestra datos del usuario autenticado.
+- **Apartados del proyecto**
+  - `backend/` Django (templates + APIs minimalistas)
+  - `login/` app Django con modelos, vistas, templates y estáticos
+  - `README.md` esta guía
+
+## Ejecución (pasos mínimos)
+
+1) Entrar al backend y crear entorno virtual (Windows/PowerShell)
+```powershell
+cd backend
+python -m venv env
+```
+
+2) Activar entorno virtual
+```powershell
+.\env\Scripts\activate
+```
+
+3) Instalar dependencias
+```powershell
+pip install -r requirements.txt
+```
+
+4) Migraciones
+```powershell
+python manage.py makemigrations
+python manage.py migrate
+```
+
+5) Ejecutar servidor
+```powershell
+python manage.py runserver
+```
+
+6) Acceso rápido
+- Login: http://127.0.0.1:8000/login/
+- Registro: http://127.0.0.1:8000/register/
+
+## Base de datos
+
+- En **producción** trabajamos con **MySQL**. Configurable vía variables de entorno (o `backend/.env`).
+- En **desarrollo**, si no defines `DB_ENGINE=mysql`, se usa **SQLite** automáticamente (sin instalación extra).
+
+## Estructura del proyecto (resumen)
+
+```
+Reconocimiento-VOZ-semi-ProyectoFinal/
+├─ backend/
+│  ├─ core/
+│  │  ├─ settings.py        # Lee .env y configura DB (MySQL o SQLite)
+│  │  └─ urls.py
+│  ├─ login/
+│  │  ├─ models/            # Modelo Usuario (embeddings/positions)
+│  │  ├─ templates/login/   # login.html, register.html, mantenimiento.html
+│  │  ├─ static/js/         # facemesh.js (captura, UX)
+│  │  └─ views/views.py     # register_view, api_login, etc.
+│  └─ requirements.txt
+└─ README.md
+```
+
+---
+
 ## 📋 ¿Qué es el proyecto?
 
 Este es un sistema completo de **reconocimiento facial** desarrollado con Django y React que permite a los usuarios registrarse y autenticarse utilizando su rostro como método de identificación biométrica.
@@ -26,6 +99,51 @@ El sistema implementa dos funcionalidades principales:
 4. **Login:** El usuario se posiciona frente a la cámara para el reconocimiento
 5. **Reconocimiento:** El sistema compara el rostro actual con todos los embeddings almacenados
 6. **Autenticación:** Si hay match exitoso, el usuario queda autenticado automáticamente
+
+## 🔗 Rutas de Acceso (Django Templates)
+
+- Login facial (UI): http://127.0.0.1:8000/login/
+- Registro facial (UI): http://127.0.0.1:8000/register/
+- Área de mantenimiento (protegida): http://127.0.0.1:8000/mantenimiento/
+
+APIs usadas por el front (por si deseas probar con Postman):
+- POST http://127.0.0.1:8000/api/login/
+- POST http://127.0.0.1:8000/api/encode/
+
+## ⚙️ Ejecución Rápida (Backend Django + Templates)
+
+1. Activar entorno virtual (Windows PowerShell):
+   ```powershell
+   .\backend\env\Scripts\Activate.ps1
+   ```
+2. Instalar dependencias:
+   ```powershell
+   pip install -r backend\requirements.txt
+   ```
+3. Exportar variables para usar MySQL (credenciales solicitadas):
+   ```powershell
+   $env:DB_ENGINE="mysql"; $env:MYSQL_DATABASE="app_db"; $env:MYSQL_USER="root"; $env:MYSQL_PASSWORD="mysql"; $env:MYSQL_HOST="127.0.0.1"; $env:MYSQL_PORT="3306"
+   ```
+4. Migraciones (ejecutar desde carpeta backend) y superusuario (OPCIONAL solo para entrar al admin):
+   ```powershell
+   python manage.py makemigrations
+   python manage.py migrate
+   # Solo si deseas entrar al panel de administración Django:
+   # python manage.py createsuperuser
+   ```
+5. Ejecutar servidor:
+   ```powershell
+   python manage.py runserver
+   ```
+6. Navega a:
+   - Login: http://127.0.0.1:8000/login/
+   - Registro: http://127.0.0.1:8000/register/
+
+Notas:
+- La malla de puntos/líneas se dibuja en color blanco y se adapta al rostro en tiempo real.
+- La posición 3D relativa se valida mediante `{x, y, scale}` para mitigar suplantación por distancia/encuadre. Se puede extender a roll/pitch/yaw si lo requieres.
+
+---
 
 ## 🔌 Endpoints para Postman
 
