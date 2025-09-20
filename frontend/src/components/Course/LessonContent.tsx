@@ -13,7 +13,6 @@ export default function LessonContent({ lesson, onMarkCompleted, onMarkPending, 
   const [showConfirm, setShowConfirm] = useState(false)
   const [showAttachments, setShowAttachments] = useState(false)
 
-  const openConfirm = () => setShowConfirm(true)
   const closeConfirm = () => setShowConfirm(false)
 
   const confirmAction = () => {
@@ -27,50 +26,105 @@ export default function LessonContent({ lesson, onMarkCompleted, onMarkPending, 
   }
 
   return (
-    <div className="mt-4">
-      <h2 className="text-white text-xl font-bold">{lesson.title}</h2>
-      <p className="text-slate-300 mt-1 text-sm">{lesson.description}</p>
+    <div className="mt-6">
+      {/* Header de la lección */}
+      <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-6 border border-gray-200 shadow-lg">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-3 h-3 rounded-full ${lesson.status === 'completed' ? 'bg-gray-500' : 'bg-gray-400'}`}></div>
+              <h2 className="text-gray-800 text-2xl font-bold">{lesson.title}</h2>
+            </div>
+            <p className="text-gray-600 text-base leading-relaxed">{lesson.description}</p>
+          </div>
+          
+          {/* Estado de la lección */}
+          <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+            lesson.status === 'completed' 
+              ? 'bg-gray-200 text-gray-700 border border-gray-300' 
+              : 'bg-gray-100 text-gray-600 border border-gray-200'
+          }`}>
+            {lesson.status === 'completed' ? '✓ Completada' : '⏳ En progreso'}
+          </div>
+        </div>
+      </div>
 
+      {/* Índice de la lección */}
       {lesson.timestamps && lesson.timestamps.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-white font-semibold">Índice de la lección</h3>
-          <ul className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-            {lesson.timestamps.map(t => (
-              <li key={t.time} className="text-slate-300">
-                <span className="font-mono text-blue-400 mr-2">{t.time}</span>
-                {t.label}
-              </li>
+        <div className="mt-6 bg-gray-50 rounded-xl p-5 border border-gray-200">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-6 h-6 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg flex items-center justify-center">
+              <span className="text-gray-700 text-sm">📋</span>
+            </div>
+            <h3 className="text-gray-800 font-semibold text-lg">Índice de la lección</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {lesson.timestamps.map((t, idx) => (
+              <div key={t.time} className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg hover:bg-slate-700 transition-colors cursor-pointer group">
+                <div className="w-8 h-8 bg-slate-600 rounded-full flex items-center justify-center text-xs font-bold text-slate-300 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                  {idx + 1}
+                </div>
+                <div className="flex-1">
+                  <div className="font-mono text-blue-400 text-sm font-medium">{t.time}</div>
+                  <div className="text-slate-300 text-sm">{t.label}</div>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
 
-      <div className="mt-4 flex items-center gap-3">
-        <button 
-          onClick={openConfirm}
-          className={`btn-accent-cyan`}
-        >
-          {lesson.status === 'completed' ? 'Quitar completado' : 'Marcar como completada'}
-        </button>
+      {/* Botones de acción */}
+      <div className="mt-6 flex flex-wrap items-center gap-3">
         {lesson.attachments && lesson.attachments.length > 0 && (
           <button
             onClick={() => setShowAttachments(v => !v)}
-            className="px-3 py-2 rounded-md border border-slate-700 text-slate-200 hover:bg-slate-800"
+            className="px-4 py-3 rounded-lg border border-slate-600 bg-slate-700/50 text-slate-200 hover:bg-slate-600 hover:border-slate-500 transition-all duration-200 flex items-center gap-2"
           >
+            <span>📎</span>
             Archivos adjuntos ({lesson.attachments.length})
           </button>
         )}
       </div>
 
-      {showAttachments && lesson.attachments && lesson.attachments.length > 0 && (
-        <div className="mt-3 border border-slate-800 rounded-md p-3 bg-slate-900">
-          <ul className="text-sm text-slate-300 list-disc pl-4">
-            {lesson.attachments.map((a) => (
-              <li key={a.name}><a className="underline hover:text-blue-400" href={a.url}>{a.name}</a></li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* Archivos adjuntos */}
+      <AnimatePresence>
+        {showAttachments && lesson.attachments && lesson.attachments.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden"
+          >
+            <div className="p-4">
+              <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                <span>📁</span>
+                Recursos descargables
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {lesson.attachments.map((a) => (
+                  <a 
+                    key={a.name} 
+                    href={a.url}
+                    className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg hover:bg-slate-600 transition-colors group"
+                  >
+                    <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                      <span className="text-blue-400">📄</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-slate-200 font-medium group-hover:text-white">{a.name}</div>
+                      <div className="text-slate-400 text-xs">Hacer clic para descargar</div>
+                    </div>
+                    <div className="text-slate-400 group-hover:text-blue-400">
+                      <span>⬇️</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showConfirm && (

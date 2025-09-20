@@ -22,17 +22,23 @@ export default function ActivitiesGrid({ onFavoriteChange }: { onFavoriteChange?
 
   const toggleFavorite = (id: string) => {
     setActivities((prev) => {
-      const next = prev.map((a) => (a.id === id ? { ...a, favorite: !a.favorite } : a))
-      next.sort((x, y) => Number(!!y.favorite) - Number(!!x.favorite))
-      return next
+      const updated = prev.map((a) => 
+        a.id === id ? { ...a, favorite: !a.favorite } : a
+      )
+      updated.sort((x, y) => Number(!!y.favorite) - Number(!!x.favorite))
+      
+      const toggled = updated.find(a => a.id === id)
+      if (toggled) {
+        const isFavorite = Boolean(toggled.favorite)
+        const msg = isFavorite 
+          ? `Añadido a favoritos: ${toggled.title}` 
+          : `Quitado de favoritos: ${toggled.title}`
+        window.dispatchEvent(new CustomEvent('app:notify', { detail: msg }))
+        if (onFavoriteChange) onFavoriteChange(id, isFavorite)
+      }
+      
+      return updated
     })
-    const updated = activities.find((a) => a.id === id)
-    if (updated && onFavoriteChange) onFavoriteChange(id, !updated.favorite)
-    const toggled = activities.find(a => a.id === id)
-    if (toggled) {
-      const msg = !toggled.favorite ? `Añadido a favoritos: ${toggled.title}` : `Quitado de favoritos: ${toggled.title}`
-      window.dispatchEvent(new CustomEvent('app:notify', { detail: msg }))
-    }
   }
 
   return (

@@ -1,230 +1,885 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Layout from '../../components/Blackboard/Layout'
-import { useState } from 'react'
+import type { ModelType, TrainingSession, ModelStats } from '../../types'
 
 export default function Models() {
-  const [trainingProgress, setTrainingProgress] = useState<{[key: string]: number}>({})
-  const [isTraining, setIsTraining] = useState<{[key: string]: boolean}>({})
+  const navigate = useNavigate()
+  
+  // Estados principales
+  const [trainingProgress, setTrainingProgress] = useState(0)
+  const [isTraining, setIsTraining] = useState(false)
+  const [showModelSelection, setShowModelSelection] = useState(false)
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+  const [selectedModel, setSelectedModel] = useState<ModelType | null>(null)
+  const [createdModels, setCreatedModels] = useState<ModelType[]>([])
+  const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([])
+  const [currentSession, setCurrentSession] = useState<TrainingSession | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filterType, setFilterType] = useState('all')
+  const [modelStats, setModelStats] = useState<ModelStats>({
+    totalModels: 0,
+    activeModels: 0,
+    totalTrainingSessions: 0,
+    averageAccuracy: 0
+  })
 
-  const startTraining = (modelId: string) => {
-    setIsTraining(prev => ({...prev, [modelId]: true}))
-    setTrainingProgress(prev => ({...prev, [modelId]: 0}))
+  // Cargar datos del localStorage al inicializar y scroll automático arriba
+  useEffect(() => {
+    loadDataFromStorage()
+    // Scroll automático arriba al cargar el componente
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
+  // Guardar datos en localStorage cuando cambien
+  useEffect(() => {
+    saveDataToStorage()
+    updateStats()
+  }, [createdModels, trainingSessions])
+
+  // Bloquear scroll cuando el modal esté abierto
+  useEffect(() => {
+    if (showModelSelection || showConfirmationModal || isTraining) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
     
-    // Simular progreso de entrenamiento
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showModelSelection, showConfirmationModal, isTraining])
+
+  // Funciones de persistencia
+  const loadDataFromStorage = () => {
+    try {
+      const savedModels = localStorage.getItem('voiceModels')
+      const savedSessions = localStorage.getItem('trainingSessions')
+      
+      if (savedModels) {
+        const models = JSON.parse(savedModels).map((model: any) => ({
+          ...model,
+          createdAt: new Date(model.createdAt)
+        }))
+        setCreatedModels(models)
+      }
+      
+      if (savedSessions) {
+        const sessions = JSON.parse(savedSessions).map((session: any) => ({
+          ...session,
+          startTime: new Date(session.startTime),
+          endTime: session.endTime ? new Date(session.endTime) : undefined
+        }))
+        setTrainingSessions(sessions)
+      }
+    } catch (error) {
+      console.error('Error loading data from storage:', error)
+    }
+  }
+
+  const saveDataToStorage = () => {
+    try {
+      localStorage.setItem('voiceModels', JSON.stringify(createdModels))
+      localStorage.setItem('trainingSessions', JSON.stringify(trainingSessions))
+    } catch (error) {
+      console.error('Error saving data to storage:', error)
+    }
+  }
+
+  const updateStats = () => {
+    const totalModels = createdModels.length
+    const activeModels = createdModels.filter(model => model.isActive).length
+    const totalTrainingSessions = trainingSessions.length
+    const completedModels = createdModels.filter(model => model.accuracy)
+    const averageAccuracy = completedModels.length > 0 
+      ? completedModels.reduce((sum, model) => sum + (model.accuracy || 0), 0) / completedModels.length
+      : 0
+
+    setModelStats({
+      totalModels,
+      activeModels,
+      totalTrainingSessions,
+      averageAccuracy
+    })
+  }
+
+  const availableModels: ModelType[] = [
+    {
+      id: 'vocales',
+      name: 'Modelo de Vocales',
+      description: 'Entrenamiento para reconocimiento de vocales habladas (A, E, I, O, U)',
+      icon: '🗣️',
+      color: 'emerald',
+      bgColor: 'from-emerald-400 to-emerald-600',
+      duration: '~10 min',
+      difficulty: 'Básica',
+      type: 'Vocales',
+      image: 'https://images.unsplash.com/photo-1589254065878-42c9da997008?w=300&h=200&fit=crop&crop=center'
+    },
+    {
+      id: 'abecedario',
+      name: 'Modelo de Abecedario',
+      description: 'Entrenamiento para reconocimiento de letras del abecedario completo',
+      icon: '🔤',
+      color: 'blue',
+      bgColor: 'from-blue-400 to-blue-600',
+      duration: '~25 min',
+      difficulty: 'Intermedia',
+      type: 'Letras',
+      image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=200&fit=crop&crop=center'
+    },
+    {
+      id: 'palabras',
+      name: 'Modelo de Palabras',
+      description: 'Entrenamiento para reconocimiento de palabras clave y vocabulario',
+      icon: '📝',
+      color: 'purple',
+      bgColor: 'from-purple-400 to-purple-600',
+      duration: '~20 min',
+      difficulty: 'Intermedia',
+      type: 'Palabras',
+      image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=300&h=200&fit=crop&crop=center'
+    },
+    {
+      id: 'aritmeticas',
+      name: 'Operaciones Aritméticas',
+      description: 'Entrenamiento para reconocimiento de operaciones matemáticas básicas',
+      icon: '➕',
+      color: 'orange',
+      bgColor: 'from-orange-400 to-orange-600',
+      duration: '~15 min',
+      difficulty: 'Básica',
+      type: 'Matemáticas',
+      image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=300&h=200&fit=crop&crop=center'
+    }
+  ]
+
+  // Funciones de manejo de modelos
+  const handleStartTraining = () => {
+    setShowModelSelection(true)
+  }
+
+  const handleModelSelect = (model: ModelType) => {
+    // Crear un nuevo modelo en la lista de modelos creados
+    const newCreatedModel = {
+      id: `model_${Date.now()}`,
+      name: model.name,
+      description: model.description,
+      type: model.type,
+      icon: model.icon,
+      image: model.image,
+      bgColor: model.bgColor,
+      color: model.color,
+      status: 'pending' as const,
+      accuracy: 0,
+      isActive: false,
+      createdAt: new Date(),
+      duration: model.duration,
+      difficulty: model.difficulty
+    }
+    
+    // Agregar el modelo a la lista de modelos creados
+    setCreatedModels(prev => [...prev, newCreatedModel])
+    
+    // Cerrar el modal
+    setShowModelSelection(false)
+    
+    // Mostrar mensaje de éxito (opcional)
+    console.log(`Modelo "${model.name}" agregado a tus modelos creados`)
+  }
+
+  const handleConfirmModel = () => {
+    if (selectedModel) {
+      const newModel: ModelType = {
+        ...selectedModel,
+        id: `${selectedModel.id}_${Date.now()}`,
+        status: 'Entrenando',
+        accuracy: 0,
+        createdAt: new Date(),
+        isActive: false,
+        trainingData: []
+      }
+      
+      setCreatedModels(prev => [...prev, newModel])
+      setShowConfirmationModal(false)
+      setSelectedModel(null)
+      startTraining(newModel)
+    }
+  }
+
+  const startTraining = (model: ModelType) => {
+    const session: TrainingSession = {
+      id: `session_${Date.now()}`,
+      modelId: model.id,
+      startTime: new Date(),
+      progress: 0,
+      status: 'training',
+      samples: 0
+    }
+
+    setTrainingSessions(prev => [...prev, session])
+    setCurrentSession(session)
+    setIsTraining(true)
+    setTrainingProgress(0)
+    
+    // Simular progreso de entrenamiento realista
     const interval = setInterval(() => {
       setTrainingProgress(prev => {
-        const currentProgress = prev[modelId] || 0
-        if (currentProgress >= 100) {
+        const newProgress = prev + Math.random() * 3 + 1
+        
+        // Actualizar sesión
+        setTrainingSessions(prevSessions => 
+          prevSessions.map(s => 
+            s.id === session.id 
+              ? { ...s, progress: newProgress, samples: Math.floor(newProgress * 10) }
+              : s
+          )
+        )
+
+        if (newProgress >= 100) {
           clearInterval(interval)
-          setIsTraining(prevTraining => ({...prevTraining, [modelId]: false}))
-          return prev
+          completeTraining(model, session)
+          return 100
         }
-        return {...prev, [modelId]: currentProgress + 2}
+        return newProgress
       })
-    }, 100)
+    }, 150)
+  }
+
+  const completeTraining = (model: ModelType, session: TrainingSession) => {
+    const accuracy = Math.floor(Math.random() * 20 + 80) // 80-99%
+    
+    // Actualizar modelo
+    setCreatedModels(prev => 
+      prev.map(m => 
+        m.id === model.id 
+          ? { 
+              ...m, 
+              status: 'Completado', 
+              accuracy: accuracy,
+              isActive: true 
+            }
+          : m
+      )
+    )
+
+    // Finalizar sesión
+    setTrainingSessions(prev => 
+      prev.map(s => 
+        s.id === session.id 
+          ? { 
+              ...s, 
+              endTime: new Date(), 
+              status: 'completed', 
+              progress: 100 
+            }
+          : s
+      )
+    )
+
+    setIsTraining(false)
+    setCurrentSession(null)
+    setTrainingProgress(0)
+  }
+
+  const deleteModel = (modelId: string) => {
+    setCreatedModels(prev => prev.filter(model => model.id !== modelId))
+    setTrainingSessions(prev => prev.filter(session => session.modelId !== modelId))
+  }
+
+  const toggleModelActive = (modelId: string) => {
+    setCreatedModels(prev => 
+      prev.map(model => 
+        model.id === modelId 
+          ? { ...model, isActive: !model.isActive }
+          : model
+      )
+    )
+  }
+
+  const useModel = (modelId: string) => {
+    const model = createdModels.find(m => m.id === modelId)
+    if (model && model.isActive) {
+      alert(`Usando modelo: ${model.name}\nPrecisión: ${model.accuracy}\nEstado: Activo`)
+      // Aquí implementarías la lógica real de uso del modelo
+    } else {
+      alert('El modelo debe estar activo para poder usarlo')
+    }
+  }
+
+
+
+  const viewModel = (model: ModelType) => {
+    // Guardar la información del modelo en localStorage para la página de entrenamiento
+    localStorage.setItem('selectedModel', JSON.stringify(model))
+    
+    // Navegar a la página de entrenamiento
+    navigate('/training')
+  }
+
+  // Funciones de filtrado y búsqueda
+  const filteredModels = createdModels.filter(model => {
+    const matchesSearch = model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         model.type.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesFilter = filterType === 'all' || 
+                         (filterType === 'active' && model.isActive) ||
+                         (filterType === 'inactive' && !model.isActive) ||
+                         (filterType === 'completed' && model.status === 'Completado')
+    
+    return matchesSearch && matchesFilter
+  })
+
+  const clearAllData = () => {
+    if (confirm('¿Estás seguro de que quieres eliminar todos los modelos y datos? Esta acción no se puede deshacer.')) {
+      setCreatedModels([])
+      setTrainingSessions([])
+      localStorage.removeItem('voiceModels')
+      localStorage.removeItem('trainingSessions')
+    }
+  }
+
+  const getColorClasses = (color: string) => {
+    const colorMap: { [key: string]: any } = {
+      emerald: {
+        bg: 'bg-emerald-600 hover:bg-emerald-700',
+        text: 'text-emerald-600',
+        badge: 'bg-emerald-100 text-emerald-800'
+      },
+      blue: {
+        bg: 'bg-blue-600 hover:bg-blue-700',
+        text: 'text-blue-600',
+        badge: 'bg-blue-100 text-blue-800'
+      },
+      purple: {
+        bg: 'bg-purple-600 hover:bg-purple-700',
+        text: 'text-purple-600',
+        badge: 'bg-purple-100 text-purple-800'
+      },
+      orange: {
+        bg: 'bg-orange-600 hover:bg-orange-700',
+        text: 'text-orange-600',
+        badge: 'bg-orange-100 text-orange-800'
+      }
+    }
+    return colorMap[color] || colorMap.blue
   }
 
   return (
-    <Layout pageTitle="Mis Modelos de Voz" pageSubtitle="Gestiona y entrena tus modelos de reconocimiento de voz personalizados.">
+    <Layout>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+        <div className="w-full max-w-none">
+          {/* Header */}
+          <div className="text-center mb-12">
       
-      {/* Sección de Modelos Pre-entrenados */}
-      <section className="container-page mt-6 animate-slide-up">
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-header">🎯 Modelos Pre-entrenados Disponibles</h2>
-            <button className="btn-accent-green btn-lg">Explorar más modelos</button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="card p-0 overflow-hidden h-[300px] flex flex-col border-2 border-accent-green/20">
-              <div className="h-28 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                <span className="text-4xl">🎤</span>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-header">Whisper Base</h3>
-                <p className="text-sm text-slate-600">Modelo OpenAI multiidioma</p>
-                <div className="mt-2 flex gap-2">
-                  <span className="badge">Español</span>
-                  <span className="badge">Inglés</span>
+
+          {/* Tarjeta grande para crear modelo - ANCHO COMPLETO */}
+          <div className="mb-12 w-full">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 w-full">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold mb-4">🎤 Crea tu Modelo Personalizado</h2>
+                  <p className="text-xl text-blue-100 mb-6 max-w-3xl">
+                    Entrena un modelo de reconocimiento de voz único con tu propia voz. 
+                    Obtén mayor precisión y personalización para tus necesidades específicas.
+                  </p>
+                  <div className="flex flex-wrap gap-4 mb-6">
+                    <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
+                      ✨ Alta Precisión
+                    </span>
+                    <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
+                      🚀 Entrenamiento Rápido
+                    </span>
+                    <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
+                      🎯 Personalizado
+                    </span>
+                  </div>
+                </div>
+                <div className="ml-8">
+                  <button 
+                    onClick={handleStartTraining}
+                    className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    Comenzar Entrenamiento
+                  </button>
                 </div>
               </div>
-              <div className="mt-auto p-5 pt-0 flex gap-3">
-                <button className="btn-accent-green">Usar modelo</button>
-                <button className="btn-accent-cyan">Probar</button>
+            </div>
+          </div>
+
+          {/* Panel de Estadísticas */}
+          {createdModels.length > 0 && (
+            <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">📊</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Total Modelos</p>
+                    <p className="text-2xl font-bold text-gray-800">{modelStats.totalModels}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">✅</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Modelos Activos</p>
+                    <p className="text-2xl font-bold text-gray-800">{modelStats.activeModels}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Precisión Promedio</p>
+                    <p className="text-2xl font-bold text-gray-800">{modelStats.averageAccuracy.toFixed(1)}%</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <span className="text-2xl">🏃</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Entrenamientos</p>
+                    <p className="text-2xl font-bold text-gray-800">{modelStats.totalTrainingSessions}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Sección: Tus modelos creados */}
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">
+                🎯 Tus Modelos Creados
+              </h2>
+              {createdModels.length > 0 && (
+                <button 
+                  onClick={clearAllData}
+                  className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                >
+                  Limpiar Todo
+                </button>
+              )}
+            </div>
+
+            {/* Controles de búsqueda y filtros */}
+            {createdModels.length > 0 && (
+              <div className="mb-6 flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="Buscar modelos por nombre o tipo..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="all">Todos</option>
+                    <option value="active">Activos</option>
+                    <option value="inactive">Inactivos</option>
+                    <option value="completed">Completados</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            
+            {/* Mostrar modelos creados o mensaje vacío */}
+            {createdModels.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-4xl text-gray-400">🎤</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                  No tienes modelos creados aún
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  Haz clic en "Comenzar Entrenamiento" para crear tu primer modelo personalizado
+                </p>
+                <button 
+                  onClick={handleStartTraining}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Crear mi primer modelo
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {filteredModels.map((model) => {
+                  const colors = getColorClasses(model.color)
+                  const isTraining = currentSession?.modelId === model.id
+                  
+                  return (
+                    <div key={model.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                      {/* Header con gradiente y círculo blanco */}
+                      <div className={`bg-gradient-to-r ${model.bgColor} h-16 relative`}>
+                        <div className="absolute top-2 left-2 w-5 h-5 bg-white/30 rounded-full"></div>
+                        <div className="absolute top-2 right-2 w-10 h-1.5 bg-white/40 rounded-full"></div>
+                        
+                        {/* Indicadores de estado */}
+                        {model.status === 'completed' && (
+                          <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-bl-lg">
+                            ✓ LISTO
+                          </div>
+                        )}
+                        {isTraining && (
+                          <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-bl-lg animate-pulse">
+                            🔄 ENTRENANDO
+                          </div>
+                        )}
+                        {!model.isActive && model.status === 'completed' && (
+                          <div className="absolute -top-1 -right-1 bg-gray-500 text-white text-xs font-bold px-2 py-0.5 rounded-bl-lg">
+                            INACTIVO
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="p-4">
+                        {/* Imagen del modelo */}
+                        <div className="mb-3">
+                          <img 
+                            src={model.image} 
+                            alt={model.name}
+                            className="w-full h-16 object-cover rounded-lg shadow-md"
+                          />
+                        </div>
+                        
+                        {/* Ícono del modelo y controles */}
+                        <div className="flex items-center mb-2">
+                          <div className="w-6 h-6 flex items-center justify-center mr-2">
+                            <span className="text-lg">{model.icon}</span>
+                          </div>
+                          <div className="ml-auto flex gap-1">
+                            {/* Botón activar/desactivar */}
+                            <button
+                              onClick={() => toggleModelActive(model.id)}
+                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors ${
+                                model.isActive ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                              }`}
+                              title={model.isActive ? 'Desactivar' : 'Activar'}
+                            >
+                              {model.isActive ? '●' : '○'}
+                            </button>
+                            {/* Botón eliminar */}
+                            <button
+                              onClick={() => deleteModel(model.id)}
+                              className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs hover:bg-red-200 transition-colors"
+                              title="Eliminar modelo"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <h3 className="text-sm font-bold text-gray-800 mb-2">{model.name}</h3>
+                        <p className="text-gray-600 text-xs mb-3 leading-relaxed line-clamp-2">
+                          {model.description}
+                        </p>
+                        
+                        {/* Información de estado y precisión */}
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div className="bg-gray-50 rounded-lg p-2">
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Estado</div>
+                            <div className="text-xs font-semibold text-gray-800">
+                              {isTraining ? 'Entrenando' : model.status === 'completed' ? 'Completado' : 'Pendiente'}
+                            </div>
+                          </div>
+                          <div className="bg-gray-50 rounded-lg p-2">
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Precisión</div>
+                            <div className="text-xs font-semibold text-gray-800">
+                              {model.accuracy ? `${model.accuracy.toFixed(1)}%` : 'N/A'}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Barra de progreso si está entrenando */}
+                        {isTraining && (
+                          <div className="mb-3">
+                            <div className="flex justify-between text-xs text-gray-600 mb-1">
+                              <span>Progreso</span>
+                              <span>{trainingProgress}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${trainingProgress}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Botones de acción */}
+                        <div className="flex flex-col gap-2 mt-auto">
+                          {model.status === 'completed' ? (
+                            <>
+                              <button 
+                                onClick={() => useModel(model.id)}
+                                className={`w-full ${colors.bg} text-white py-2 px-3 rounded-lg text-xs font-medium transition-all transform hover:scale-105 shadow-md`}
+                                disabled={!model.isActive}
+                              >
+                                {model.isActive ? 'Usar' : 'Inactivo'}
+                              </button>
+                              <button 
+                                onClick={() => viewModel(model)}
+                                className="w-full bg-blue-100 text-blue-700 py-2 px-3 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors shadow-md"
+                              >
+                                Mira tu modelo
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              {/* Barra de progreso pequeña */}
+                               <div className="w-full">
+                                 <div className="flex justify-between text-xs text-gray-600 mb-1">
+                                   <span>Entrenamiento</span>
+                                   <span>{isTraining ? `${trainingProgress}%` : '0%'}</span>
+                                 </div>
+                                 <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                   <div 
+                                     className={`${colors.bg.replace('bg-', 'bg-')} h-2 rounded-full transition-all duration-300`}
+                                     style={{ width: `${isTraining ? trainingProgress : 0}%` }}
+                                   ></div>
+                                 </div>
+                               </div>
+                              <button 
+                                onClick={() => viewModel(model)}
+                                className="w-full bg-blue-100 text-blue-700 py-2 px-3 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors shadow-md"
+                              >
+                                Mira tu modelo
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Modal de selección de modelos */}
+      {showModelSelection && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            {/* Header del modal */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">🎯 Selecciona el Tipo de Modelo</h2>
+                  <p className="text-blue-100">Elige qué tipo de modelo de voz quieres entrenar</p>
+                </div>
+                <button 
+                  onClick={() => setShowModelSelection(false)}
+                  className="text-white/80 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                >
+                  ×
+                </button>
               </div>
             </div>
 
-            <div className="card p-0 overflow-hidden h-[300px] flex flex-col border-2 border-accent-purple/20">
-              <div className="h-28 bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-                <span className="text-4xl">🧠</span>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-header">Wav2Vec2</h3>
-                <p className="text-sm text-slate-600">Facebook AI Research</p>
-                <div className="mt-2 flex gap-2">
-                  <span className="badge">Español</span>
-                  <span className="badge">Fine-tuning</span>
-                </div>
-              </div>
-              <div className="mt-auto p-5 pt-0 flex gap-3">
-                <button className="btn-accent-purple">Usar modelo</button>
-                <button className="btn-accent-cyan">Probar</button>
-              </div>
-            </div>
-
-            <div className="card p-0 overflow-hidden h-[300px] flex flex-col border-2 border-primary/20">
-              <div className="h-28 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                <span className="text-4xl">⚡</span>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-header">DeepSpeech</h3>
-                <p className="text-sm text-slate-600">Mozilla Open Source</p>
-                <div className="mt-2 flex gap-2">
-                  <span className="badge">Rápido</span>
-                  <span className="badge">Ligero</span>
-                </div>
-              </div>
-              <div className="mt-auto p-5 pt-0 flex gap-3">
-                <button className="btn-primary">Usar modelo</button>
-                <button className="btn-accent-cyan">Probar</button>
-              </div>
-            </div>
-
-            <div className="card p-0 overflow-hidden h-[300px] flex flex-col border-2 border-slate-200">
-              <div className="h-28 bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-                <span className="text-4xl">➕</span>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-header">Crear Nuevo</h3>
-                <p className="text-sm text-slate-600">Entrena tu propio modelo</p>
-                <div className="mt-2 flex gap-2">
-                  <span className="badge">Personalizado</span>
-                </div>
-              </div>
-              <div className="mt-auto p-5 pt-0 flex gap-3">
-                <button className="btn-accent-purple btn-lg w-full">Crear modelo</button>
+            {/* Contenido del modal - Tarjetas flotantes */}
+            <div className="p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {availableModels.map((model) => {
+                  const colors = getColorClasses(model.color)
+                  return (
+                    <div 
+                      key={model.id}
+                      onClick={() => handleModelSelect(model)}
+                      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 cursor-pointer hover:border-blue-300 overflow-hidden"
+                    >
+                      {/* Header con gradiente y círculo blanco */}
+                      <div className={`bg-gradient-to-r ${model.bgColor} h-16 relative`}>
+                        <div className="absolute top-2 left-2 w-5 h-5 bg-white/30 rounded-full"></div>
+                        <div className="absolute top-2 right-2 w-10 h-1.5 bg-white/40 rounded-full"></div>
+                        {/* Etiqueta "NUEVO" si es necesario */}
+                        {model.id === 'vocales' && (
+                          <div className="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold px-2 py-0.5 rounded-bl-lg">
+                            NUEVO
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="p-4">
+                        {/* Imagen del modelo */}
+                        <div className="mb-3">
+                          <img 
+                            src={model.image} 
+                            alt={model.name}
+                            className="w-full h-16 object-cover rounded-lg shadow-md"
+                          />
+                        </div>
+                        
+                        {/* Ícono del modelo y estrella */}
+                        <div className="flex items-center mb-2">
+                          <div className="w-6 h-6 flex items-center justify-center mr-2">
+                            <span className="text-lg">{model.icon}</span>
+                          </div>
+                          {/* Estrella de favorito */}
+                          <div className="ml-auto">
+                            <svg className="w-4 h-4 text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                            </svg>
+                          </div>
+                        </div>
+                        
+                        <h3 className="text-sm font-bold text-gray-800 mb-2">{model.name}</h3>
+                        <p className="text-gray-600 text-xs mb-3 leading-relaxed line-clamp-2">
+                          {model.description}
+                        </p>
+                        
+                        {/* Información adicional */}
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div className="bg-gray-50 rounded-lg p-2">
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Duración</div>
+                            <div className="text-xs font-semibold text-gray-800">{model.duration}</div>
+                          </div>
+                          <div className="bg-gray-50 rounded-lg p-2">
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Nivel</div>
+                            <div className="text-xs font-semibold text-gray-800">{model.difficulty}</div>
+                          </div>
+                        </div>
+                        
+                        {/* Indicador de selección */}
+                        <div className="mt-auto pt-2">
+                          <div className="text-center text-xs text-gray-500">
+                            Haz clic para seleccionar
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
         </div>
-      </section>
+      )}
 
-      {/* Sección de Mis Modelos Personalizados */}
-      <section className="container-page mt-8 animate-slide-up">
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-header">🔧 Mis Modelos Personalizados</h2>
-            <button className="btn-accent-purple btn-lg">Nuevo modelo personalizado</button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div className="card p-0 overflow-hidden h-[320px] flex flex-col">
-              <div className="h-28 bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-                <span className="text-4xl">🎙️</span>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-header">Reconocedor Médico</h3>
-                <p className="text-sm text-slate-600">Especializado en terminología médica</p>
-                <p className="text-xs text-slate-500 mt-1">Última ejecución: hace 2 días</p>
-                
-                {isTraining['medical'] && (
-                  <div className="mt-3">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Entrenando...</span>
-                      <span>{trainingProgress['medical'] || 0}%</span>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="bg-accent-purple h-2 rounded-full transition-all duration-300" 
-                        style={{width: `${trainingProgress['medical'] || 0}%`}}
-                      ></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="mt-auto p-5 pt-0 flex gap-3">
-                <button 
-                  className="btn-accent-purple"
-                  onClick={() => startTraining('medical')}
-                  disabled={isTraining['medical']}
-                >
-                  {isTraining['medical'] ? 'Entrenando...' : 'Entrenar'}
-                </button>
-                <button className="btn-accent-cyan">Probar</button>
+      {/* Modal de confirmación */}
+      {showConfirmationModal && selectedModel && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+            {/* Header del modal */}
+            <div className={`bg-gradient-to-r ${selectedModel.bgColor} text-white p-6 rounded-t-2xl`}>
+              <div className="text-center">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">{selectedModel.icon}</span>
+                </div>
+                <h2 className="text-xl font-bold">Confirmar Creación</h2>
               </div>
             </div>
 
-            <div className="card p-0 overflow-hidden h-[320px] flex flex-col">
-              <div className="h-28 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                <span className="text-4xl">📞</span>
+            {/* Contenido del modal */}
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  ¿Crear {selectedModel.name}?
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Estás a punto de crear un modelo de entrenamiento para {selectedModel.type.toLowerCase()}. 
+                  Este proceso tomará aproximadamente {selectedModel.duration}.
+                </p>
               </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-header">Asistente Telefónico</h3>
-                <p className="text-sm text-slate-600">Optimizado para llamadas</p>
-                <p className="text-xs text-slate-500 mt-1">Última ejecución: hace 5 días</p>
-                
-                {isTraining['phone'] && (
-                  <div className="mt-3">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Entrenando...</span>
-                      <span>{trainingProgress['phone'] || 0}%</span>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="bg-accent-green h-2 rounded-full transition-all duration-300" 
-                        style={{width: `${trainingProgress['phone'] || 0}%`}}
-                      ></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className="mt-auto p-5 pt-0 flex gap-3">
-                <button 
-                  className="btn-accent-green"
-                  onClick={() => startTraining('phone')}
-                  disabled={isTraining['phone']}
-                >
-                  {isTraining['phone'] ? 'Entrenando...' : 'Entrenar'}
-                </button>
-                <button className="btn-accent-cyan">Probar</button>
-              </div>
-            </div>
 
-            <div className="card p-0 overflow-hidden h-[320px] flex flex-col">
-              <div className="h-28 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                <span className="text-4xl">🎵</span>
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-header">Transcriptor Musical</h3>
-                <p className="text-sm text-slate-600">Para letras y notas musicales</p>
-                <p className="text-xs text-slate-500 mt-1">Última ejecución: hace 1 semana</p>
-                
-                {isTraining['music'] && (
-                  <div className="mt-3">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Entrenando...</span>
-                      <span>{trainingProgress['music'] || 0}%</span>
-                    </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="bg-primary h-2 rounded-full transition-all duration-300" 
-                        style={{width: `${trainingProgress['music'] || 0}%`}}
-                      ></div>
-                    </div>
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <h4 className="font-semibold text-gray-800 mb-2">Detalles del modelo:</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Tipo:</span>
+                    <span className="font-medium">{selectedModel.type}</span>
                   </div>
-                )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Duración estimada:</span>
+                    <span className="font-medium">{selectedModel.duration}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Nivel de dificultad:</span>
+                    <span className="font-medium">{selectedModel.difficulty}</span>
+                  </div>
+                </div>
               </div>
-              <div className="mt-auto p-5 pt-0 flex gap-3">
+
+              <div className="flex gap-3">
                 <button 
-                  className="btn-primary"
-                  onClick={() => startTraining('music')}
-                  disabled={isTraining['music']}
+                  onClick={() => {
+                    setShowConfirmationModal(false)
+                    setSelectedModel(null)
+                  }}
+                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-medium"
                 >
-                  {isTraining['music'] ? 'Entrenando...' : 'Entrenar'}
+                  Cancelar
                 </button>
-                <button className="btn-accent-cyan">Probar</button>
+                <button 
+                  onClick={handleConfirmModel}
+                  className={`flex-1 px-4 py-2 bg-gradient-to-r ${selectedModel.bgColor} text-white rounded-lg hover:opacity-90 transition-all font-medium`}
+                >
+                  Crear Modelo
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      )}
+
+      {/* Modal de progreso de entrenamiento */}
+      {isTraining && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
+              <div className="text-center">
+                <h2 className="text-xl font-bold mb-2">🎤 Entrenando Modelo</h2>
+                <p className="text-blue-100">Creando tu modelo personalizado...</p>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">Progreso del entrenamiento</span>
+                  <span className="text-sm font-bold text-blue-600">{trainingProgress}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
+                    style={{width: `${trainingProgress}%`}}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="text-2xl mb-2">⏳</div>
+                <p className="text-gray-600 text-sm">
+                  Por favor espera mientras entrenamos tu modelo...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }

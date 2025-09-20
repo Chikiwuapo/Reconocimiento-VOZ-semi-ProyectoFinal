@@ -1,9 +1,11 @@
 import Layout from '../../components/Blackboard/Layout'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import type { ModelType } from '../../types'
 
 export default function Training() {
   const [selectedDataset, setSelectedDataset] = useState('')
   const [selectedModel, setSelectedModel] = useState('')
+  const [selectedModelInfo, setSelectedModelInfo] = useState<ModelType | null>(null)
   const [trainingConfig, setTrainingConfig] = useState({
     epochs: 10,
     batchSize: 32,
@@ -14,6 +16,25 @@ export default function Training() {
   const [trainingProgress, setTrainingProgress] = useState(0)
   const [currentEpoch, setCurrentEpoch] = useState(0)
   const [trainingLogs, setTrainingLogs] = useState<string[]>([])
+
+  // Cargar modelo seleccionado desde localStorage
+  useEffect(() => {
+    const savedModel = localStorage.getItem('selectedModelForTraining')
+    if (savedModel) {
+      try {
+        const modelInfo = JSON.parse(savedModel)
+        setSelectedModelInfo(modelInfo)
+        setTrainingConfig(prev => ({
+          ...prev,
+          modelName: modelInfo.name || ''
+        }))
+        // Limpiar el localStorage después de cargar
+        localStorage.removeItem('selectedModelForTraining')
+      } catch (error) {
+        console.error('Error al cargar el modelo seleccionado:', error)
+      }
+    }
+  }, [])
 
   const startTraining = () => {
     if (!selectedDataset || !selectedModel || !trainingConfig.modelName) {
@@ -55,6 +76,35 @@ export default function Training() {
   return (
     <Layout pageTitle="Entrenar Modelo" pageSubtitle="Crea y entrena tu propio modelo de reconocimiento de voz personalizado.">
       
+      {/* Información del Modelo Seleccionado */}
+      {selectedModelInfo && (
+        <section className="container-page mt-6 animate-slide-up">
+          <div className="card">
+            <h2 className="text-lg font-semibold text-header mb-4">🎯 Modelo Seleccionado</h2>
+            <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
+              <div className={`w-16 h-16 bg-gradient-to-r ${selectedModelInfo.bgColor} rounded-xl flex items-center justify-center text-2xl`}>
+                {selectedModelInfo.icon}
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-gray-800">{selectedModelInfo.name}</h3>
+                <p className="text-gray-600 text-sm mb-2">{selectedModelInfo.description}</p>
+                <div className="flex space-x-4 text-sm">
+                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                    📊 {selectedModelInfo.type}
+                  </span>
+                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    ⏱️ {selectedModelInfo.duration}
+                  </span>
+                  <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                    🎓 {selectedModelInfo.difficulty}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Configuración del Entrenamiento */}
       <section className="container-page mt-6 animate-slide-up">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

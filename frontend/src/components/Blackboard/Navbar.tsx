@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import ProfileModal from './ProfileModal'
 
 const navItems = [
-  { to: '/', label: 'Inicio' },
+  { to: '/dashboard', label: 'Inicio' },
   { to: '/models', label: 'Modelos' },
 ]
 
@@ -27,7 +27,7 @@ export default function Navbar({ notifications = 0 }: { notifications?: number }
     <>
     <header className="bg-white/80 backdrop-blur sticky top-0 z-40 border-b border-slate-100">
       <div className="container-page flex items-center justify-between py-3">
-        <Link to="/" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
+        <Link to="/dashboard" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
             {/* Abstract ML icon */}
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">

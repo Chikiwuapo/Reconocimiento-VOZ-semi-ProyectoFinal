@@ -173,6 +173,11 @@ export default function CoursePage() {
     } catch {}
   }, [currentIndex, CURRENT_KEY])
 
+  // Scroll automático arriba al entrar al curso
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [slug])
+
   const current = lessons[currentIndex]
 
   const markCompleted = () => {
@@ -192,24 +197,50 @@ export default function CoursePage() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 p-6">
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-4">
+      <section className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 p-8 shadow-lg">
+        {/* Efectos de fondo */}
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-100/30 via-gray-200/20 to-gray-300/30" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-gray-100/40 to-gray-200/40 rounded-full blur-2xl" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="flex-1">
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-100">{courseTitle}</h1>
-            <p className="text-slate-300 mt-1">Aprende paso a paso con lecciones prácticas, recursos descargables y proyecto final.</p>
-          </div>
-          <button className="btn-accent-cyan btn-lg">Iniciar curso</button>
-        </div>
-        <div className="mt-4">
-          <div className="flex items-center gap-3">
-            <div className="text-sm text-slate-300"><span className="font-semibold text-slate-100">Progreso:</span> {completedCount} de {total} lecciones</div>
-            <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-500 transition-all" style={{ width: `${progressPct}%` }} />
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-3 h-3 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full animate-pulse" />
+              <span className="text-gray-600 text-sm font-medium uppercase tracking-wider">Curso Activo</span>
             </div>
-            <div className="text-xs text-slate-400 w-10 text-right">{progressPct}%</div>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-800 mb-3">{courseTitle}</h1>
+            <p className="text-gray-600 text-lg leading-relaxed">Aprende paso a paso con lecciones prácticas, recursos descargables y proyecto final.</p>
+          </div>
+          <div className="flex flex-col gap-3">
+            <div className="text-center text-gray-500 text-sm">
+              {completedCount} de {total} lecciones completadas
+            </div>
           </div>
         </div>
-      
+        
+        {/* Barra de progreso mejorada */}
+        <div className="relative z-10 mt-8 p-4 bg-white/70 rounded-xl border border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold text-gray-800">Progreso del curso:</span> {completedCount} de {total} lecciones
+            </div>
+            <div className="text-lg font-bold text-gray-800">{progressPct}%</div>
+          </div>
+          <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="h-3 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 rounded-full transition-all duration-500 relative"
+              style={{ width: `${progressPct}%` }}
+            >
+              <div className="absolute inset-0 bg-white/30 rounded-full animate-pulse" />
+            </div>
+          </div>
+          <div className="flex justify-between text-xs text-gray-500 mt-2">
+            <span>Iniciado</span>
+            <span>En progreso</span>
+            <span>Completado</span>
+          </div>
+        </div>
       </section>
 
       {/* Acordeón movido al sidebar */}
@@ -222,13 +253,34 @@ export default function CoursePage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            className="lg:col-span-2 bg-slate-900 rounded-xl p-4 shadow-soft border border-slate-800"
+            className="lg:col-span-2 bg-white rounded-xl p-4 shadow-lg border border-gray-200"
           >
             <VideoPlayer videoId={current.videoId} src={current.videoUrl} />
 
-            <div className="mt-4 flex items-center gap-2">
-              <button className="btn-accent-purple" onClick={markCompleted}>Marcar completada</button>
-              <button className="btn-accent-cyan" onClick={advanceNext}>Continuar</button>
+            <div className="mt-4 flex items-center justify-between">
+              <button 
+                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => {
+                  if (currentIndex > 0) {
+                    setCurrentIndex(currentIndex - 1);
+                  }
+                }}
+                disabled={currentIndex === 0}
+              >
+                ← Anterior
+              </button>
+              
+              <div className="text-gray-600 text-sm">
+                Lección {currentIndex + 1} de {lessons.length}
+              </div>
+              
+              <button 
+                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={advanceNext}
+                disabled={currentIndex === lessons.length - 1}
+              >
+                Siguiente →
+              </button>
             </div>
 
             <LessonContent 
@@ -240,10 +292,10 @@ export default function CoursePage() {
 
             <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <h3 className="text-white text-lg font-semibold mb-2">Descripción extendida</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">
+                <h3 className="text-gray-800 text-lg font-semibold mb-2">Descripción extendida</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
                   {current.description} En esta sección ampliamos la explicación y agregamos recursos de
-                  apoyo. Diseñado con una estética tecnológica oscura y acentos azules/púrpura.
+                  apoyo. Diseñado con una estética limpia y moderna con tonos blancos y grises.
                 </p>
               </div>
             </div>

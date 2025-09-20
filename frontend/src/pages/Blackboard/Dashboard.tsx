@@ -1,20 +1,36 @@
 import Layout from '../../components/Blackboard/Layout'
 import { motion } from 'framer-motion'
-import Welcome from '../../components/Blackboard/Welcome'
+
 import ActivityCard from '../../components/Blackboard/ActivityCard'
 import CourseCard from '../../components/Course/CourseCard'
 import ModelDetailsModal from '../../components/Blackboard/ModelDetailsModal'
-import { useState } from 'react'
+import HeroUnified from '../../components/Blackboard/HeroUnified'
+import MissionsPanel from '../../components/Blackboard/MissionsPanel'
 
+import { useState } from 'react'
 export default function Dashboard() { 
   const userName = 'Usuario'
   type Model = { id: string; title: string; description: string; emoji: string; imageUrl: string; favorite?: boolean; features: string[] }
+  type Course = { id: string; title: string; progress: string; img: string; completed?: boolean }
+  type TestedModel = { id: string; title: string; result: string; color: string; tested?: boolean }
+  
   const [models, setModels] = useState<Model[]>([
     { id: 'm1', title: 'Modelo de entrenamiento para Vocales', description: 'Crea un modelo para reconocer vocales habladas.', emoji: '🗣️', imageUrl: '/src/assets/placeholder.svg', favorite: true, features: ['Dataset: 1200 audios', 'Precisión esperada: 90%', 'Arquitectura: CNN 1D'] },
     { id: 'm2', title: 'Modelo de entrenamiento para Abecedario', description: 'Entrena un modelo para letras del abecedario.', emoji: '🔤', imageUrl: '/src/assets/placeholder.svg', features: ['Clases: 27 (A-Z + Ñ)', 'MFCC + Augment', 'Batch size: 32'] },
     { id: 'm3', title: 'Modelo de entrenamiento para Palabras', description: 'Reconoce palabras clave frecuentes.', emoji: '📝', imageUrl: '/src/assets/placeholder.svg', features: ['Wake words', 'Latencia baja', 'Streaming-ready'] },
     { id: 'm4', title: 'Modelo de entrenamiento para Operaciones aritméticas básicas', description: 'Suma, resta, multiplicación y división.', emoji: '➕', imageUrl: '/src/assets/placeholder.svg', features: ['4 clases básicas', 'Post-procesado con reglas', 'Visor de resultados'] },
   ])
+  
+  const [watchedCourses, setWatchedCourses] = useState<Course[]>([
+    { id: 'w1', title: 'MediaPipe Hands', progress: '60%', img: 'https://i.blogs.es/2b36a7/algoritmo/1366_2000.png', completed: false },
+    { id: 'w2', title: 'Agentes IA', progress: '30%', img: 'https://nocodestartup.io/wp-content/uploads/2025/02/o-que-e-um-agente-de-ia-e-como-ele-funciona-1024x701.jpg', completed: false },
+  ])
+  
+  const [testedModels, setTestedModels] = useState<TestedModel[]>([
+    { id: 't1', title: 'Demo voz', result: 'WER 12%', color: '#F59E0B', tested: true },
+    { id: 't2', title: 'Demo rostro', result: 'Acc 94%', color: '#06B6D4', tested: true },
+  ])
+  
   const [detailId, setDetailId] = useState<string | null>(null)
   const currentModel = models.find(m => m.id === detailId) || null
 
@@ -26,6 +42,56 @@ export default function Dashboard() {
     })
     const m = models.find(m => m.id === id)
     if (m) window.dispatchEvent(new CustomEvent('app:notify', { detail: (!m.favorite ? 'Añadido a favoritos: ' : 'Quitado de favoritos: ') + m.title }))
+  }
+
+  const completeCourse = (courseId: string) => {
+    const course = watchedCourses.find(c => c.id === courseId)
+    setWatchedCourses(prev => 
+      prev.map(course => 
+        course.id === courseId 
+          ? { ...course, completed: true, progress: '100%' }
+          : course
+      )
+    )
+    if (course) window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Curso completado: ' + course.title }))
+  }
+
+  const completeCourseByTitle = (title: string) => {
+    // Buscar si el curso ya existe en watchedCourses
+    const existingCourse = watchedCourses.find(c => c.title.includes(title.split(' ')[0]))
+    if (existingCourse) {
+      completeCourse(existingCourse.id)
+    } else {
+      // Crear nuevo curso completado
+      const newCourse: Course = {
+        id: `c_${Date.now()}`,
+        title: title,
+        progress: '100%',
+        img: 'https://via.placeholder.com/300x200',
+        completed: true
+      }
+      setWatchedCourses(prev => [...prev, newCourse])
+      window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Curso completado: ' + title }))
+    }
+  }
+
+  const testModel = (modelId: string) => {
+    const model = models.find(m => m.id === modelId)
+    if (model) {
+      const newTestedModel: TestedModel = {
+        id: `test_${modelId}`,
+        title: model.title,
+        result: 'Acc 85%',
+        color: '#10B981',
+        tested: true
+      }
+      setTestedModels(prev => {
+        const exists = prev.find(t => t.id === newTestedModel.id)
+        if (exists) return prev
+        return [...prev, newTestedModel]
+      })
+      window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Modelo probado: ' + model.title }))
+    }
   }
   const container = {
     hidden: { opacity: 0 },
@@ -39,9 +105,22 @@ export default function Dashboard() {
     show: { opacity: 1, y: 0 }
   }
   return (
+    
     <Layout notifications={3}>
-      
-      <Welcome userName={userName} progress={64} models={models} />
+      <HeroUnified 
+        userName={userName} 
+        models={models}
+        watchedCourses={watchedCourses}
+        testedModels={testedModels}
+      />
+
+      {/* Panel de Misiones */}
+      <div className="container-page mt-8">
+        <MissionsPanel 
+          models={models} 
+        />
+      </div>
+
       <div className="container-page mt-8 animate-slide-up">
         <h2 className="text-2xl font-bold text-header animate-slide-in-left">Tus modelos creados</h2>
         <p className="text-slate-600 mt-1 animate-slide-in-left delay-100">Explora tus modelos creados</p>
@@ -58,6 +137,35 @@ export default function Dashboard() {
               onTrain={() => window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Entrenamiento iniciado: ' + m.title }))}
               onViewDetails={() => setDetailId(m.id)}
             />
+          ))}
+        </div>
+      </div>
+
+      {/* Sección de Modelo Entrenado */}
+      <div className="container-page mt-8 animate-slide-up">
+        <h2 className="text-2xl font-bold text-header animate-slide-in-left">Modelo Entrenado</h2>
+        <p className="text-slate-600 mt-1 animate-slide-in-left delay-100">Listo para probar tu creación</p>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {models.map(m => (
+            <div key={`test-${m.id}`} className="bg-white rounded-xl shadow-soft border border-slate-200 overflow-hidden group hover:shadow-lg transition-all duration-300">
+              <div className="relative h-32 bg-gradient-to-br from-emerald-100 to-emerald-200 flex items-center justify-center">
+                <span className="text-4xl">{m.emoji}</span>
+                <div className="absolute top-2 right-2 bg-emerald-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                  Entrenado
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-slate-800 mb-2 line-clamp-2">{m.title}</h3>
+                <p className="text-sm text-slate-600 mb-4 line-clamp-2">{m.description}</p>
+                <button 
+                  onClick={() => testModel(m.id)}
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <span>🧪</span>
+                  Probar Modelo
+                </button>
+              </div>
+            </div>
           ))}
         </div>
       </div>      
@@ -87,6 +195,8 @@ export default function Dashboard() {
                   cornerCode="MP"
                   to="/courses/hand-recognition"
                   accent="emerald"
+                  onComplete={() => completeCourseByTitle("Reconocimiento de Manos con MediaPipe")}
+                  completed={watchedCourses.some(c => c.title.includes("MediaPipe") && c.completed)}
                 />
               </motion.div>
 
@@ -99,6 +209,8 @@ export default function Dashboard() {
                   cornerCode="RF"
                   to="/courses/face-recognition"
                   accent="blue"
+                  onComplete={() => completeCourseByTitle("Reconocimiento Facial Avanzado")}
+                  completed={watchedCourses.some(c => c.title.includes("Facial") && c.completed)}
                 />
               </motion.div>
 
@@ -111,6 +223,8 @@ export default function Dashboard() {
                   cornerCode="RV"
                   to="/courses/voice-recognition"
                   accent="purple"
+                  onComplete={() => completeCourseByTitle("Reconocimiento de Voz con IA")}
+                  completed={watchedCourses.some(c => c.title.includes("Voz") && c.completed)}
                 />
               </motion.div>
 
@@ -123,6 +237,8 @@ export default function Dashboard() {
                   cornerCode="OM"
                   to="/courses/hand-math-ops"
                   accent="orange"
+                  onComplete={() => completeCourseByTitle("Operaciones Matemáticas con Reconocimiento de Manos")}
+                  completed={watchedCourses.some(c => c.title.includes("Matemáticas") && c.completed)}
                 />
               </motion.div>
 
@@ -135,6 +251,8 @@ export default function Dashboard() {
                   cornerCode="AI"
                   to="/courses/ai-agent"
                   accent="indigo"
+                  onComplete={() => completeCourseByTitle("Desarrollo de Agente IA Avanzado")}
+                  completed={watchedCourses.some(c => c.title.includes("Agente") && c.completed)}
                 />
               </motion.div>
 
@@ -147,6 +265,8 @@ export default function Dashboard() {
                   cornerCode="CB"
                   to="/courses/chatbot-automation"
                   accent="teal"
+                  onComplete={() => completeCourseByTitle("Chatbot Automatizado con IA")}
+                  completed={watchedCourses.some(c => c.title.includes("Chatbot") && c.completed)}
                 />
               </motion.div>
 

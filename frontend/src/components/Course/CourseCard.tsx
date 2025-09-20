@@ -7,9 +7,11 @@ type Props = {
   cornerCode?: string
   to: string
   accent?: 'emerald' | 'blue' | 'purple' | 'orange' | 'indigo' | 'teal' | 'cyan' | 'fuchsia'
+  onComplete?: () => void
+  completed?: boolean
 }
 
-export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '', to, accent = 'blue' }: Props) {
+export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '', to, accent = 'blue', onComplete, completed = false }: Props) {
   const map: Record<string, string> = {
     emerald: 'from-emerald-400 to-teal-600',
     blue: 'from-blue-500 to-indigo-700',
@@ -39,7 +41,28 @@ export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '',
         <div className="course-title">{title}</div>
         <div className="course-subtitle">{subtitle}</div>
         <div className="course-footer">
-          <Link to={to} className="btn-accent-cyan w-full text-center">Ver curso</Link>
+          {completed ? (
+            <div className="flex items-center justify-center gap-2 py-2 text-green-600 font-semibold">
+              <span>✓</span>
+              <span>Completado</span>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <Link to={to} className="btn-accent-cyan flex-1 text-center">Ver curso</Link>
+              {onComplete && (
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onComplete()
+                  }}
+                  className="btn-secondary px-3"
+                  title="Marcar como completado"
+                >
+                  ✓
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
