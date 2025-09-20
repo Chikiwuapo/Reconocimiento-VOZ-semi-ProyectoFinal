@@ -3,15 +3,15 @@ from .models import GestoMano, HistorialReconocimiento, OperacionMatematica
 
 @admin.register(GestoMano)
 class GestoManoAdmin(admin.ModelAdmin):
-    list_display = ['tipo_gesto', 'nombre_display', 'activo', 'precision_entrenamiento', 'fecha_creacion']
-    list_filter = ['activo', 'tipo_gesto', 'fecha_creacion']
-    search_fields = ['tipo_gesto', 'nombre_display']
+    list_display = ['numero_vinculado', 'operacion_vinculada', 'nombre_display', 'activo', 'precision_entrenamiento', 'fecha_creacion']
+    list_filter = ['activo', 'operacion_vinculada', 'fecha_creacion']
+    search_fields = ['nombre_display']
     readonly_fields = ['fecha_creacion', 'fecha_actualizacion']
     list_editable = ['activo']
     
     fieldsets = (
         ('Información Básica', {
-            'fields': ('tipo_gesto', 'nombre_display', 'activo')
+            'fields': ('numero_vinculado', 'operacion_vinculada', 'nombre_display', 'activo')
         }),
         ('Datos de Entrenamiento', {
             'fields': ('landmarks_data', 'precision_entrenamiento'),
@@ -27,7 +27,7 @@ class GestoManoAdmin(admin.ModelAdmin):
 class HistorialReconocimientoAdmin(admin.ModelAdmin):
     list_display = ['gesto_reconocido', 'confianza', 'fecha_reconocimiento']
     list_filter = ['gesto_reconocido', 'fecha_reconocimiento']
-    search_fields = ['gesto_reconocido__tipo_gesto']
+    search_fields = ['gesto_reconocido__nombre_display']
     readonly_fields = ['fecha_reconocimiento']
     date_hierarchy = 'fecha_reconocimiento'
     

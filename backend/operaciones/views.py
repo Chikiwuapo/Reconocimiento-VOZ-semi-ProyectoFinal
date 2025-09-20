@@ -10,14 +10,14 @@ import json
 import logging
 import os
 
-from .models import GestoMano, HistorialReconocimiento, OperacionMatematica, TipoGesto
+from .models import GestoMano, HistorialReconocimiento, OperacionMatematica, TipoGesto, TipoOperacion
 
 logger = logging.getLogger(__name__)
 
 def index(request):
     """Vista principal que sirve el archivo HTML"""
     # Leer el archivo ejemplo_frontend.html
-    html_path = os.path.join(settings.BASE_DIR, 'ejemplo_frontend.html')
+    html_path = os.path.join(os.path.dirname(__file__), '..', 'ejemplo_frontend.html')
     try:
         with open(html_path, 'r', encoding='utf-8') as file:
             html_content = file.read()
@@ -39,35 +39,55 @@ def guardar_gesto(request):
     """API para guardar un nuevo gesto entrenado"""
     try:
         data = json.loads(request.body)
-        tipo_gesto = data.get('tipo_gesto')
+        numero_vinculado = data.get('numero_vinculado')
+        operacion_vinculada = data.get('operacion_vinculada')
         landmarks_data = data.get('landmarks_data')
         precision = data.get('precision', 0.0)
-        tipo_mano = data.get('tipo_mano', 'right')  # Por defecto mano derecha
+        tipo_mano = data.get('tipo_mano', 'derecha')  # Por defecto mano derecha
         numero_muestras = data.get('numero_muestras', 0)
-        landmarks_izquierda = data.get('landmarks_mano_izquierda')
-        landmarks_derecha = data.get('landmarks_mano_derecha')
+        landmarks_izquierda = data.get('landmarks_izquierda')
+        landmarks_derecha = data.get('landmarks_derecha')
         
-        if not tipo_gesto or not landmarks_data:
+        # Validar que se proporcione al menos uno de los dos campos
+        if (numero_vinculado is None and operacion_vinculada is None) or not landmarks_data:
             return JsonResponse({
                 'success': False,
-                'error': 'Faltan datos requeridos'
+                'error': 'Faltan datos requeridos: debe especificar número o operación'
             }, status=400)
         
-        # Verificar que el tipo de gesto sea válido
-        tipos_validos = [choice[0] for choice in TipoGesto.choices]
-        if tipo_gesto not in tipos_validos:
-            return JsonResponse({
-                'success': False,
-                'error': 'Tipo de gesto no válido'
-            }, status=400)
+        # Validar número si se proporciona
+        if numero_vinculado is not None:
+            if not (0 <= numero_vinculado <= 50):
+                return JsonResponse({
+                    'success': False,
+                    'error': 'El número debe estar entre 0 y 50'
+                }, status=400)
         
-        # Obtener el nombre display
-        nombre_display = dict(TipoGesto.choices)[tipo_gesto]
+        # Validar operación si se proporciona
+        if operacion_vinculada is not None:
+            operaciones_validas = [choice[0] for choice in TipoOperacion.choices]
+            if operacion_vinculada not in operaciones_validas:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Operación no válida'
+                }, status=400)
+        
+        # Generar nombre display
+        if numero_vinculado is not None:
+            nombre_display = f"Número {numero_vinculado}"
+        else:
+            nombre_display = f"Operación {dict(TipoOperacion.choices)[operacion_vinculada]}"
         
         # Crear o actualizar el gesto
+        # Buscar si ya existe un gesto con los mismos parámetros
+        filter_params = {'tipo_mano': tipo_mano}
+        if numero_vinculado is not None:
+            filter_params['numero_vinculado'] = numero_vinculado
+        else:
+            filter_params['operacion_vinculada'] = operacion_vinculada
+        
         gesto, created = GestoMano.objects.update_or_create(
-            tipo_gesto=tipo_gesto,
-            tipo_mano=tipo_mano,
+            **filter_params,
             defaults={
                 'nombre_display': nombre_display,
                 'landmarks_data': json.dumps(landmarks_data),
@@ -149,7 +169,9 @@ def reconocer_gesto(request):
             return JsonResponse({
                 'success': True,
                 'gesto_reconocido': {
-                    'tipo': mejor_coincidencia.tipo_gesto,
+                    'numero_vinculado': mejor_coincidencia.numero_vinculado,
+                    'operacion_vinculada': mejor_coincidencia.operacion_vinculada,
+                    'valor_display': mejor_coincidencia.valor_display,
                     'nombre': mejor_coincidencia.nombre_display,
                     'confianza': mejor_confianza
                 }
@@ -181,13 +203,14 @@ def vista_guia(request):
 def gestos_entrenados(request):
     """API para obtener todos los gestos entrenados"""
     try:
-        gestos = GestoMano.objects.filter(activo=True).order_by('tipo_gesto')
+        gestos = GestoMano.objects.filter(activo=True).order_by('numero_vinculado', 'operacion_vinculada')
         gestos_data = []
         
         for gesto in gestos:
             gestos_data.append({
                 'id': gesto.id,
-                'tipo_gesto': gesto.tipo_gesto,
+                'numero_vinculado': gesto.numero_vinculado,
+                'operacion_vinculada': gesto.operacion_vinculada,
                 'tipo_mano': gesto.tipo_mano,
                 'nombre_display': gesto.nombre_display,
                 'landmarks': json.loads(gesto.landmarks_data) if gesto.landmarks_data else [],

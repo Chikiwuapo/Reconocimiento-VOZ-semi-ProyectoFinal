@@ -2,23 +2,22 @@ from django.db import models
 from django.core.validators import MinLengthValidator
 import json
 
+class TipoOperacion(models.TextChoices):
+    """Tipos de operaciones matemáticas disponibles"""
+    SUMA = 'suma', 'Suma (+)'
+    RESTA = 'resta', 'Resta (-)'
+    MULTIPLICACION = 'multiplicacion', 'Multiplicación (×)'
+    DIVISION = 'division', 'División (÷)'
+
 class TipoGesto(models.TextChoices):
-    """Tipos de gestos disponibles"""
-    NUMERO_0 = '0', 'Número 0'
-    NUMERO_1 = '1', 'Número 1'
-    NUMERO_2 = '2', 'Número 2'
-    NUMERO_3 = '3', 'Número 3'
-    NUMERO_4 = '4', 'Número 4'
-    NUMERO_5 = '5', 'Número 5'
-    NUMERO_6 = '6', 'Número 6'
-    NUMERO_7 = '7', 'Número 7'
-    NUMERO_8 = '8', 'Número 8'
-    NUMERO_9 = '9', 'Número 9'
-    SUMA = '+', 'Suma (+)'
-    RESTA = '-', 'Resta (-)'
-    MULTIPLICACION = '*', 'Multiplicación (*)'
-    DIVISION = '/', 'División (/)'
-    IGUAL = '=', 'Igual (=)'
+    """Tipos de gestos disponibles - Números del 0 al 50"""
+    # Generamos dinámicamente los números del 0 al 50
+    @classmethod
+    def get_numero_choices(cls):
+        choices = []
+        for i in range(51):  # 0 a 50
+            choices.append((str(i), f'Número {i}'))
+        return choices
 
 class TipoMano(models.TextChoices):
     """Tipos de mano para el reconocimiento"""
@@ -28,10 +27,18 @@ class TipoMano(models.TextChoices):
 
 class GestoMano(models.Model):
     """Modelo para almacenar gestos de mano entrenados"""
-    tipo_gesto = models.CharField(
+    numero_vinculado = models.IntegerField(
+        help_text="Número del 0 al 50 vinculado al gesto",
+        null=True,
+        blank=True
+    )
+    
+    operacion_vinculada = models.CharField(
         max_length=20,
-        choices=TipoGesto.choices,
-        help_text="Tipo de gesto (número u operación)"
+        choices=TipoOperacion.choices,
+        help_text="Operación matemática vinculada al gesto",
+        null=True,
+        blank=True
     )
     
     tipo_mano = models.CharField(
@@ -91,11 +98,15 @@ class GestoMano(models.Model):
     class Meta:
         verbose_name = "Gesto de Mano"
         verbose_name_plural = "Gestos de Mano"
-        ordering = ['tipo_gesto', 'tipo_mano']
-        unique_together = ['tipo_gesto', 'tipo_mano']
+        ordering = ['numero_vinculado', 'operacion_vinculada', 'tipo_mano']
 
     def __str__(self):
-        return f"{self.get_tipo_gesto_display()}"
+        if self.numero_vinculado is not None:
+            return f"Número {self.numero_vinculado} - {self.get_tipo_mano_display()}"
+        elif self.operacion_vinculada:
+            return f"{self.get_operacion_vinculada_display()} - {self.get_tipo_mano_display()}"
+        else:
+            return f"Gesto sin vincular - {self.get_tipo_mano_display()}"
     
     def get_landmarks_as_dict(self):
         """Convierte los landmarks de JSON a diccionario"""
@@ -111,12 +122,27 @@ class GestoMano(models.Model):
     @property
     def es_numero(self):
         """Verifica si el gesto es un número"""
-        return self.tipo_gesto.isdigit()
+        return self.numero_vinculado is not None
     
     @property
     def es_operacion(self):
         """Verifica si el gesto es una operación matemática"""
-        return self.tipo_gesto in ['+', '-', '*', '/', '=']
+        return self.operacion_vinculada is not None
+    
+    @property
+    def valor_display(self):
+        """Retorna el valor a mostrar del gesto"""
+        if self.es_numero:
+            return str(self.numero_vinculado)
+        elif self.es_operacion:
+            operacion_symbols = {
+                'suma': '+',
+                'resta': '-',
+                'multiplicacion': '×',
+                'division': '÷'
+            }
+            return operacion_symbols.get(self.operacion_vinculada, self.operacion_vinculada)
+        return "Sin vincular"
 
 class HistorialReconocimiento(models.Model):
     """Modelo para almacenar el historial de reconocimientos"""
