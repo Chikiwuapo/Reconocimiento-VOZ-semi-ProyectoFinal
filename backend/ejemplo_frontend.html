@@ -669,6 +669,36 @@
                 --dark-color: #f7fafc;
             }
         }
+        
+        /* Layout de dos paneles con CSS Grid (izquierda | derecha) */
+        .two-panel {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* cámara/panel ó calculadora/operación */
+            gap: 24px;
+            align-items: start; /* alineación superior consistente */
+        }
+        .two-panel > * {
+            height: 100%;
+        }
+        /* Asegurar que las tarjetas llenen la celda y el contenido crezca correctamente */
+        .two-panel .card,
+        .two-panel article.card,
+        .two-panel aside.card,
+        .two-panel div.card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .two-panel .card-body {
+            flex: 1 1 auto;
+            display: block;
+        }
+        
+        @media (max-width: 992px) {
+            .two-panel {
+                grid-template-columns: 1fr; /* apilar en pantallas pequeñas */
+            }
+        }
     </style>
 </head>
 <body>
@@ -722,215 +752,195 @@
         <div class="tab-content" id="mainTabContent">
             <!-- Vista de Entrenamiento -->
             <section class="tab-pane fade show active" id="entrenamiento" role="tabpanel" aria-labelledby="entrenamiento-tab" tabindex="0">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <article class="card">
-                            <header class="card-header bg-primary text-white">
-                                <h2 class="h5 mb-0"><i class="fas fa-video me-2" aria-hidden="true"></i>Cámara de Entrenamiento</h2>
-                            </header>
-                            <div class="card-body">
-                                <div class="video-container" role="img" aria-label="Vista de la cámara para entrenamiento de gestos">
-                                    <video id="videoElement" class="video-element" autoplay muted playsinline aria-label="Video en vivo de la cámara"></video>
-                                    <canvas id="canvasElement" class="canvas-element" aria-label="Canvas para detección de gestos"></canvas>
-                                </div>
-                                <div class="mt-3 text-center">
-                                    <button id="startCamera" class="btn btn-custom btn-success-custom me-2" aria-describedby="camera-help">
-                                        <i class="fas fa-camera me-2" aria-hidden="true"></i>Iniciar Cámara
-                                    </button>
-                                    <button id="stopCamera" class="btn btn-custom btn-danger-custom" disabled aria-describedby="camera-help">
-                                        <i class="fas fa-stop me-2" aria-hidden="true"></i>Detener Cámara
-                                    </button>
-                                    <div id="camera-help" class="visually-hidden">Controles para iniciar y detener la cámara de entrenamiento</div>
-                                </div>
+                <div class="two-panel entrenamiento-layout">
+                    <article class="card">
+                        <header class="card-header bg-primary text-white">
+                            <h2 class="h5 mb-0"><i class="fas fa-video me-2" aria-hidden="true"></i>Cámara de Entrenamiento</h2>
+                        </header>
+                        <div class="card-body">
+                            <div class="video-container" role="img" aria-label="Vista de la cámara para entrenamiento de gestos">
+                                <video id="videoElement" class="video-element" autoplay muted playsinline aria-label="Video en vivo de la cámara"></video>
+                                <canvas id="canvasElement" class="canvas-element" aria-label="Canvas para detección de gestos"></canvas>
                             </div>
-                        </article>
-                    </div>
-                    <div class="col-lg-4">
-                        <aside class="card">
-                            <header class="card-header bg-success text-white">
-                                <h2 class="h5 mb-0"><i class="fas fa-cog me-2" aria-hidden="true"></i>Panel de Control</h2>
-                            </header>
-                            <div class="card-body">
-                                <fieldset class="mb-3">
-                                    <legend class="form-label h6">Tipo de Gesto:</legend>
-                                    <div class="row" role="radiogroup" aria-labelledby="gesture-type-legend">
-                                        <div class="col-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="gestureTypeRadio" id="numeroRadio" value="numero" checked aria-describedby="numero-help">
-                                                <label class="form-check-label" for="numeroRadio">
-                                                    Número
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="gestureTypeRadio" id="operacionRadio" value="operacion" aria-describedby="operacion-help">
-                                                <label class="form-check-label" for="operacionRadio">
-                                                    Operación
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="numero-help" class="visually-hidden">Selecciona para entrenar gestos de números del 0 al 50</div>
-                                    <div id="operacion-help" class="visually-hidden">Selecciona para entrenar gestos de operaciones matemáticas</div>
-                                </fieldset>
-                                
-                                <div class="mb-3" id="numeroSection">
-                                    <label for="numeroVinculado" class="form-label">Número (0-50):</label>
-                                    <input type="number" id="numeroVinculado" class="form-control" min="0" max="50" value="0" aria-describedby="numero-input-help" required>
-                                    <div id="numero-input-help" class="form-text">Ingresa un número entre 0 y 50 para asociar con el gesto</div>
-                                </div>
-                                
-                                <div class="mb-3" id="operacionSection" style="display: none;">
-                                    <label for="operacionVinculada" class="form-label">Operación:</label>
-                                    <select id="operacionVinculada" class="form-select" aria-describedby="operacion-select-help" required>
-                                        <option value="">Seleccionar operación...</option>
-                                        <option value="suma">Suma (+)</option>
-                                        <option value="resta">Resta (-)</option>
-                                        <option value="multiplicacion">Multiplicación (×)</option>
-                                        <option value="division">División (÷)</option>
-                                    </select>
-                                    <div id="operacion-select-help" class="form-text">Selecciona la operación matemática para asociar con el gesto</div>
-                                </div>
-                                
-                                <div class="confidence-meter" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Nivel de confianza de detección">
-                                    <label class="form-label" for="confidenceIndicator">Confianza de Detección:</label>
-                                    <div class="confidence-bar" aria-hidden="true">
-                                        <div class="confidence-indicator" id="confidenceIndicator" style="width: 0%"></div>
-                                    </div>
-                                    <small class="text-muted">Confianza: <span id="confidenceText" aria-live="polite">0%</span></small>
-                                </div>
-                                
-                                <!-- Contador de muestras -->
-                                <div class="stats-container">
-                                    <h6 class="mb-3 text-center fw-bold">Estadísticas de Entrenamiento</h6>
-                                    <div class="row text-center">
-                                        <div class="col-4">
-                                            <div class="stat-item">
-                                                <i class="fas fa-target text-primary mb-2"></i>
-                                                <h6 class="mb-1">Objetivo</h6>
-                                                <span class="badge bg-primary fs-6" id="targetSamples">50</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="stat-item">
-                                                <i class="fas fa-check-circle text-success mb-2"></i>
-                                                <h6 class="mb-1">Capturadas</h6>
-                                                <span class="badge bg-success fs-6" id="capturedSamples">0</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="stat-item">
-                                                <i class="fas fa-chart-line text-info mb-2"></i>
-                                                <h6 class="mb-1">Progreso</h6>
-                                                <span class="badge bg-info fs-6" id="progressPercent">0%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="progress mt-3">
-                                        <div class="progress-bar" id="samplesProgress" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Indicadores de manos detectadas -->
-                                <div class="mt-3 p-3 bg-light rounded">
-                                    <h6 class="mb-2 text-center">Manos Detectadas</h6>
-                                    <div class="row text-center">
-                                        <div class="col-6">
-                                            <div class="hand-indicator" id="leftHandIndicator">
-                                                <i class="fas fa-hand-paper me-2"></i>
-                                                <span class="badge bg-secondary" id="leftHandStatus">Izquierda</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="hand-indicator" id="rightHandIndicator">
-                                                <i class="fas fa-hand-paper me-2"></i>
-                                                <span class="badge bg-secondary" id="rightHandStatus">Derecha</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="d-grid gap-2 mt-3">
-                                    <button id="recordGesture" class="btn btn-custom btn-warning-custom" disabled>
-                                        <i class="fas fa-record-vinyl me-2"></i>Grabar Gesto
-                                    </button>
-                                    <button id="saveGesture" class="btn btn-custom btn-primary-custom" disabled>
-                                        <i class="fas fa-save me-2"></i>Guardar Gesto
-                                    </button>
-                                </div>
-                                
-                                <div class="loading-spinner" id="loadingSpinner">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Cargando...</span>
-                                    </div>
-                                    <p class="mt-2">Procesando gesto...</p>
-                                </div>
+                            <div class="mt-3 text-center">
+                                <button id="startCamera" class="btn btn-custom btn-success-custom me-2" aria-describedby="camera-help">
+                                    <i class="fas fa-camera me-2" aria-hidden="true"></i>Iniciar Cámara
+                                </button>
+                                <button id="stopCamera" class="btn btn-custom btn-danger-custom" disabled aria-describedby="camera-help">
+                                    <i class="fas fa-stop me-2" aria-hidden="true"></i>Detener Cámara
+                                </button>
+                                <div id="camera-help" class="visually-hidden">Controles para iniciar y detener la cámara de entrenamiento</div>
                             </div>
                         </div>
-                    </div>
+                    </article>
+                    <aside class="card">
+                        <header class="card-header bg-success text-white">
+                            <h2 class="h5 mb-0"><i class="fas fa-cog me-2" aria-hidden="true"></i>Panel de Control</h2>
+                        </header>
+                        <div class="card-body">
+                            <fieldset class="mb-3">
+                                <legend class="form-label h6">Tipo de Gesto:</legend>
+                                <div class="row" role="radiogroup" aria-labelledby="gesture-type-legend">
+                                    <div class="col-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gestureTypeRadio" id="numeroRadio" value="numero" checked aria-describedby="numero-help">
+                                            <label class="form-check-label" for="numeroRadio">
+                                                Número
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="gestureTypeRadio" id="operacionRadio" value="operacion" aria-describedby="operacion-help">
+                                            <label class="form-check-label" for="operacionRadio">
+                                                Operación
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="numero-help" class="visually-hidden">Selecciona para entrenar gestos de números del 0 al 50</div>
+                                <div id="operacion-help" class="visually-hidden">Selecciona para entrenar gestos de operaciones matemáticas</div>
+                            </fieldset>
+                            <div class="mb-3" id="numeroSection">
+                                <label for="numeroVinculado" class="form-label">Número (0-50):</label>
+                                <input type="number" id="numeroVinculado" class="form-control" min="0" max="50" value="0" aria-describedby="numero-input-help" required>
+                                <div id="numero-input-help" class="form-text">Ingresa un número entre 0 y 50 para asociar con el gesto</div>
+                            </div>
+                            <div class="mb-3" id="operacionSection" style="display: none;">
+                                <label for="operacionVinculada" class="form-label">Operación:</label>
+                                <select id="operacionVinculada" class="form-select" aria-describedby="operacion-select-help" required>
+                                    <option value="">Seleccionar operación...</option>
+                                    <option value="suma">Suma (+)</option>
+                                    <option value="resta">Resta (-)</option>
+                                    <option value="multiplicacion">Multiplicación (×)</option>
+                                    <option value="division">División (÷)</option>
+                                </select>
+                                <div id="operacion-select-help" class="form-text">Selecciona la operación matemática para asociar con el gesto</div>
+                            </div>
+                            <div class="confidence-meter" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Nivel de confianza de detección">
+                                <label class="form-label" for="confidenceIndicator">Confianza de Detección:</label>
+                                <div class="confidence-bar" aria-hidden="true">
+                                    <div class="confidence-indicator" id="confidenceIndicator" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted">Confianza: <span id="confidenceText" aria-live="polite">0%</span></small>
+                            </div>
+                            <div class="stats-container">
+                                <h6 class="mb-3 text-center fw-bold">Estadísticas de Entrenamiento</h6>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="stat-item">
+                                            <i class="fas fa-target text-primary mb-2"></i>
+                                            <h6 class="mb-1">Objetivo</h6>
+                                            <span class="badge bg-primary fs-6" id="targetSamples">50</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="stat-item">
+                                            <i class="fas fa-check-circle text-success mb-2"></i>
+                                            <h6 class="mb-1">Capturadas</h6>
+                                            <span class="badge bg-success fs-6" id="capturedSamples">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="stat-item">
+                                            <i class="fas fa-chart-line text-info mb-2"></i>
+                                            <h6 class="mb-1">Progreso</h6>
+                                            <span class="badge bg-info fs-6" id="progressPercent">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress mt-3">
+                                    <div class="progress-bar" id="samplesProgress" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <h6 class="mb-2 text-center">Manos Detectadas</h6>
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="hand-indicator" id="leftHandIndicator">
+                                            <i class="fas fa-hand-paper me-2"></i>
+                                            <span class="badge bg-secondary" id="leftHandStatus">Izquierda</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="hand-indicator" id="rightHandIndicator">
+                                            <i class="fas fa-hand-paper me-2"></i>
+                                            <span class="badge bg-secondary" id="rightHandStatus">Derecha</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-grid gap-2 mt-3">
+                                <button id="recordGesture" class="btn btn-custom btn-warning-custom" disabled>
+                                    <i class="fas fa-record-vinyl me-2"></i>Grabar Gesto
+                                </button>
+                                <button id="saveGesture" class="btn btn-custom btn-primary-custom" disabled>
+                                    <i class="fas fa-save me-2"></i>Guardar Gesto
+                                </button>
+                            </div>
+                            <div class="loading-spinner" id="loadingSpinner">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Procesando gesto...</p>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
-            </div>
+            </section>
 
             <!-- Vista de Interacción -->
             <div class="tab-pane fade" id="interaccion">
-                <div class="row">
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header bg-info text-white">
-                                <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Calculadora por Gestos</h5>
+                <div class="two-panel interaccion-layout">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Calculadora por Gestos</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="video-container" role="img" aria-label="Vista de la cámara para interacción con gestos">
+                                <video id="videoElementInteraction" class="video-element" autoplay muted playsinline aria-label="Video en vivo para interacción"></video>
+                                <canvas id="canvasElementInteraction" class="canvas-element" aria-label="Canvas para reconocimiento de gestos"></canvas>
                             </div>
-                            <div class="card-body">
-                                <div class="video-container" role="img" aria-label="Vista de la cámara para interacción con gestos">
-                                    <video id="videoElementInteraction" class="video-element" autoplay muted playsinline aria-label="Video en vivo para interacción"></video>
-                                    <canvas id="canvasElementInteraction" class="canvas-element" aria-label="Canvas para reconocimiento de gestos"></canvas>
-                                </div>
-                                <div class="mt-3">
-                                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                        <button id="startInteraction" class="btn btn-custom btn-success-custom flex-md-fill">
-                                            <i class="fas fa-play me-2"></i>Iniciar Interacción
-                                        </button>
-                                        <button id="stopInteraction" class="btn btn-custom btn-danger-custom flex-md-fill" disabled>
-                                            <i class="fas fa-stop me-2"></i>Detener
-                                        </button>
-                                        <button id="clearOperation" class="btn btn-custom btn-warning-custom flex-md-fill">
-                                            <i class="fas fa-eraser me-2"></i>Limpiar
-                                        </button>
-                                    </div>
+                            <div class="mt-3">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                    <button id="startInteraction" class="btn btn-custom btn-success-custom flex-md-fill">
+                                        <i class="fas fa-play me-2"></i>Iniciar Interacción
+                                    </button>
+                                    <button id="stopInteraction" class="btn btn-custom btn-danger-custom flex-md-fill" disabled>
+                                        <i class="fas fa-stop me-2"></i>Detener
+                                    </button>
+                                    <button id="clearOperation" class="btn btn-custom btn-warning-custom flex-md-fill">
+                                        <i class="fas fa-eraser me-2"></i>Limpiar
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-header bg-warning text-dark">
-                                <h5 class="mb-0"><i class="fas fa-desktop me-2"></i>Operación Actual</h5>
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="fas fa-desktop me-2"></i>Operación Actual</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="operation-display" id="operationDisplay">
+                                Esperando gestos...
                             </div>
-                            <div class="card-body">
-                                <div class="operation-display" id="operationDisplay">
-                                    Esperando gestos...
+                            <div class="confidence-meter">
+                                <label class="form-label">Reconocimiento:</label>
+                                <div class="confidence-bar">
+                                    <div class="confidence-indicator" id="interactionConfidence" style="width: 0%"></div>
                                 </div>
-                                
-                                <div class="confidence-meter">
-                                    <label class="form-label">Reconocimiento:</label>
-                                    <div class="confidence-bar">
-                                        <div class="confidence-indicator" id="interactionConfidence" style="width: 0%"></div>
-                                    </div>
-                                    <small class="text-muted">Último gesto: <span id="lastGesture">Ninguno</span></small>
+                                <small class="text-muted">Último gesto: <span id="lastGesture">Ninguno</span></small>
+                            </div>
+                            <div class="mt-3">
+                                <h6>Historial de Gestos:</h6>
+                                <div id="gestureHistory" class="border rounded p-2" style="height: 150px; overflow-y: auto; background: #f8f9fa;">
+                                    <small class="text-muted">Los gestos reconocidos aparecerán aquí...</small>
                                 </div>
-                                
-                                <div class="mt-3">
-                                    <h6>Historial de Gestos:</h6>
-                                    <div id="gestureHistory" class="border rounded p-2" style="height: 150px; overflow-y: auto; background: #f8f9fa;">
-                                        <small class="text-muted">Los gestos reconocidos aparecerán aquí...</small>
-                                    </div>
-                                </div>
-                                
-                                <div class="d-grid gap-2 mt-3">
-                                    <button id="calculateResult" class="btn btn-custom btn-success-custom">
-                                        <i class="fas fa-equals me-2"></i>Calcular Resultado
-                                    </button>
-                                </div>
+                            </div>
+                            <div class="d-grid gap-2 mt-3">
+                                <button id="calculateResult" class="btn btn-custom btn-success-custom">
+                                    <i class="fas fa-equals me-2"></i>Calcular Resultado
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1175,7 +1185,10 @@
                 
                 document.getElementById('startCamera').disabled = true;
                 document.getElementById('stopCamera').disabled = false;
-                // El botón de grabación se habilita automáticamente con los radio buttons
+                // Habilitar el botón de grabación cuando la cámara está activa
+                const recordBtn = document.getElementById('recordGesture');
+                if (recordBtn) recordBtn.disabled = false;
+                // 'Guardar Gesto' permanece deshabilitado hasta que haya muestras grabadas
                 
                 updateConnectionStatus(true);
                 showNotification('Cámara iniciada correctamente', 'success');
