@@ -1,6 +1,5 @@
 # Dependencias principales de Django
 Django==5.2.6
-Django==5.2.5
 numpy>=2.1.3
 asgiref==3.9.1
 sqlparse==0.5.3
