@@ -24,6 +24,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Project logs (explicit)
+backend/facial_debug.log
+
 # === Frontend (Node/Vite/React) ===
 node_modules/
 dist/

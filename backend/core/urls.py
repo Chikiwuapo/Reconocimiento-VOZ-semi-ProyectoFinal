@@ -1,5 +1,5 @@
 """
-URL configuration for server project.
+URL configuration for core project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -18,8 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", include("api.urls")),
+    path('admin/', admin.site.urls),
+    path('', include('login.urls')),
     path("operaciones/", include("operaciones.urls")),
     path("", include("operaciones.urls")),  # URLs principales en la raíz
 ]
