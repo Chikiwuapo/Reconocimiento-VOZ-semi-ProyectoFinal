@@ -48,9 +48,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     # Local apps
     "api",
+    "operaciones",
 ]
 
 MIDDLEWARE = [
@@ -64,7 +66,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "server.urls"
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
@@ -81,31 +83,26 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "server.wsgi.application"
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DB_ENGINE = env("DB_ENGINE", default="sqlite")
-
-if DB_ENGINE == "mysql":
+if os.environ.get('DB_ENGINE') in ("mysql", "MySQL"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
             "NAME": env("MYSQL_DATABASE", default="app_db"),
             "USER": env("MYSQL_USER", default="root"),
-            "PASSWORD": env("MYSQL_PASSWORD", default=""),
+            "PASSWORD": env("MYSQL_PASSWORD", default="mysql"),
             "HOST": env("MYSQL_HOST", default="127.0.0.1"),
-            "PORT": env("MYSQL_PORT", default="3306"),
-            "OPTIONS": {
-                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
+            "PORT": env("MYSQL_PORT", default="3306")
         }
     }
 else:
     DATABASES = {
-        "default": {
+        "default": {    
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
@@ -166,9 +163,22 @@ CORS_ALLOWED_ORIGINS = env.list(
     ],
 )
 
-# DRF basic config (can be customized later)
+# Django REST Framework configuration
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_FILTER_BACKENDS": [
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
     ],
 }

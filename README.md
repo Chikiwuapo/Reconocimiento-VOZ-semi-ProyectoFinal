@@ -1,205 +1,149 @@
-# Proyecto Full‑Stack: React + Vite + TypeScript (Frontend) / Django + DRF + MySQL (Backend)
+# Reconocimiento de Gestos con MediaPipe y Django
 
-Este repositorio contiene una plantilla full‑stack con:
+Este proyecto implementa un sistema de reconocimiento de gestos de manos utilizando MediaPipe (desde CDN) y Django como backend.
 
-- Frontend: React + Vite + TypeScript (`frontend/`)
-- Backend: Django + Django REST Framework + CORS (`backend/`)
-- Base de datos en desarrollo: SQLite por defecto (para iniciar rápido)
-- Base de datos en producción/real: MySQL (conmutación por `.env`)
+## Características
 
----
+- Reconocimiento de gestos de manos en tiempo real
+- Interfaz web interactiva
+- Backend Django para gestión de datos
+- Uso de MediaPipe desde CDN (sin instalación local)
+- Calculadora con gestos de manos
 
-## Requisitos previos
+## Requisitos del Sistema
 
-- Node.js 18+ y npm
-- Python 3.10+ (Windows: `py` launcher recomendado)
-- MySQL Server (opcional para desarrollo inicial; requerido si vas a usar MySQL de inmediato)
+- Python 3.8 o superior
+- Navegador web moderno con soporte para cámara web
+- Conexión a internet (para MediaPipe CDN)
 
-> Nota Windows: PowerShell es recomendado. Si usas `cmd`, adapta los comandos de activación del entorno virtual.
+## Instalación
 
----
+### 1. Clonar el repositorio
 
-## Estructura del proyecto
-
-```
-Reconocimiento-de-voz/
-├─ backend/
-│  ├─ api/
-│  │  ├─ urls.py           # rutas de la API (incluye /health/)
-│  │  └─ views.py          # vistas DRF/JSON (endpoint de salud)
-│  ├─ server/
-│  │  ├─ __init__.py       # pymysql.install_as_MySQLdb()
-│  │  ├─ settings.py       # configuración Django, DRF, CORS, DB
-│  │  └─ urls.py           # rutas raíz (incluye api.urls)
-│  ├─ manage.py
-│  ├─ venv/                # entorno virtual (local)
-│  └─ .env                 # variables de entorno del backend
-└─ frontend/
-   ├─ src/
-   │  └─ App.tsx           # ejemplo: consulta GET /api/health/
-   ├─ vite.config.ts       # proxy /api -> http://127.0.0.1:8000
-   └─ package.json
+```bash
+git clone <url-del-repositorio>
+cd Reconocimiento-VOZ-semi-ProyectoFinal
 ```
 
----
+### 2. Crear entorno virtual
 
-## Inicio rápido (desarrollo)
+```bash
+python -m venv venv
 
-### 1) Backend (Django)
+# En Windows
+venv\Scripts\activate
 
-Desde `backend/`:
-
-- Crear/activar entorno virtual (si no está activo):
-  - PowerShell:
-    ```powershell
-    py -m venv venv
-    .\venv\Scripts\Activate.ps1
-    ```
-- Instalar dependencias:
-  ```powershell
-  python -m pip install --upgrade pip
-  pip install django djangorestframework django-cors-headers pymysql django-environ
-  ```
-- Migraciones (usa SQLite por defecto):
-  ```powershell
-  python manage.py migrate
-  ```
-- Arrancar servidor:
-  ```powershell
-  python manage.py runserver
-  ```
-- Probar endpoint de salud:
-  - http://127.0.0.1:8000/api/health/
-
-### 2) Frontend (Vite)
-
-Desde `frontend/`:
-
-- Instalar dependencias:
-  ```powershell
-  npm install
-  ```
-- Arrancar servidor de desarrollo:
-  ```powershell
-  npm run dev
-  ```
-- Abrir en el navegador:
-  - http://localhost:5173/
-  - En pantalla verás “Backend health: ok” si el backend está arriba.
-
-> El proxy de Vite redirige cualquier llamada que empiece con `/api` hacia `http://127.0.0.1:8000`. Configurado en `frontend/vite.config.ts`.
-
----
-
-## Variables de entorno (backend/.env)
-
-Archivo `backend/.env` de ejemplo (ya creado):
-
-```
-# Django
-DEBUG=True
-SECRET_KEY=dev-secret-key-change-me
-ALLOWED_HOSTS=localhost,127.0.0.1
-
-# Database engine: sqlite (default) o mysql
-DB_ENGINE=sqlite
-
-# MySQL (solo si usas DB_ENGINE=mysql)
-MYSQL_DATABASE=app_db
-MYSQL_USER=root
-MYSQL_PASSWORD=
-MYSQL_HOST=127.0.0.1
-MYSQL_PORT=3306
-
-# CORS (Vite dev server)
-CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+# En Linux/Mac
+source venv/bin/activate
 ```
 
-> Cambia `SECRET_KEY` en producción. En desarrollo puedes dejarlo así.
+### 3. Instalar dependencias
 
----
+```bash
+cd backend
+pip install -r requirements.txt
+```
 
-## Cambiar a MySQL
+### 4. Configurar la base de datos
 
-1) Asegúrate de que MySQL Server esté corriendo y crea base de datos/usuario (ejemplo):
-   ```sql
-   CREATE DATABASE app_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-   CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'tu_password';
-   GRANT ALL PRIVILEGES ON app_db.* TO 'app_user'@'localhost';
-   FLUSH PRIVILEGES;
-   ```
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
 
-2) Edita `backend/.env`:
-   ```env
-   DB_ENGINE=mysql
-   MYSQL_DATABASE=app_db
-   MYSQL_USER=app_user
-   MYSQL_PASSWORD=tu_password
-   MYSQL_HOST=127.0.0.1
-   MYSQL_PORT=3306
-   ```
+### 5. Crear superusuario (opcional)
 
-3) Reinicia el servidor de Django y aplica migraciones contra MySQL:
-   ```powershell
-   python manage.py migrate
-   ```
+```bash
+python manage.py createsuperuser
+```
 
-> La configuración de DB en `backend/server/settings.py` conmuta en función de `DB_ENGINE`.
+## Ejecución
 
----
+### 1. Iniciar el servidor Django
 
-## Comandos útiles
+```bash
+cd backend
+python manage.py runserver
+```
 
-- Backend:
-  - Activar venv (PowerShell): `./venv/Scripts/Activate.ps1`
-  - Migraciones: `python manage.py makemigrations && python manage.py migrate`
-  - Superusuario: `python manage.py createsuperuser`
-  - Correr servidor: `python manage.py runserver`
+### 2. Acceder a la aplicación
 
-- Frontend:
-  - Instalar deps: `npm install`
-  - Dev server: `npm run dev`
-  - Build: `npm run build`
-  - Preview build: `npm run preview`
+Abrir el navegador y navegar a:
+```
+http://127.0.0.1:8000/operaciones/
+```
 
----
+## Uso de la Aplicación
 
-## Endpoints iniciales
+1. **Permitir acceso a la cámara**: Al cargar la página, el navegador solicitará permisos para acceder a la cámara web.
 
-- `GET /api/health/` → `{ "status": "ok" }`
+2. **Entrenar gestos**: 
+   - Hacer clic en "Entrenar Gesto"
+   - Realizar el gesto frente a la cámara
+   - Asignar un valor numérico al gesto
+   - Guardar el gesto entrenado
 
-> Agrega más rutas en `backend/api/urls.py` y vistas en `backend/api/views.py`. Recuerda incluirlas en `server/urls.py` si creas nuevos módulos.
+3. **Usar la calculadora**:
+   - Los gestos entrenados aparecerán como botones
+   - Realizar operaciones matemáticas usando gestos
+   - Ver resultados en tiempo real
 
----
+## Estructura del Proyecto
 
-## CORS y Proxy
+```
+backend/
+├── operaciones/           # App principal de Django
+│   ├── models.py         # Modelos de datos
+│   ├── views.py          # Vistas y lógica del backend
+│   ├── urls.py           # URLs de la aplicación
+│   └── migrations/       # Migraciones de base de datos
+├── ejemplo_frontend.html # Interfaz principal
+├── manage.py            # Script de gestión de Django
+├── requirements.txt     # Dependencias del proyecto
+└── db.sqlite3          # Base de datos SQLite
+```
 
-- CORS: Configurado en `backend/server/settings.py` con `django-cors-headers`.
-- Proxy Vite: Configurado en `frontend/vite.config.ts` para evitar problemas de CORS en desarrollo (`/api` → `http://127.0.0.1:8000`).
+## Tecnologías Utilizadas
 
----
+- **Backend**: Django 5.2.6, Django REST Framework
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Reconocimiento de gestos**: MediaPipe (CDN)
+- **Base de datos**: SQLite
+- **Cámara web**: WebRTC API
 
-## Solución de problemas (Troubleshooting)
+## Dependencias
 
-- Error de conexión MySQL durante `migrate`:
-  - Verifica que el servicio MySQL esté activo y que `DB_ENGINE=mysql` junto con credenciales en `.env` sean correctos.
-  - Si solo estás desarrollando el frontend/backend, usa `DB_ENGINE=sqlite` para avanzar sin MySQL.
+Las dependencias principales están listadas en `requirements.txt`:
 
-- Vite no arranca en 5173:
-  - Verifica si hay otro proceso ocupando el puerto o usa: `npm run dev -- --port 5174 --host`.
+- Django 5.2.6
+- django-cors-headers
+- djangorestframework
+- django-environ
 
-- CORS bloqueado:
-  - Asegura que `CORS_ALLOWED_ORIGINS` contenga el origen del frontend (`http://localhost:5173`).
+**Nota**: MediaPipe se carga desde CDN, por lo que no requiere instalación local.
 
-- No carga el endpoint `/api/health/` desde el frontend:
-  - Verifica que el backend esté corriendo en `http://127.0.0.1:8000`.
-  - Revisa el proxy en `vite.config.ts`.
+## Solución de Problemas
 
----
+### Error de permisos de cámara
+- Verificar que el navegador tenga permisos para acceder a la cámara
+- Usar HTTPS en producción para acceso a cámara
 
-## Siguientes pasos sugeridos
+### Error de CORS
+- Verificar que `django-cors-headers` esté instalado y configurado
+- Revisar la configuración de CORS en `settings.py`
 
-- Crear un CRUD de ejemplo con DRF (por ejemplo, `tasks`).
-- Autenticación con JWT (djangorestframework-simplejwt) y consumo desde el frontend.
-- Configuración de producción (servir frontend compilado, Nginx, Gunicorn/Uvicorn, etc.).
-- Docker/Docker Compose para orquestar backend, frontend y MySQL.
+### Error de MediaPipe
+- Verificar conexión a internet
+- Comprobar que el navegador soporte WebRTC
+
+## Contribución
+
+1. Fork el proyecto
+2. Crear una rama para la nueva característica
+3. Commit los cambios
+4. Push a la rama
+5. Crear un Pull Request
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT.
