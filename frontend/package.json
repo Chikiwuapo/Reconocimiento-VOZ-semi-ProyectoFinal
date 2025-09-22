@@ -12,6 +12,7 @@
   "dependencies": {
     "@splinetool/react-spline": "^4.1.0",
     "framer-motion": "^12.23.15",
+    "motion": "^12.23.15",
     "gsap": "^3.13.0",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
