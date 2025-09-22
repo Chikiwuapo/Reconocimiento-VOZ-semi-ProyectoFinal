@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { apiFetch, calculateAPI, getTrainedGesturesAPI, recognizeGestureAPI, saveGestureAPI } from '../services/arithmeticService'
+import { calculateAPI, getTrainedGesturesAPI, recognizeGestureAPI, saveGestureAPI } from '../services/arithmeticService'
 
+// Nota: evitamos extender la interfaz global de Window para prevenir conflictos de TS
 declare global {
   interface Window {
     Hands: any
-    Camera: any
-    drawConnectors: any
-    drawLandmarks: any
     HAND_CONNECTIONS: any
   }
 }
@@ -29,6 +27,9 @@ export function useArithmetic() {
   const lastFrameRef = useRef<RecordedFrame | null>(null)
   const recordedRef = useRef<RecordedFrame[]>([])
   const currentOperationRef = useRef<string[]>([])
+  const currentGestureIdsRef = useRef<number[]>([])
+  const recordingRef = useRef<boolean>(false)
+  const samplerRef = useRef<number | null>(null)
 
   // Estado
   const [mpReady, setMpReady] = useState(false)
@@ -59,6 +60,37 @@ export function useArithmetic() {
   const [showChart, setShowChart] = useState(false)
   const [, forceRender] = useState(0)
 
+  // Mantener un ref sincronizado con el estado de recording para evitar cierres obsoletos en onResults
+  useEffect(() => {
+    recordingRef.current = recording
+  }, [recording])
+
+  // Fallback: mientras está grabando, muestrear el último frame detectado cada ~120ms
+  useEffect(() => {
+    // limpiar cualquier intervalo previo
+    if (samplerRef.current) {
+      window.clearInterval(samplerRef.current)
+      samplerRef.current = null
+    }
+    if (recording) {
+      samplerRef.current = window.setInterval(() => {
+        const lf = lastFrameRef.current
+        if (!lf) return
+        if (!lf.leftHand && !lf.rightHand) return
+        // Empuja una copia ligera del último frame
+        recordedRef.current.push({ ...lf, leftHand: lf.leftHand ? [...lf.leftHand] : null, rightHand: lf.rightHand ? [...lf.rightHand] : null })
+        setSamplesCaptured(recordedRef.current.length)
+        if (recordedRef.current.length % 5 === 0) console.debug('Sampler pushed frames:', recordedRef.current.length)
+      }, 120)
+    }
+    return () => {
+      if (samplerRef.current) {
+        window.clearInterval(samplerRef.current)
+        samplerRef.current = null
+      }
+    }
+  }, [recording])
+
   // Scripts MediaPipe
   const loadScript = (src: string) => new Promise<void>((resolve, reject) => {
     const existing = document.querySelector(`script[src="${src}"]`)
@@ -81,7 +113,7 @@ export function useArithmetic() {
         const canvas = canvasRef.current
         if (canvas) ctxRef.current = canvas.getContext('2d')
 
-        handsRef.current = new window.Hands({ locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` })
+        handsRef.current = new (window as any).Hands({ locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` })
         handsRef.current.setOptions({
           maxNumHands: 2,
           modelComplexity: 1,
@@ -120,7 +152,7 @@ export function useArithmetic() {
       console.warn('Camera start attempted before MediaPipe ready')
       return
     }
-    const cam = new window.Camera(videoRef.current, {
+    const cam = new (window as any).Camera(videoRef.current, {
       onFrame: async () => {
         if (!handsRef.current || !videoRef.current) return
         await handsRef.current.send({ image: videoRef.current })
@@ -186,11 +218,11 @@ export function useArithmetic() {
 
     if (frame.leftHand || frame.rightHand) lastFrameRef.current = frame
 
-    if (recording && (frame.leftHand || frame.rightHand)) {
+    if (recordingRef.current && (frame.leftHand || frame.rightHand)) {
       if (recordedRef.current.length % 10 === 0) console.debug('Recording frame', recordedRef.current.length + 1)
       recordedRef.current.push(frame)
       setSamplesCaptured(recordedRef.current.length)
-    } else if (recording && multi.length === 0) {
+    } else if (recordingRef.current && multi.length === 0) {
       console.warn('Recording is ON but no hands detected in this frame')
     }
 
@@ -201,16 +233,31 @@ export function useArithmetic() {
     if (!cameraActive) return
     if (!recording) recordedRef.current = []
     setSamplesCaptured(0)
-    setRecording(v => !v)
+    setRecording(v => {
+      const next = !v
+      recordingRef.current = next
+      return next
+    })
   }
 
   const saveGesture = async () => {
-    if (recordedRef.current.length === 0) return
+    if (!cameraActive) {
+      setError('La cámara no está activa')
+      return
+    }
+    if (recordedRef.current.length === 0) {
+      setError('No hay muestras grabadas. Presiona "Grabar Gesto" y realiza el gesto frente a la cámara.')
+      return
+    }
     setError(null)
 
     let rightCount = 0, leftCount = 0
     recordedRef.current.forEach(f => { if (f.rightHand) rightCount++; if (f.leftHand) leftCount++; })
     const predominant = rightCount >= leftCount ? 'right' : 'left'
+    if (rightCount + leftCount === 0) {
+      setError('No se detectaron manos en las muestras grabadas. Acerca tu mano y vuelve a intentarlo.')
+      return
+    }
 
     const processed = recordedRef.current.map(f => ({
       confidence: f.confidence,
@@ -233,17 +280,23 @@ export function useArithmetic() {
     }
 
     console.debug('Saving gesture. Samples:', recordedRef.current.length)
-    const data = await saveGestureAPI(payload)
-    if (!data?.success) throw new Error(data?.error || 'No se pudo guardar el gesto')
+    try {
+      const data = await saveGestureAPI(payload)
+      if (!data?.success) throw new Error(data?.error || 'No se pudo guardar el gesto')
 
-    const confidences = recordedRef.current.map(f => Math.round((f.confidence || 0) * 100))
-    setChartData(confidences)
-    setShowChart(true)
+      const confidences = recordedRef.current.map(f => Math.round((f.confidence || 0) * 100))
+      setChartData(confidences)
+      setShowChart(true)
 
-    recordedRef.current = []
-    setSamplesCaptured(0)
-    setRecording(false)
-    window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Gesto guardado exitosamente' }))
+      recordedRef.current = []
+      setSamplesCaptured(0)
+      setRecording(false)
+      window.dispatchEvent(new CustomEvent('app:notify', { detail: data?.message || 'Gesto guardado exitosamente' }))
+    } catch (e: any) {
+      console.error(e)
+      setError(e?.message || 'No se pudo guardar el gesto')
+      window.dispatchEvent(new CustomEvent('app:notify', { detail: e?.message || 'No se pudo guardar el gesto' }))
+    }
   }
 
   const recognizeCurrent = async () => {
@@ -253,33 +306,44 @@ export function useArithmetic() {
     const points: HandPoint[] = (lastFrameRef.current.rightHand || lastFrameRef.current.leftHand || []).map(p => ({ x: p.x, y: p.y, z: p.z }))
     if (points.length === 0) return
 
-    const data = await recognizeGestureAPI(points)
-    if (!data?.success) throw new Error(data?.error || 'No se pudo reconocer el gesto')
+    try {
+      const data = await recognizeGestureAPI(points)
+      if (!data?.success) throw new Error(data?.error || 'No se pudo reconocer el gesto')
 
-    const recog = data.gesto_reconocido || {}
-    let token = ''
-    if (typeof recog.numero_vinculado === 'number') {
-      token = String(recog.numero_vinculado)
-    } else if (recog.operacion_vinculada) {
-      const map: Record<string, string> = { suma: '+', resta: '-', multiplicacion: '*', division: '/' }
-      token = map[recog.operacion_vinculada] || recog.valor_display || ''
-    } else if (recog.valor_display) {
-      token = String(recog.valor_display)
-      if (token === '×') token = '*'
-      if (token === '÷') token = '/'
-    }
-
-    if (token) {
-      const seq = currentOperationRef.current
-      if (seq[seq.length - 1] !== token) {
-        seq.push(token)
-        forceRender(x => x + 1)
+      const recog = data.gesto_reconocido || {}
+      let token = ''
+      if (typeof recog.numero_vinculado === 'number') {
+        token = String(recog.numero_vinculado)
+      } else if (recog.operacion_vinculada) {
+        const map: Record<string, string> = { suma: '+', resta: '-', multiplicacion: '*', division: '/' }
+        token = map[recog.operacion_vinculada] || recog.valor_display || ''
+      } else if (recog.valor_display) {
+        token = String(recog.valor_display)
+        if (token === '×') token = '*'
+        if (token === '÷') token = '/'
       }
+
+      if (token) {
+        const seq = currentOperationRef.current
+        if (seq[seq.length - 1] !== token) {
+          seq.push(token)
+          // asociar id de gesto si está presente
+          const gid = typeof recog.id === 'number' ? recog.id : null
+          if (gid != null) currentGestureIdsRef.current.push(gid)
+          else currentGestureIdsRef.current.push(-1)
+          forceRender(x => x + 1)
+        }
+      }
+    } catch (e: any) {
+      console.error(e)
+      setError(e?.message || 'No se pudo reconocer el gesto')
+      window.dispatchEvent(new CustomEvent('app:notify', { detail: e?.message || 'No se pudo reconocer el gesto' }))
     }
   }
 
   const clearOperation = () => {
     currentOperationRef.current = []
+    currentGestureIdsRef.current = []
     forceRender(x => x + 1)
   }
 
@@ -302,7 +366,9 @@ export function useArithmetic() {
     setResultado(null)
     setExpresion(null)
     try {
-      const data = await calculateAPI({ operando1, operador, operando2, gestos_utilizados: [] })
+      // tomar hasta 3 ids válidos de los gestos reconocidos para asociar con la operación
+      const ids = currentGestureIdsRef.current.filter(id => typeof id === 'number' && id > 0).slice(0, 3)
+      const data = await calculateAPI({ operando1, operador, operando2, gestos_utilizados: ids })
       if (!data?.success) throw new Error(data?.error || 'Error al calcular')
       setResultado(data.resultado)
       setExpresion(data.expresion)

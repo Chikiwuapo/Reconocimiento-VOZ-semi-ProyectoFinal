@@ -71,23 +71,23 @@ export default function Arithmetic() {
               </div>
               <div className="mt-4 flex flex-wrap gap-3">
                 {!cameraActive ? (
-                  <button onClick={startCamera} disabled={!mpReady} className="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white px-4 py-2 rounded-xl shadow">Iniciar Cámara</button>
+                  <button type="button" onClick={startCamera} disabled={!mpReady} className="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white px-4 py-2 rounded-xl shadow">Iniciar Cámara</button>
                 ) : (
-                  <button onClick={stopCamera} className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl shadow">Detener Cámara</button>
+                  <button type="button" onClick={stopCamera} className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-xl shadow">Detener Cámara</button>
                 )}
                 {activeTab === 'train' && (
                   <>
-                    <button disabled={!cameraActive} onClick={toggleRecording} className={`px-4 py-2 rounded-xl text-white shadow ${recording ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'} disabled:opacity-50`}>
+                    <button type="button" disabled={!cameraActive} onClick={toggleRecording} className={`px-4 py-2 rounded-xl text-white shadow ${recording ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'} disabled:opacity-50`}>
                       {recording ? 'Detener Grabación' : 'Grabar Gesto'}
                     </button>
-                    <button disabled={samplesCaptured === 0} onClick={saveGesture} className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-xl shadow disabled:opacity-50">Guardar Gesto</button>
+                    <button type="button" onClick={saveGesture} title={samplesCaptured === 0 ? 'Graba algunas muestras antes de guardar' : 'Guardar gesto entrenado'} className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-xl shadow">Guardar Gesto</button>
                   </>
                 )}
                 {activeTab === 'test' && (
                   <>
-                    <button onClick={recognizeCurrent} disabled={false} className="px-4 py-2 rounded-xl bg-indigo-600 text-white shadow">Reconocer gesto actual</button>
-                    <button onClick={clearOperation} className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 shadow">Limpiar operación</button>
-                    <button onClick={calculateFromOperation} className="px-4 py-2 rounded-xl bg-emerald-600 text-white shadow">Calcular con operación</button>
+                    <button type="button" onClick={recognizeCurrent} disabled={false} className="px-4 py-2 rounded-xl bg-indigo-600 text-white shadow">Reconocer gesto actual</button>
+                    <button type="button" onClick={clearOperation} className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 shadow">Limpiar operación</button>
+                    <button type="button" onClick={calculateFromOperation} className="px-4 py-2 rounded-xl bg-emerald-600 text-white shadow">Calcular con operación</button>
                   </>
                 )}
               </div>

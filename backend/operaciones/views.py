@@ -164,7 +164,7 @@ def reconocer_gesto(request):
                 confianza=mejor_confianza,
                 landmarks_reconocidos=json.dumps(points)
             )
-            return JsonResponse({'success': True,'gesto_reconocido': {'numero_vinculado': mejor_coincidencia.numero_vinculado,'operacion_vinculada': mejor_coincidencia.operacion_vinculada,'valor_display': mejor_coincidencia.valor_display,'nombre': mejor_coincidencia.nombre_display,'confianza': mejor_confianza}})
+            return JsonResponse({'success': True,'gesto_reconocido': {'id': mejor_coincidencia.id,'numero_vinculado': mejor_coincidencia.numero_vinculado,'operacion_vinculada': mejor_coincidencia.operacion_vinculada,'valor_display': mejor_coincidencia.valor_display,'nombre': mejor_coincidencia.nombre_display,'confianza': mejor_confianza}})
         else:
             return JsonResponse({'success': False,'error': 'No se pudo reconocer el gesto con suficiente confianza','confianza_maxima': mejor_confianza})
     
@@ -273,30 +273,66 @@ def calcular_similitud_landmarks(landmarks1, landmarks2):
     try:
         if not landmarks1 or not landmarks2:
             return 0.0
-        
-        # Convertir a listas si son necesarios
+
+        # Asegurar estructuras de datos desde JSON si llegan como string
         if isinstance(landmarks1, str):
             landmarks1 = json.loads(landmarks1)
         if isinstance(landmarks2, str):
             landmarks2 = json.loads(landmarks2)
-        
-        # Implementación básica de similitud
-        # En un caso real, usarías algoritmos como DTW, cosine similarity, etc.
-        if len(landmarks1) != len(landmarks2):
+
+        def to_flat_points(seq):
+            """Normaliza una secuencia de landmarks a una lista plana de puntos {x,y}.
+            Acepta:
+            - Lista de puntos planos: [{x,y}, ...]
+            - Lista de frames con leftHand/rightHand: [{leftHand:[{x,y},...], rightHand:[{x,y},...]}, ...]
+            - Diccionario único con claves x/y (se convierte a lista de un elemento)
+            """
+            if not seq:
+                return []
+            # Si es dict de un solo punto
+            if isinstance(seq, dict) and 'x' in seq and 'y' in seq:
+                return [ {'x': float(seq['x']), 'y': float(seq['y'])} ]
+            # Si es lista
+            if isinstance(seq, list):
+                # Caso lista de puntos planos
+                if len(seq) > 0 and isinstance(seq[0], dict) and 'x' in seq[0] and 'y' in seq[0]:
+                    return [ {'x': float(p['x']), 'y': float(p['y'])} for p in seq if isinstance(p, dict) and 'x' in p and 'y' in p ]
+                # Caso lista de frames con leftHand/rightHand
+                flat = []
+                for fr in seq:
+                    if isinstance(fr, dict):
+                        hand = fr.get('rightHand') or fr.get('leftHand') or []
+                        if isinstance(hand, list):
+                            for p in hand:
+                                if isinstance(p, dict) and 'x' in p and 'y' in p:
+                                    flat.append({'x': float(p['x']), 'y': float(p['y'])})
+                return flat
+            # Estructura no reconocida
+            return []
+
+        pts1 = to_flat_points(landmarks1)
+        pts2 = to_flat_points(landmarks2)
+
+        if not pts1 or not pts2:
             return 0.0
-        
+
+        # Igualar longitudes usando la mínima para evitar 0 inmediato por diferente tamaño
+        n = min(len(pts1), len(pts2))
+        if n == 0:
+            return 0.0
+        pts1 = pts1[:n]
+        pts2 = pts2[:n]
+
+        # Implementación básica de similitud: 1 - distancia promedio euclidiana
         total_distance = 0.0
-        for i in range(len(landmarks1)):
-            if 'x' in landmarks1[i] and 'y' in landmarks1[i] and 'x' in landmarks2[i] and 'y' in landmarks2[i]:
-                dx = landmarks1[i]['x'] - landmarks2[i]['x']
-                dy = landmarks1[i]['y'] - landmarks2[i]['y']
-                distance = (dx ** 2 + dy ** 2) ** 0.5
-                total_distance += distance
-        
-        # Normalizar y convertir a similitud (0-1)
-        avg_distance = total_distance / len(landmarks1)
+        for i in range(n):
+            dx = (pts1[i]['x'] - pts2[i]['x'])
+            dy = (pts1[i]['y'] - pts2[i]['y'])
+            distance = (dx ** 2 + dy ** 2) ** 0.5
+            total_distance += distance
+
+        avg_distance = total_distance / n
         similitud = max(0.0, 1.0 - avg_distance)
-        
         return similitud
         
     except Exception as e:
