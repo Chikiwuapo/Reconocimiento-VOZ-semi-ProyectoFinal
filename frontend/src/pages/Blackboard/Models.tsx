@@ -177,6 +177,11 @@ export default function Models() {
 
     // Notificación
     window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
+
+    // Si el modelo es de operaciones aritméticas, navegar a la vista dedicada
+    if (model.id === 'aritmeticas') {
+      navigate('/arithmetic')
+    }
   }
 
   const handleConfirmModel = () => {
