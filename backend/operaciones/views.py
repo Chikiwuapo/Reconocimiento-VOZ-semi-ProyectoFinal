@@ -37,52 +37,70 @@ def frontend_view(request):
 @require_http_methods(["POST"])
 def guardar_gesto(request):
     """API para guardar un nuevo gesto entrenado"""
-    data = json.loads(request.body)
-    numero_vinculado = data.get('numero_vinculado')
-    operacion_vinculada = data.get('operacion_vinculada')
-    landmarks_data = data.get('landmarks_data')
-    precision = data.get('precision', 0.0)
-    # Usar claves del modelo ('left'|'right'|'both')
-    tipo_mano = data.get('tipo_mano', 'right')
-    numero_muestras = data.get('numero_muestras', 0)
-    landmarks_izquierda = data.get('landmarks_izquierda')
-    landmarks_derecha = data.get('landmarks_derecha')
+    try:
+        # Validar que el request tenga contenido
+        if not request.body:
+            return JsonResponse({'success': False, 'error': 'No se enviaron datos en la petición'}, status=400)
+        
+        # Intentar parsear el JSON
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError as e:
+            return JsonResponse({'success': False, 'error': f'JSON malformado: {str(e)}'}, status=400)
+        
+        # Validar que data sea un diccionario
+        if not isinstance(data, dict):
+            return JsonResponse({'success': False, 'error': 'Los datos deben ser un objeto JSON válido'}, status=400)
+        
+        numero_vinculado = data.get('numero_vinculado')
+        operacion_vinculada = data.get('operacion_vinculada')
+        landmarks_data = data.get('landmarks_data')
+        precision = data.get('precision', 0.0)
+        # Usar claves del modelo ('left'|'right'|'both')
+        tipo_mano = data.get('tipo_mano', 'right')
+        numero_muestras = data.get('numero_muestras', 0)
+        landmarks_izquierda = data.get('landmarks_izquierda')
+        landmarks_derecha = data.get('landmarks_derecha')
 
-    # Validaciones explícitas con respuesta clara
-    if (numero_vinculado is None and operacion_vinculada is None) or not landmarks_data:
-        return JsonResponse({'success': False,'error': 'Faltan datos requeridos: debe especificar número o operación'}, status=400)
-    if numero_vinculado is not None and not (0 <= numero_vinculado <= 50):
-        return JsonResponse({'success': False,'error': 'El número debe estar entre 0 y 50'}, status=400)
-    if operacion_vinculada is not None:
-        operaciones_validas = [choice[0] for choice in TipoOperacion.choices]
-        if operacion_vinculada not in operaciones_validas:
-            return JsonResponse({'success': False,'error': 'Operación no válida'}, status=400)
+        # Validaciones explícitas con respuesta clara
+        if (numero_vinculado is None and operacion_vinculada is None) or not landmarks_data:
+            return JsonResponse({'success': False,'error': 'Faltan datos requeridos: debe especificar número o operación'}, status=400)
+        if numero_vinculado is not None and not (0 <= numero_vinculado <= 50):
+            return JsonResponse({'success': False,'error': 'El número debe estar entre 0 y 50'}, status=400)
+        if operacion_vinculada is not None:
+            operaciones_validas = [choice[0] for choice in TipoOperacion.choices]
+            if operacion_vinculada not in operaciones_validas:
+                return JsonResponse({'success': False,'error': 'Operación no válida'}, status=400)
 
-    if numero_vinculado is not None:
-        nombre_display = f"Número {numero_vinculado}"
-    else:
-        nombre_display = f"Operación {dict(TipoOperacion.choices)[operacion_vinculada]}"
+        if numero_vinculado is not None:
+            nombre_display = f"Número {numero_vinculado}"
+        else:
+            nombre_display = f"Operación {dict(TipoOperacion.choices)[operacion_vinculada]}"
 
-    filter_params = {'tipo_mano': tipo_mano}
-    if numero_vinculado is not None:
-        filter_params['numero_vinculado'] = numero_vinculado
-    else:
-        filter_params['operacion_vinculada'] = operacion_vinculada
+        filter_params = {'tipo_mano': tipo_mano}
+        if numero_vinculado is not None:
+            filter_params['numero_vinculado'] = numero_vinculado
+        else:
+            filter_params['operacion_vinculada'] = operacion_vinculada
 
-    gesto, created = GestoMano.objects.update_or_create(
-        **filter_params,
-        defaults={
-            'nombre_display': nombre_display,
-            'landmarks_data': json.dumps(landmarks_data),
-            'precision_entrenamiento': precision,
-            'numero_muestras': numero_muestras,
-            'landmarks_mano_izquierda': json.dumps(landmarks_izquierda) if landmarks_izquierda else None,
-            'landmarks_mano_derecha': json.dumps(landmarks_derecha) if landmarks_derecha else None,
-            'activo': True
-        }
-    )
+        gesto, created = GestoMano.objects.update_or_create(
+            **filter_params,
+            defaults={
+                'nombre_display': nombre_display,
+                'landmarks_data': json.dumps(landmarks_data),
+                'precision_entrenamiento': precision,
+                'numero_muestras': numero_muestras,
+                'landmarks_mano_izquierda': json.dumps(landmarks_izquierda) if landmarks_izquierda else None,
+                'landmarks_mano_derecha': json.dumps(landmarks_derecha) if landmarks_derecha else None,
+                'activo': True
+            }
+        )
 
-    return JsonResponse({'success': True,'message': f'Gesto "{nombre_display}" {"creado" if created else "actualizado"} exitosamente','gesto_id': gesto.id,'created': created})
+        return JsonResponse({'success': True,'message': f'Gesto "{nombre_display}" {"creado" if created else "actualizado"} exitosamente','gesto_id': gesto.id,'created': created})
+    
+    except Exception as e:
+        logger.error(f"Error inesperado en guardar_gesto: {str(e)}")
+        return JsonResponse({'success': False, 'error': 'Error interno del servidor'}, status=500)
 
 def vista_interaccion(request):
     """Redirige a la vista principal"""
@@ -92,49 +110,67 @@ def vista_interaccion(request):
 @require_http_methods(["POST"])
 def reconocer_gesto(request):
     """API para reconocer un gesto capturado"""
-    data = json.loads(request.body)
-    # Aceptar alias 'landmarks' del HTML antiguo
-    landmarks_payload = data.get('landmarks_data') or data.get('landmarks')
+    try:
+        # Validar que el request tenga contenido
+        if not request.body:
+            return JsonResponse({'success': False, 'error': 'No se enviaron datos en la petición'}, status=400)
+        
+        # Intentar parsear el JSON
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError as e:
+            return JsonResponse({'success': False, 'error': f'JSON malformado: {str(e)}'}, status=400)
+        
+        # Validar que data sea un diccionario
+        if not isinstance(data, dict):
+            return JsonResponse({'success': False, 'error': 'Los datos deben ser un objeto JSON válido'}, status=400)
+        
+        # Aceptar alias 'landmarks' del HTML antiguo
+        landmarks_payload = data.get('landmarks_data') or data.get('landmarks')
 
-    if not landmarks_payload:
-        return JsonResponse({'success': False,'error': 'No se proporcionaron datos de landmarks'}, status=400)
+        if not landmarks_payload:
+            return JsonResponse({'success': False, 'error': 'No se proporcionaron datos de landmarks'}, status=400)
 
-    # Normalizar: si llega un frame plano de puntos, úsalo; si llegan frames con leftHand/rightHand, aplanar right si existe o left
-    if isinstance(landmarks_payload, dict):
-        landmarks_input = [landmarks_payload]
-    else:
-        landmarks_input = landmarks_payload
+        # Normalizar: si llega un frame plano de puntos, úsalo; si llegan frames con leftHand/rightHand, aplanar right si existe o left
+        if isinstance(landmarks_payload, dict):
+            landmarks_input = [landmarks_payload]
+        else:
+            landmarks_input = landmarks_payload
 
-    if len(landmarks_input) > 0 and isinstance(landmarks_input[0], dict) and 'x' in landmarks_input[0]:
-        points = landmarks_input
-    else:
-        # Se asume lista de frames con leftHand/rightHand
-        points = []
-        for fr in landmarks_input:
-            hand = fr.get('rightHand') or fr.get('leftHand') or []
-            points.extend(hand)
+        if len(landmarks_input) > 0 and isinstance(landmarks_input[0], dict) and 'x' in landmarks_input[0]:
+            points = landmarks_input
+        else:
+            # Se asume lista de frames con leftHand/rightHand
+            points = []
+            for fr in landmarks_input:
+                hand = fr.get('rightHand') or fr.get('leftHand') or []
+                points.extend(hand)
 
-    gestos_entrenados = GestoMano.objects.filter(activo=True)
-    if not gestos_entrenados.exists():
-        return JsonResponse({'success': False,'error': 'No hay gestos entrenados disponibles'}, status=400)
+        gestos_entrenados = GestoMano.objects.filter(activo=True)
+        if not gestos_entrenados.exists():
+            return JsonResponse({'success': False,'error': 'No hay gestos entrenados disponibles'}, status=400)
 
-    mejor_coincidencia = None
-    mejor_confianza = 0.0
-    for gesto in gestos_entrenados:
-        confianza = calcular_similitud_landmarks(points, gesto.get_landmarks_as_dict())
-        if confianza > mejor_confianza:
-            mejor_confianza = confianza
-            mejor_coincidencia = gesto
+        mejor_coincidencia = None
+        mejor_confianza = 0.0
+        for gesto in gestos_entrenados:
+            confianza = calcular_similitud_landmarks(points, gesto.get_landmarks_as_dict())
+            if confianza > mejor_confianza:
+                mejor_confianza = confianza
+                mejor_coincidencia = gesto
 
-    if mejor_coincidencia and mejor_confianza > 0.7:
-        HistorialReconocimiento.objects.create(
-            gesto_reconocido=mejor_coincidencia,
-            confianza=mejor_confianza,
-            landmarks_reconocidos=json.dumps(points)
-        )
-        return JsonResponse({'success': True,'gesto_reconocido': {'numero_vinculado': mejor_coincidencia.numero_vinculado,'operacion_vinculada': mejor_coincidencia.operacion_vinculada,'valor_display': mejor_coincidencia.valor_display,'nombre': mejor_coincidencia.nombre_display,'confianza': mejor_confianza}})
-    else:
-        return JsonResponse({'success': False,'error': 'No se pudo reconocer el gesto con suficiente confianza','confianza_maxima': mejor_confianza})
+        if mejor_coincidencia and mejor_confianza > 0.7:
+            HistorialReconocimiento.objects.create(
+                gesto_reconocido=mejor_coincidencia,
+                confianza=mejor_confianza,
+                landmarks_reconocidos=json.dumps(points)
+            )
+            return JsonResponse({'success': True,'gesto_reconocido': {'numero_vinculado': mejor_coincidencia.numero_vinculado,'operacion_vinculada': mejor_coincidencia.operacion_vinculada,'valor_display': mejor_coincidencia.valor_display,'nombre': mejor_coincidencia.nombre_display,'confianza': mejor_confianza}})
+        else:
+            return JsonResponse({'success': False,'error': 'No se pudo reconocer el gesto con suficiente confianza','confianza_maxima': mejor_confianza})
+    
+    except Exception as e:
+        logger.error(f"Error inesperado en reconocer_gesto: {str(e)}")
+        return JsonResponse({'success': False, 'error': 'Error interno del servidor'}, status=500)
 
 def vista_guia(request):
     """Redirige a la vista principal"""
@@ -174,42 +210,60 @@ def eliminar_gesto(request, gesto_id):
 @require_http_methods(["POST"])
 def calcular_operacion(request):
     """API para calcular una operación matemática"""
-    data = json.loads(request.body)
-    operando1 = data.get('operando1')
-    operador = data.get('operador')
-    operando2 = data.get('operando2')
-    gestos_ids = data.get('gestos_utilizados', [])
-
-    if not all([operando1, operador, operando2]):
-        return JsonResponse({'success': False,'error': 'Faltan operandos u operador'}, status=400)
-
-    # Calcular resultado
     try:
-        num1 = float(operando1)
-        num2 = float(operando2)
-    except ValueError:
-        return JsonResponse({'success': False,'error': 'Operandos no válidos'}, status=400)
+        # Validar que el request tenga contenido
+        if not request.body:
+            return JsonResponse({'success': False, 'error': 'No se enviaron datos en la petición'}, status=400)
+        
+        # Intentar parsear el JSON
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError as e:
+            return JsonResponse({'success': False, 'error': f'JSON malformado: {str(e)}'}, status=400)
+        
+        # Validar que data sea un diccionario
+        if not isinstance(data, dict):
+            return JsonResponse({'success': False, 'error': 'Los datos deben ser un objeto JSON válido'}, status=400)
+        
+        operando1 = data.get('operando1')
+        operador = data.get('operador')
+        operando2 = data.get('operando2')
+        gestos_ids = data.get('gestos_utilizados', [])
 
-    if operador == '+':
-        resultado = num1 + num2
-    elif operador == '-':
-        resultado = num1 - num2
-    elif operador == '*':
-        resultado = num1 * num2
-    elif operador == '/':
-        if num2 == 0:
-            return JsonResponse({'success': False,'error': 'División por cero no permitida'}, status=400)
-        resultado = num1 / num2
-    else:
-        return JsonResponse({'success': False,'error': 'Operador no válido'}, status=400)
+        if not all([operando1, operador, operando2]):
+            return JsonResponse({'success': False,'error': 'Faltan operandos u operador'}, status=400)
 
-    resultado_str = str(int(resultado)) if resultado == int(resultado) else f"{resultado:.2f}"
-    operacion = OperacionMatematica.objects.create(operando1=operando1, operador=operador, operando2=operando2, resultado=resultado_str)
-    if gestos_ids:
-        gestos = GestoMano.objects.filter(id__in=gestos_ids)
-        operacion.gestos_utilizados.set(gestos)
+        # Calcular resultado
+        try:
+            num1 = float(operando1)
+            num2 = float(operando2)
+        except ValueError:
+            return JsonResponse({'success': False,'error': 'Operandos no válidos'}, status=400)
 
-    return JsonResponse({'success': True,'resultado': resultado_str,'expresion': f"{operando1} {operador} {operando2} = {resultado_str}",'operacion_id': operacion.id})
+        if operador == '+':
+            resultado = num1 + num2
+        elif operador == '-':
+            resultado = num1 - num2
+        elif operador == '*':
+            resultado = num1 * num2
+        elif operador == '/':
+            if num2 == 0:
+                return JsonResponse({'success': False,'error': 'División por cero no permitida'}, status=400)
+            resultado = num1 / num2
+        else:
+            return JsonResponse({'success': False,'error': 'Operador no válido'}, status=400)
+
+        resultado_str = str(int(resultado)) if resultado == int(resultado) else f"{resultado:.2f}"
+        operacion = OperacionMatematica.objects.create(operando1=operando1, operador=operador, operando2=operando2, resultado=resultado_str)
+        if gestos_ids:
+            gestos = GestoMano.objects.filter(id__in=gestos_ids)
+            operacion.gestos_utilizados.set(gestos)
+
+        return JsonResponse({'success': True,'resultado': resultado_str,'expresion': f"{operando1} {operador} {operando2} = {resultado_str}",'operacion_id': operacion.id})
+    
+    except Exception as e:
+        logger.error(f"Error inesperado en calcular_operacion: {str(e)}")
+        return JsonResponse({'success': False, 'error': 'Error interno del servidor'}, status=500)
 
 def calcular_similitud_landmarks(landmarks1, landmarks2):
     """
