@@ -70,28 +70,74 @@ export function useFaceCapture() {
         })
         await v.play().catch(() => {})
 
-        overlay.width = v.videoWidth
-        overlay.height = v.videoHeight
+        // Size canvases: overlay should match DISPLAY size; capture canvas uses SOURCE size
+        const alignOverlayToDisplay = () => {
+          const rect = v.getBoundingClientRect()
+          // Canvas internal pixel size should match CSS display size for crisp drawing
+          overlay.width = Math.max(1, Math.round(rect.width))
+          overlay.height = Math.max(1, Math.round(rect.height))
+        }
+        alignOverlayToDisplay()
         if (canvasRef.current) {
+          // Keep full video resolution for captured frames
           canvasRef.current.width = v.videoWidth
           canvasRef.current.height = v.videoHeight
         }
 
         const ctx = overlay.getContext('2d')!
+
+        // Helper: compute transform for object-contain rendering
+        function getVisibleTransform() {
+          const vv = v!
+          const ov = overlay!
+          const vidW = Math.max(1, vv.videoWidth || 640)
+          const vidH = Math.max(1, vv.videoHeight || 480)
+          const scale = Math.min(ov.width / vidW, ov.height / vidH)
+          const contentW = vidW * scale
+          const contentH = vidH * scale
+          const offsetX = (ov.width - contentW) / 2
+          const offsetY = (ov.height - contentH) / 2
+          return { scale, contentW, contentH, offsetX, offsetY }
+        }
         const faceMesh = new window.FaceMesh({ locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}` })
-        faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.6, minTrackingConfidence: 0.6 })
+        faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 })
 
         faceMesh.onResults((results: any) => {
           ctx.clearRect(0, 0, overlay.width, overlay.height)
           let hasFace = false
           if (results.multiFaceLandmarks && results.multiFaceLandmarks.length) {
             const lms = results.multiFaceLandmarks[0]
+            const vt = getVisibleTransform()
+            const contentW = vt.contentW
+            const contentH = vt.contentH
+            const offsetX = vt.offsetX
+            const offsetY = vt.offsetY
             // Draw white mesh like backend (white lines, no glow)
             const tess = (window as any).FACEMESH_TESSELATION || (window as any).FACEMESH_TESSELLATION
             if (window.drawConnectors && tess) {
-              window.drawConnectors(ctx, lms, tess, { color: '#ffffff', lineWidth: 0.7 })
-              if (window.drawLandmarks) {
-                window.drawLandmarks(ctx, lms, { color: '#ffffff', radius: 0.7 })
+              // Manual draw to account for offsets and scaling
+              ctx.strokeStyle = '#ffffff'
+              ctx.lineWidth = 0.7
+              for (const [a, b] of tess) {
+                const pa = lms[a]
+                const pb = lms[b]
+                const ax = offsetX + pa.x * contentW
+                const ay = offsetY + pa.y * contentH
+                const bx = offsetX + pb.x * contentW
+                const by = offsetY + pb.y * contentH
+                ctx.beginPath()
+                ctx.moveTo(ax, ay)
+                ctx.lineTo(bx, by)
+                ctx.stroke()
+              }
+              // Landmarks points
+              ctx.fillStyle = '#ffffff'
+              for (const p of lms) {
+                const x = offsetX + p.x * contentW
+                const y = offsetY + p.y * contentH
+                ctx.beginPath()
+                ctx.arc(x, y, 0.7, 0, Math.PI * 2)
+                ctx.fill()
               }
             } else {
               // Fallback: draw points (simple, no glow)
@@ -100,20 +146,24 @@ export function useFaceCapture() {
               ctx.fillStyle = '#ffffff'
               for (const p of lms) {
                 ctx.beginPath()
-                ctx.arc(p.x * overlay.width, p.y * overlay.height, 1.0, 0, Math.PI * 2)
+                ctx.arc(offsetX + p.x * contentW, offsetY + p.y * contentH, 1.0, 0, Math.PI * 2)
                 ctx.fill()
               }
             }
             // Compute bounding box
             let xMin = 1e9, yMin = 1e9, xMax = -1e9, yMax = -1e9
             for (const p of lms) {
-              xMin = Math.min(xMin, p.x * overlay.width)
-              yMin = Math.min(yMin, p.y * overlay.height)
-              xMax = Math.max(xMax, p.x * overlay.width)
-              yMax = Math.max(yMax, p.y * overlay.height)
+              const x = offsetX + p.x * contentW
+              const y = offsetY + p.y * contentH
+              xMin = Math.min(xMin, x)
+              yMin = Math.min(yMin, y)
+              xMax = Math.max(xMax, x)
+              yMax = Math.max(yMax, y)
             }
             lastBoxRef.current = { xMin, yMin, xMax, yMax }
-            const pos = computePositionFromBox(lastBoxRef.current, overlay.width, overlay.height)
+            // Normalize within the visible content rectangle for consistent status
+            const normBox = { xMin: xMin - offsetX, yMin: yMin - offsetY, xMax: xMax - offsetX, yMax: yMax - offsetY }
+            const pos = computePositionFromBox(normBox as any, contentW, contentH)
             // Distance/status logic similar to backend
             if (pos.scale < 0.25) {
               setStatus('Muy lejos')
@@ -141,17 +191,15 @@ export function useFaceCapture() {
 
         await camera.start()
         // keep sizes in sync if the stream provides them later/changes
-        const resize = () => {
+        const resizeToDisplay = () => {
           if (!overlay || !v) return
-          overlay.width = v.videoWidth
-          overlay.height = v.videoHeight
-          if (canvasRef.current) {
-            canvasRef.current.width = v.videoWidth
-            canvasRef.current.height = v.videoHeight
-          }
+          const rect = v.getBoundingClientRect()
+          overlay.width = Math.max(1, Math.round(rect.width))
+          overlay.height = Math.max(1, Math.round(rect.height))
         }
-        v.addEventListener('loadedmetadata', resize)
-        window.addEventListener('resize', resize)
+        const ro = new ResizeObserver(resizeToDisplay)
+        ro.observe(v)
+        window.addEventListener('resize', resizeToDisplay)
 
         setReady(true)
         setStatus('Buscando rostro...')
@@ -168,6 +216,13 @@ export function useFaceCapture() {
       startedRef.current = false
       try {
         window.removeEventListener('resize', () => {})
+      } catch {}
+      try {
+        const vv = videoRef.current
+        if (vv) {
+          // @ts-ignore
+          if (vv.__ro) vv.__ro.disconnect()
+        }
       } catch {}
     }
   }, [])
@@ -196,7 +251,20 @@ export function useFaceCapture() {
     ctx.drawImage(v, 0, 0, w, h)
     const imageB64 = c.toDataURL('image/jpeg', 0.92)
     const box = lastBoxRef.current
-    const position = box ? computePositionFromBox(box, overlay.width, overlay.height) : { x: 0.5, y: 0.5, scale: 0.25 }
+    // Map box (overlay coords) into normalized coords relative to visible content rectangle
+    let position: PositionData = { x: 0.5, y: 0.5, scale: 0.25 }
+    if (box) {
+      const rect = v.getBoundingClientRect()
+      const ovW = Math.max(1, Math.round(rect.width))
+      const ovH = Math.max(1, Math.round(rect.height))
+      const scale = Math.min(ovW / w, ovH / h)
+      const contentW = w * scale
+      const contentH = h * scale
+      const offsetX = (ovW - contentW) / 2
+      const offsetY = (ovH - contentH) / 2
+      const norm = { xMin: box.xMin - offsetX, yMin: box.yMin - offsetY, xMax: box.xMax - offsetX, yMax: box.yMax - offsetY }
+      position = computePositionFromBox(norm as any, contentW, contentH)
+    }
     return { imageB64, position }
   }
 

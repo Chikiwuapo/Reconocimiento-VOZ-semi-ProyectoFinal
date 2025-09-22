@@ -5,15 +5,13 @@ import Models from './pages/Blackboard/Models'
 import Training from './pages/Blackboard/Training'
 
 import CoursePage from './pages/Courses/CoursePage'
-import Login from './auth/Login'
-import Register from './auth/Register'
+import AuthFlowPage from './auth/AuthFlowPage'
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<SplashScreen />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/auth" element={<AuthFlowPage />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/models" element={<Models />} />
       <Route path="/training" element={<Training />} />

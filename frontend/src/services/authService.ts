@@ -11,6 +11,37 @@ export type PositionData = {
   dist?: number
 }
 
+export async function registerBasic(payload: { nombres: string; apellidos: string; email: string; dni: string }) {
+  const res = await fetch('/api/register-basic/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    credentials: 'include',
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok || !data?.ok) {
+    throw new Error(data?.error || `No se pudo guardar (${res.status})`)
+  }
+  return data as { ok: true; created?: boolean }
+}
+
+// Validate traditional credentials (email + DNI)
+export async function validateUserTraditional(params: { email: string; dni: string }) {
+  const res = await fetch('/api/validate-user/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: params.email, dni: params.dni }),
+    credentials: 'include',
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok || !data?.ok) {
+    const err: any = new Error(data?.error || 'Credenciales inválidas')
+    err.status = res.status
+    throw err
+  }
+  return data as { ok: true }
+}
+
 export async function loginFacial(params: { email: string; facialFrame: string; position: PositionData }) {
   const res = await fetch('/api/login/', {
     method: 'POST',
@@ -66,15 +97,18 @@ export async function registerUser(payload: RegisterPayload) {
     headers: csrftoken ? { 'X-CSRFToken': csrftoken } : undefined,
   })
 
-  // Django redirects to /login on success; treat 200 with HTML as possibly validation error
+  // Django redirects to /login on success; any non-redirect HTML means failure
   if (res.redirected || res.url.endsWith('/login/')) {
     return { ok: true }
   }
+  const text = await res.text().catch(() => '')
+  // Heuristic: when embeddings fail, the view renders register.html with error messages.
+  // We treat any non-redirect 200 as failure so the UI can inform the user correctly.
+  const msg = 'No se pudo registrar tu rostro. Verifica iluminación, encuadre y vuelve a intentar.'
   if (!res.ok) {
-    const text = await res.text().catch(() => '')
-    throw new Error(text || `Registration failed (${res.status})`)
+    throw new Error(text || `${msg} (HTTP ${res.status})`)
   }
-  return { ok: true }
+  throw new Error(msg)
 }
 
 function getCookie(name: string): string | undefined {

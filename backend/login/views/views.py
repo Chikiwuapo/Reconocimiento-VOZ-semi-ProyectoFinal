@@ -55,12 +55,25 @@ def register_view(request):
             return render(request, 'login/register.html')
 
         try:
-            user = Usuario.objects.create_user(
-                email=email,
-                dni=dni,
-                nombres=nombres,
-                apellidos=apellidos,
-            )
+            # Buscar usuario ya creado en el paso 1 o crear si no existe
+            try:
+                user = Usuario.objects.get(email=email)
+                created = False
+                # Actualiza datos básicos para mantener consistencia
+                user.nombres = nombres
+                user.apellidos = apellidos
+                user.dni = dni
+                user.save(update_fields=['nombres', 'apellidos', 'dni'])
+                log.debug('register_view: usuario existente actualizado')
+            except Usuario.DoesNotExist:
+                user = Usuario.objects.create_user(
+                    email=email,
+                    dni=dni,
+                    nombres=nombres,
+                    apellidos=apellidos,
+                )
+                created = True
+                log.debug('register_view: usuario creado (no existía)')
 
             embeddings_list = []
             positions_list = []
@@ -93,9 +106,9 @@ def register_view(request):
                     log.debug('register_view: emb None en modo compatibilidad (una muestra)')
 
             if not embeddings_list:
-                log.debug('register_view: embeddings_list vacío tras procesamiento; abortando registro')
+                log.debug('register_view: embeddings_list vacío tras procesamiento; abortando registro (usuario se mantiene)')
                 messages.error(request, 'No se pudo extraer información facial válida. Intenta nuevamente con buena iluminación.')
-                user.delete()
+                # No eliminar al usuario existente: mantener datos básicos
                 return render(request, 'login/register.html')
 
             # Guarda compatibilidad binaria principal (primer embedding) y posición principal
@@ -200,6 +213,78 @@ def api_login(request):
         return JsonResponse({'ok': False, 'error': 'Error interno'}, status=500)
 
 
+@require_POST
+@csrf_exempt
+def api_register_basic(request):
+    """Crea o actualiza un usuario solo con datos básicos (sin rostro).
+    Espera JSON o x-www-form-urlencoded con campos: nombres, apellidos, email, dni.
+    """
+    try:
+        try:
+            data = json.loads(request.body.decode('utf-8')) if request.body else request.POST
+        except Exception:
+            data = request.POST
+
+        nombres = (data.get('nombres') or '').strip()
+        apellidos = (data.get('apellidos') or '').strip()
+        email = (data.get('email') or '').strip().lower()
+        import re
+        dni = re.sub(r"\D+", "", (data.get('dni') or '').strip())
+
+        if not all([nombres, apellidos, email, dni]):
+            return JsonResponse({'ok': False, 'error': 'Campos incompletos'}, status=400)
+
+        # Validación simple de email
+        if '@' not in email or '.' not in email.split('@')[-1]:
+            return JsonResponse({'ok': False, 'error': 'Email inválido'}, status=400)
+
+        # Crea o actualiza con el manager adecuado si existe
+        from django.db import IntegrityError
+        try:
+            try:
+                user = Usuario.objects.get(email=email)
+                created = False
+            except Usuario.DoesNotExist:
+                # Intentar localizar por DNI (datos existentes previos)
+                try:
+                    user = Usuario.objects.get(dni=dni)
+                    # Actualiza email normalizado si antes no coincidía
+                    user.email = email
+                    user.nombres = nombres
+                    user.apellidos = apellidos
+                    user.save(update_fields=['email', 'nombres', 'apellidos'])
+                    created = False
+                except Usuario.DoesNotExist:
+                    created = True
+                    if hasattr(Usuario.objects, 'create_user'):
+                        user = Usuario.objects.create_user(
+                            email=email,
+                            dni=dni,
+                            nombres=nombres,
+                            apellidos=apellidos,
+                        )
+                    else:
+                        user = Usuario.objects.create(
+                            email=email,
+                            dni=dni,
+                            nombres=nombres,
+                            apellidos=apellidos,
+                        )
+            if not created:
+                # Asegura sincronización de datos básicos
+                user.nombres = nombres
+                user.apellidos = apellidos
+                user.dni = dni
+                user.save(update_fields=['nombres', 'apellidos', 'dni'])
+        except IntegrityError as ie:
+            return JsonResponse({'ok': False, 'error': 'Duplicado o restricción de integridad'}, status=400)
+
+        return JsonResponse({'ok': True, 'created': created})
+    except Exception as e:
+        logging.getLogger('facial').exception(f'api_register_basic: excepción {e}')
+        return JsonResponse({'ok': False, 'error': 'Error interno'}, status=500)
+
+
 @login_required
 def mantenimiento_view(request):
     # Pasamos el usuario autenticado como 'user' para el template
@@ -220,6 +305,46 @@ def db_check(request):
         return JsonResponse({"ok": True, "result": row[0] if row else None})
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)}, status=500)
+
+
+@require_POST
+@csrf_exempt
+def api_validate_user(request):
+    """Valida credenciales tradicionales: email + DNI.
+    Responde JSON con ok True si existe el usuario y coincide el DNI.
+    """
+    try:
+        try:
+            data = json.loads(request.body.decode('utf-8')) if request.body else request.POST
+        except Exception:
+            return JsonResponse({'ok': False, 'error': 'JSON inválido'}, status=400)
+
+        email = (data.get('email') or '').strip().lower()
+        import re
+        dni = re.sub(r"\D+", "", (data.get('dni') or '').strip())
+        if not email or not dni:
+            return JsonResponse({'ok': False, 'error': 'Parámetros incompletos'}, status=400)
+
+        try:
+            user = Usuario.objects.get(email=email)
+        except Usuario.DoesNotExist:
+            return JsonResponse({'ok': False, 'error': 'Usuario no encontrado'}, status=404)
+        except Exception as ex:
+            # p.ej., MultipleObjectsReturned
+            try:
+                user = Usuario.objects.filter(email=email).first()
+                if not user:
+                    return JsonResponse({'ok': False, 'error': 'Usuario no encontrado'}, status=404)
+            except Exception:
+                return JsonResponse({'ok': False, 'error': 'Error al consultar usuario'}, status=500)
+
+        stored_dni = re.sub(r"\D+", "", str(user.dni or '').strip())
+        if stored_dni == dni:
+            return JsonResponse({'ok': True})
+        return JsonResponse({'ok': False, 'error': 'DNI no coincide'}, status=401)
+    except Exception as e:
+        logging.getLogger('facial').exception(f'api_validate_user: excepción {e}')
+        return JsonResponse({'ok': False, 'error': 'Error interno'}, status=500)
 
 
 @require_POST
@@ -424,4 +549,3 @@ def _validate_position(stored_pos, live_pos) -> bool:
         return False
     except Exception:
         return False
-
