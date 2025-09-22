@@ -338,3 +338,153 @@ def calcular_similitud_landmarks(landmarks1, landmarks2):
     except Exception as e:
         logger.error(f"Error al calcular similitud: {str(e)}")
         return 0.0
+
+
+# -------------------- NUEVA FUNCIÓN ADICIONAL --------------------
+# Reconocimiento simultáneo de dos manos para componer números de dos cifras
+@csrf_exempt
+@require_http_methods(["POST"])
+def reconocer_dos_manos(request):
+    """
+    API para reconocer simultáneamente la mano izquierda (decenas) y derecha (unidades),
+    componer un número de dos cifras y devolver una respuesta estructurada para el Panel de Control.
+
+    Compatibilidad: No modifica la lógica existente. Usa la misma estructura de landmarks
+    aceptada por reconocer_gesto:
+    - "landmarks_data" o "landmarks"
+      Puede ser:
+        * Lista de puntos planos [{x,y}, ...] (se asumirá como una sola mano si no se proveen frames con left/right)
+        * Lista de frames [{leftHand:[{x,y}], rightHand:[{x,y}]} , ...]
+    """
+    try:
+        if not request.body:
+            return JsonResponse({'success': False, 'error': 'No se enviaron datos en la petición'}, status=400)
+
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError as e:
+            return JsonResponse({'success': False, 'error': f'JSON malformado: {str(e)}'}, status=400)
+
+        if not isinstance(data, dict):
+            return JsonResponse({'success': False, 'error': 'Los datos deben ser un objeto JSON válido'}, status=400)
+
+        # Aceptar alias
+        landmarks_payload = data.get('landmarks_data') or data.get('landmarks')
+        if not landmarks_payload:
+            return JsonResponse({'success': False, 'error': 'No se proporcionaron datos de landmarks'}, status=400)
+
+        # Normalización de entrada a dos conjuntos: izquierda y derecha
+        left_points, right_points = [], []
+
+        def to_points(seq):
+            # Reutiliza la normalización de la función auxiliar existente, pero separando por mano si hay frames
+            if isinstance(seq, list) and len(seq) > 0 and isinstance(seq[0], dict) and ('leftHand' in seq[0] or 'rightHand' in seq[0]):
+                for fr in seq:
+                    if not isinstance(fr, dict):
+                        continue
+                    l = fr.get('leftHand') or []
+                    r = fr.get('rightHand') or []
+                    if isinstance(l, list):
+                        for p in l:
+                            if isinstance(p, dict) and 'x' in p and 'y' in p:
+                                left_points.append({'x': float(p['x']), 'y': float(p['y'])})
+                    if isinstance(r, list):
+                        for p in r:
+                            if isinstance(p, dict) and 'x' in p and 'y' in p:
+                                right_points.append({'x': float(p['x']), 'y': float(p['y'])})
+            else:
+                # Caso secuencia plana: no sabemos la mano; para compatibilidad, asumimos derecha
+                # y dejamos izquierda vacía, de modo que siga funcionando como el flujo estándar si el cliente
+                # sólo envía una mano.
+                # Podemos aprovechar calcular_similitud_landmarks que acepta lista de puntos planos
+                points = []
+                if isinstance(seq, dict) and 'x' in seq and 'y' in seq:
+                    points = [{'x': float(seq['x']), 'y': float(seq['y'])}]
+                elif isinstance(seq, list):
+                    for p in seq:
+                        if isinstance(p, dict) and 'x' in p and 'y' in p:
+                            points.append({'x': float(p['x']), 'y': float(p['y'])})
+                # Por defecto, lo asignamos a derecha
+                right_points.extend(points)
+
+        to_points(landmarks_payload)
+
+        # Consultar gestos entrenados por mano
+        gestos_izq = GestoMano.objects.filter(activo=True, tipo_mano='left', numero_vinculado__isnull=False)
+        gestos_der = GestoMano.objects.filter(activo=True, tipo_mano='right', numero_vinculado__isnull=False)
+
+        if not gestos_izq.exists() and not gestos_der.exists():
+            return JsonResponse({'success': False, 'error': 'No hay gestos entrenados de números para manos izquierda/derecha'}, status=400)
+
+        # Buscar mejor coincidencia por mano con el mismo método de similitud
+        umbral = 0.7
+        mejor_izq, conf_izq = None, 0.0
+        if left_points and gestos_izq.exists():
+            for gesto in gestos_izq:
+                c = calcular_similitud_landmarks(left_points, gesto.get_landmarks_as_dict())
+                if c > conf_izq:
+                    conf_izq, mejor_izq = c, gesto
+
+        mejor_der, conf_der = None, 0.0
+        if right_points and gestos_der.exists():
+            for gesto in gestos_der:
+                c = calcular_similitud_landmarks(right_points, gesto.get_landmarks_as_dict())
+                if c > conf_der:
+                    conf_der, mejor_der = c, gesto
+
+        # Construir respuesta de dígitos detectados
+        decena = mejor_izq.numero_vinculado if mejor_izq and conf_izq > umbral else None
+        unidad = mejor_der.numero_vinculado if mejor_der and conf_der > umbral else None
+
+        if decena is None and unidad is None:
+            return JsonResponse({'success': False, 'error': 'No se detectaron dígitos con suficiente confianza', 'confianzas': {'izquierda': conf_izq, 'derecha': conf_der}}, status=200)
+
+        numero_compuesto = None
+        if decena is not None and unidad is not None:
+            numero_compuesto = int(f"{decena}{unidad}")
+        elif unidad is not None:
+            numero_compuesto = int(unidad)
+        elif decena is not None:
+            # Si sólo hay decena, la interpretamos como X0
+            numero_compuesto = int(decena) * 10
+
+        # Registrar en historial por mano si corresponde
+        if mejor_izq and decena is not None:
+            HistorialReconocimiento.objects.create(
+                gesto_reconocido=mejor_izq,
+                confianza=conf_izq,
+                landmarks_reconocidos=json.dumps(left_points)
+            )
+        if mejor_der and unidad is not None:
+            HistorialReconocimiento.objects.create(
+                gesto_reconocido=mejor_der,
+                confianza=conf_der,
+                landmarks_reconocidos=json.dumps(right_points)
+            )
+
+        respuesta = {
+            'success': True,
+            'manos_detectadas': {
+                'izquierda': {
+                    'numero': decena,
+                    'rol': 'decena',
+                    'confianza': conf_izq,
+                    'gesto_id': mejor_izq.id if mejor_izq else None,
+                    'nombre': mejor_izq.nombre_display if mejor_izq else None,
+                },
+                'derecha': {
+                    'numero': unidad,
+                    'rol': 'unidad',
+                    'confianza': conf_der,
+                    'gesto_id': mejor_der.id if mejor_der else None,
+                    'nombre': mejor_der.nombre_display if mejor_der else None,
+                },
+            },
+            'numero_compuesto': numero_compuesto,
+        }
+
+        return JsonResponse(respuesta)
+
+    except Exception as e:
+        logger.error(f"Error inesperado en reconocer_dos_manos: {str(e)}")
+        return JsonResponse({'success': False, 'error': 'Error interno del servidor'}, status=500)
