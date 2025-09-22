@@ -353,10 +353,27 @@ export function useArithmetic() {
       setError('La operación debe ser del tipo: número operador número')
       return
     }
+    // Actualiza UI
     setOperando1(seq[0])
     setOperador(seq[1])
     setOperando2(seq[2])
-    await calcular(new Event('submit') as any)
+
+    // Ejecuta cálculo directamente con los valores actuales para evitar condición de carrera
+    setLoadingCalc(true)
+    setError(null)
+    setResultado(null)
+    setExpresion(null)
+    try {
+      const ids = currentGestureIdsRef.current.filter(id => typeof id === 'number' && id > 0).slice(0, 3)
+      const data = await calculateAPI({ operando1: seq[0], operador: seq[1], operando2: seq[2], gestos_utilizados: ids })
+      if (!data?.success) throw new Error(data?.error || 'Error al calcular')
+      setResultado(data.resultado)
+      setExpresion(data.expresion)
+    } catch (err: any) {
+      setError(err.message || 'Error inesperado')
+    } finally {
+      setLoadingCalc(false)
+    }
   }
 
   const calcular = async (e: React.FormEvent) => {

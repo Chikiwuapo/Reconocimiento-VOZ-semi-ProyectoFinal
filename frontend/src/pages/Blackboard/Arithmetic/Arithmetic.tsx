@@ -1,4 +1,3 @@
-import React from 'react'
 import Layout from '../../../components/Blackboard/Layout'
 import { useArithmetic } from './hooks/useArithmetic'
 
@@ -157,11 +156,11 @@ export default function Arithmetic() {
                   <form onSubmit={calcular} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
                     <div className="md:col-span-2">
                       <label className="block text-xs text-gray-600 mb-1">Operando 1</label>
-                      <input type="number" step="any" value={operando1} onChange={e => setOperando1(e.target.value)} className="w-full rounded border px-3 py-2" required />
+                      <input type="number" step="any" value={operando1} onChange={e => setOperando1(e.target.value)} className="w-full rounded border px-3 py-2" required disabled={loadingCalc} />
                     </div>
                     <div>
                       <label className="block text-xs text-gray-600 mb-1">Operador</label>
-                      <select value={operador} onChange={e => setOperador(e.target.value)} className="w-full rounded border px-3 py-2">
+                      <select value={operador} onChange={e => setOperador(e.target.value)} className="w-full rounded border px-3 py-2" disabled={loadingCalc}>
                         <option value="+">+</option>
                         <option value="-">-</option>
                         <option value="*">*</option>
@@ -170,10 +169,7 @@ export default function Arithmetic() {
                     </div>
                     <div>
                       <label className="block text-xs text-gray-600 mb-1">Operando 2</label>
-                      <input type="number" step="any" value={operando2} onChange={e => setOperando2(e.target.value)} className="w-full rounded border px-3 py-2" required />
-                    </div>
-                    <div className="md:col-span-4">
-                      <button type="submit" disabled={loadingCalc} className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg">{loadingCalc ? 'Calculando...' : 'Calcular'}</button>
+                      <input type="number" step="any" value={operando2} onChange={e => setOperando2(e.target.value)} className="w-full rounded border px-3 py-2" required disabled={loadingCalc} />
                     </div>
                   </form>
 
