@@ -34,7 +34,10 @@ SECRET_KEY = 'django-insecure-w1ys==++dc1@#cv-^*kl2roku8)b!n!hx883)!y(0o(1o5+y)n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+]
 
 
 # Application definition
@@ -169,3 +172,13 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
 }
+
+# CSRF config for local dev behind Vite proxy
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
+]
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'

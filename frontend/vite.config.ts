@@ -13,6 +13,17 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      // Django views (HTML) used by the registration flow for CSRF and POST form
+      '/register': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/login': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 })
