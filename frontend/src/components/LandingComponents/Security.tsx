@@ -1,4 +1,5 @@
-import React from 'react';
+ 
+import { motion } from 'framer-motion';
 
 interface SecurityProps {
   isDarkMode?: boolean;
@@ -37,7 +38,14 @@ const Security = ({ isDarkMode = false }: SecurityProps) => {
 
   // SVG para ilustrar seguridad
   const SecurityShieldSVG = () => (
-    <svg className="w-full h-64" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <motion.svg
+      className="w-full h-64"
+      viewBox="0 0 400 300"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      whileHover={{ scale: 1.03, y: -4 }}
+      transition={{ type: 'spring', stiffness: 280, damping: 18 }}
+    >
       {/* Escudo base */}
       <path 
         d="M200,50 L300,90 C300,180 260,240 200,270 C140,240 100,180 100,90 L200,50 Z" 
@@ -94,7 +102,7 @@ const Security = ({ isDarkMode = false }: SecurityProps) => {
         strokeWidth="4"
         fill="none"
       />
-    </svg>
+    </motion.svg>
   );
 
   return (
@@ -103,7 +111,7 @@ const Security = ({ isDarkMode = false }: SecurityProps) => {
       className={`py-20 ${
         isDarkMode 
           ? 'bg-[#121212]' 
-          : 'bg-[#F5F5F5]'
+          : 'bg-gray-50'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -134,40 +142,28 @@ const Security = ({ isDarkMode = false }: SecurityProps) => {
           <div className="lg:w-1/2">
             <div className="space-y-8">
               {securityFeatures.map((feature, index) => (
-                <div 
+                <motion.div 
                   key={index}
-                  className={`flex gap-4 p-6 rounded-lg ${
-                    isDarkMode ? 'bg-[#1A1A1A]' : 'bg-white shadow'
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className={`flex gap-4 p-6 rounded-lg transition-colors ${
+                    isDarkMode 
+                      ? 'bg-[#1A1A1A] hover:bg-[#151515] border border-transparent hover:border-[#2a2a2a]'
+                      : 'bg-white shadow hover:shadow-lg'
                   }`}
                 >
-                  <div 
-                    className={`${
-                      isDarkMode ? 'text-[#6A11CB]' : 'text-[#1B4965]'
-                    }`}
-                  >
-                    {feature.icon}
-                  </div>
+                  <div className={`${isDarkMode ? 'text-[#6A11CB]' : 'text-[#1B4965]'} flex-shrink-0`}>{feature.icon}</div>
                   <div>
-                    <h3 
-                      className={`text-xl font-bold mb-2 ${
-                        isDarkMode ? 'text-white' : 'text-[#1B4965]'
-                      }`}
-                    >
-                      {feature.title}
-                    </h3>
-                    <p 
-                      className={`${
-                        isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                      }`}
-                    >
-                      {feature.description}
-                    </p>
+                    <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`}>{feature.title}</h3>
+                    <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{feature.description}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
             
-            <div 
+            <motion.div 
+              whileHover={{ y: -3, scale: 1.01 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 22 }}
               className={`mt-8 p-4 rounded-lg border-l-4 ${
                 isDarkMode 
                   ? 'bg-[#1A1A1A] border-[#6A11CB] text-gray-300' 
@@ -180,7 +176,7 @@ const Security = ({ isDarkMode = false }: SecurityProps) => {
                 </svg>
                 Puedes revisar nuestra política de privacidad completa para más detalles sobre cómo protegemos tus datos.
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import Header from '../../components/LandingComponents/Header';
-import Hero from '../../components/LandingComponents/Hero';
 import Benefits from '../../components/LandingComponents/Benefits';
 import Examples from '../../components/LandingComponents/Examples';
 import HowItWorks from '../../components/LandingComponents/HowItWorks';
-import Testimonials from '../../components/LandingComponents/Testimonials';
+import OurTeam from '../../components/LandingComponents/OurTeam';
 import Security from '../../components/LandingComponents/Security';
 import Registration from '../../components/LandingComponents/Registration';
+import Contact from '../../components/LandingComponents/Contact';
 import Footer from '../../components/LandingComponents/Footer';
+import PromoCarousel from '../../components/LandingComponents/PromoCarousel';
+
 
 const Landing = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -16,6 +18,25 @@ const Landing = () => {
   useEffect(() => {
     const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(prefersDarkMode);
+  }, []);
+
+  // Bloquear scroll del body cuando el apartado de equipo esté completamente a la vista
+  useEffect(() => {
+    const teamSection = document.getElementById('team-wrapper');
+    if (!teamSection) return;
+
+    const onScroll = () => {
+      const rect = teamSection.getBoundingClientRect();
+      const fullyVisible = rect.top <= 0 && rect.bottom >= window.innerHeight;
+      document.body.style.overflow = fullyVisible ? 'hidden' : '';
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      document.body.style.overflow = '';
+    };
   }, []);
 
   // Manejar cambio de tema
@@ -28,13 +49,17 @@ const Landing = () => {
       <div className={`min-h-screen ${isDarkMode ? 'bg-[#0D0D0D] text-white' : 'bg-white text-gray-800'}`}>
         <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
         <main>
-          <Hero isDarkMode={isDarkMode} />
+          <PromoCarousel isDarkMode={isDarkMode} />
           <Benefits isDarkMode={isDarkMode} />
           <Examples isDarkMode={isDarkMode} />
           <HowItWorks isDarkMode={isDarkMode} />
-          <Testimonials isDarkMode={isDarkMode} />
+          {/* Bloquear scroll de body cuando nuestro equipo esté completamente a la vista */}
+          <section id="team-wrapper">
+            <OurTeam isDarkMode={isDarkMode} />
+          </section>
           <Security isDarkMode={isDarkMode} />
           <Registration isDarkMode={isDarkMode} />
+          <Contact isDarkMode={isDarkMode} />
         </main>
         <Footer isDarkMode={isDarkMode} />
       </div>

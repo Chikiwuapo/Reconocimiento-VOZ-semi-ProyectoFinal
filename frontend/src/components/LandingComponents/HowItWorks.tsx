@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface HowItWorksProps {
   isDarkMode?: boolean;
 }
 
 const HowItWorks = ({ isDarkMode = false }: HowItWorksProps) => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [expandedCards, setExpandedCards] = useState<number[]>([]);
   
   const steps = [
     {
@@ -46,149 +47,14 @@ const HowItWorks = ({ isDarkMode = false }: HowItWorksProps) => {
     }
   ];
 
-  // SVG para ilustrar el proceso
-  const renderProcessSVG = () => {
-    return (
-      <svg className="w-full h-64" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Línea de proceso */}
-        <path 
-          d="M100,150 L700,150" 
-          stroke={isDarkMode ? "#333" : "#E0E0E0"} 
-          strokeWidth="4" 
-          strokeDasharray="1,10"
-        />
-        
-        {/* Círculos de pasos */}
-        {steps.map((_, index) => {
-          const x = 100 + index * 200;
-          return (
-            <g key={index}>
-              <circle 
-                cx={x} 
-                cy="150" 
-                r="40" 
-                fill={
-                  index === activeStep 
-                    ? isDarkMode ? "#6A11CB" : "#1B4965" 
-                    : index < activeStep 
-                      ? isDarkMode ? "#3A7BD5" : "#62B6CB" 
-                      : isDarkMode ? "#1A1A1A" : "#F5F5F5"
-                } 
-                stroke={
-                  index === activeStep 
-                    ? isDarkMode ? "#6A11CB" : "#1B4965" 
-                    : isDarkMode ? "#333" : "#E0E0E0"
-                }
-                strokeWidth="2"
-              />
-              <text 
-                x={x} 
-                y="155" 
-                textAnchor="middle" 
-                dominantBaseline="middle" 
-                fill={
-                  index <= activeStep 
-                    ? "white" 
-                    : isDarkMode ? "#666" : "#999"
-                }
-                fontSize="20"
-                fontWeight="bold"
-              >
-                {index + 1}
-              </text>
-            </g>
-          );
-        })}
-        
-        {/* Animación específica para cada paso */}
-        {activeStep === 0 && (
-          <>
-            {/* Ondas de sonido */}
-            <path 
-              d="M100,150 C120,120 120,180 140,150 C160,120 160,180 180,150" 
-              stroke={isDarkMode ? "#6A11CB" : "#1B4965"} 
-              strokeWidth="3" 
-              fill="none"
-            />
-            <path 
-              d="M80,150 C110,100 110,200 140,150 C170,100 170,200 200,150" 
-              stroke={isDarkMode ? "#3A7BD5" : "#62B6CB"} 
-              strokeWidth="2" 
-              fill="none"
-              opacity="0.6"
-            />
-          </>
-        )}
-        
-        {activeStep === 1 && (
-          <>
-            {/* Procesamiento de señal */}
-            <path 
-              d="M300,180 L280,160 L290,150 L280,140 L290,130 L280,120 L300,100" 
-              stroke={isDarkMode ? "#6A11CB" : "#1B4965"} 
-              strokeWidth="3" 
-              fill="none"
-            />
-            <path 
-              d="M320,180 L340,160 L330,150 L340,140 L330,130 L340,120 L320,100" 
-              stroke={isDarkMode ? "#3A7BD5" : "#62B6CB"} 
-              strokeWidth="3" 
-              fill="none"
-            />
-          </>
-        )}
-        
-        {activeStep === 2 && (
-          <>
-            {/* Texto emergiendo */}
-            <text 
-              x="500" 
-              y="120" 
-              fill={isDarkMode ? "#6A11CB" : "#1B4965"} 
-              fontSize="14"
-            >
-              "Hola mundo"
-            </text>
-            <text 
-              x="480" 
-              y="140" 
-              fill={isDarkMode ? "#3A7BD5" : "#62B6CB"} 
-              fontSize="14"
-            >
-              "Reconocimiento de voz"
-            </text>
-            <text 
-              x="510" 
-              y="160" 
-              fill={isDarkMode ? "#6A11CB" : "#1B4965"} 
-              fontSize="14"
-            >
-              "Machine Learning"
-            </text>
-            <text 
-              x="490" 
-              y="180" 
-              fill={isDarkMode ? "#3A7BD5" : "#62B6CB"} 
-              fontSize="14"
-            >
-              "Inteligencia Artificial"
-            </text>
-          </>
-        )}
-        
-        {activeStep === 3 && (
-          <>
-            {/* Gráficos de análisis */}
-            <rect x="680" y="120" width="10" height="60" fill={isDarkMode ? "#6A11CB" : "#1B4965"} />
-            <rect x="700" y="100" width="10" height="80" fill={isDarkMode ? "#3A7BD5" : "#62B6CB"} />
-            <rect x="720" y="130" width="10" height="50" fill={isDarkMode ? "#6A11CB" : "#1B4965"} />
-            <rect x="740" y="90" width="10" height="90" fill={isDarkMode ? "#3A7BD5" : "#62B6CB"} />
-            <rect x="760" y="110" width="10" height="70" fill={isDarkMode ? "#6A11CB" : "#1B4965"} />
-          </>
-        )}
-      </svg>
+  const toggleCard = (index: number) => {
+    setExpandedCards(prev => 
+      prev.includes(index) 
+        ? prev.filter(i => i !== index)
+        : [...prev, index]
     );
   };
+
 
   return (
     <section 
@@ -196,7 +62,7 @@ const HowItWorks = ({ isDarkMode = false }: HowItWorksProps) => {
       className={`py-20 ${
         isDarkMode 
           ? 'bg-[#121212]' 
-          : 'bg-[#F5F5F5]'
+          : 'bg-gray-50'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -211,24 +77,31 @@ const HowItWorks = ({ isDarkMode = false }: HowItWorksProps) => {
             Cómo Funciona
           </h2>
           <p 
-            className={`max-w-2xl mx-auto ${
+            className={`max-w-2xl mx-auto mb-6 ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
             }`}
           >
             Nuestro sistema de reconocimiento de voz utiliza tecnología de punta para transformar tu voz en datos accionables.
           </p>
+          <motion.p 
+            className={`text-lg font-semibold ${
+              isDarkMode ? 'text-[#6A11CB]' : 'text-[#1B4965]'
+            }`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            ✨ Descubre cómo funciona, haz click en las tarjetas
+          </motion.p>
         </div>
         
-        <div className="mb-16">
-          {renderProcessSVG()}
-        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <div 
+            <motion.div 
               key={index}
               className={`p-6 rounded-lg cursor-pointer transition-all ${
-                activeStep === index 
+                expandedCards.includes(index)
                   ? isDarkMode 
                     ? 'bg-[#1A1A1A] border-b-4 border-[#6A11CB]' 
                     : 'bg-white shadow-lg border-b-4 border-[#1B4965]'
@@ -236,11 +109,13 @@ const HowItWorks = ({ isDarkMode = false }: HowItWorksProps) => {
                     ? 'bg-[#1A1A1A] hover:bg-[#0D0D0D]' 
                     : 'bg-white shadow hover:shadow-md'
               }`}
-              onClick={() => setActiveStep(index)}
+              onClick={() => toggleCard(index)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
               <div 
                 className={`flex justify-center mb-4 ${
-                  activeStep === index 
+                  expandedCards.includes(index)
                     ? isDarkMode 
                       ? 'text-[#6A11CB]' 
                       : 'text-[#1B4965]'
@@ -258,14 +133,22 @@ const HowItWorks = ({ isDarkMode = false }: HowItWorksProps) => {
               >
                 {step.title}
               </h3>
-              <p 
-                className={`text-center ${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}
-              >
-                {step.description}
-              </p>
-            </div>
+              <AnimatePresence>
+                {expandedCards.includes(index) && (
+                  <motion.p 
+                    className={`text-center ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {step.description}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -79,9 +79,59 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
       } ${isVisible ? 'transform-none' : 'transform -translate-y-full'}`}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center">
-          <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`}>
-            Ares digital soft
+        <div className="flex items-center gap-3">
+          {/* Icono idéntico al de la primera promo del PromoCarousel, escalado al header */}
+          <svg 
+            className="h-12 w-16 animate-[pulse_2.2s_ease-in-out_infinite]"
+            viewBox="0 0 500 400" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            style={{
+              filter: isDarkMode
+                ? 'drop-shadow(0 0 10px rgba(106,17,203,0.55)) drop-shadow(0 0 18px rgba(58,123,213,0.45))'
+                : 'drop-shadow(0 0 8px rgba(98,182,203,0.55)) drop-shadow(0 0 14px rgba(27,73,101,0.35))'
+            }}
+          >
+            {/* Fondo abstracto */}
+            <circle 
+              cx="250" 
+              cy="200" 
+              r="150" 
+              fill={isDarkMode ? 'url(#gradient-dark-header)' : '#F8FAFC'}
+              opacity="0.8" 
+            />
+            {/* Nodos y conexiones */}
+            <circle cx="180" cy="150" r="10" fill={isDarkMode ? '#3A7BD5' : '#1B4965'} />
+            <circle cx="250" cy="120" r="15" fill={isDarkMode ? '#6A11CB' : '#62B6CB'} />
+            <circle cx="320" cy="150" r="10" fill={isDarkMode ? '#F53844' : '#1B4965'} />
+            <circle cx="200" cy="220" r="12" fill={isDarkMode ? '#6A11CB' : '#62B6CB'} />
+            <circle cx="300" cy="220" r="12" fill={isDarkMode ? '#3A7BD5' : '#1B4965'} />
+            <circle cx="250" cy="280" r="15" fill={isDarkMode ? '#F53844' : '#62B6CB'} />
+            {/* Líneas de conexión */}
+            <line x1="180" y1="150" x2="250" y2="120" stroke={isDarkMode ? '#3A7BD5' : '#1B4965'} strokeWidth="2" />
+            <line x1="250" y1="120" x2="320" y2="150" stroke={isDarkMode ? '#6A11CB' : '#62B6CB'} strokeWidth="2" />
+            <line x1="180" y1="150" x2="200" y2="220" stroke={isDarkMode ? '#F53844' : '#1B4965'} strokeWidth="2" />
+            <line x1="320" y1="150" x2="300" y2="220" stroke={isDarkMode ? '#3A7BD5' : '#62B6CB'} strokeWidth="2" />
+            <line x1="200" y1="220" x2="250" y2="280" stroke={isDarkMode ? '#6A11CB' : '#1B4965'} strokeWidth="2" />
+            <line x1="300" y1="220" x2="250" y2="280" stroke={isDarkMode ? '#F53844' : '#62B6CB'} strokeWidth="2" />
+            <line x1="250" y1="120" x2="250" y2="280" stroke={isDarkMode ? '#3A7BD5' : '#1B4965'} strokeOpacity="0.5" strokeWidth="1" strokeDasharray="5 5" />
+            {/* Datos y resultados (rectángulos) */}
+            <rect x="120" y="100" width="40" height="20" rx="5" fill={isDarkMode ? '#3A7BD5' : '#1B4965'} />
+            <rect x="340" y="100" width="40" height="20" rx="5" fill={isDarkMode ? '#F53844' : '#62B6CB'} />
+            <rect x="120" y="280" width="40" height="20" rx="5" fill={isDarkMode ? '#6A11CB' : '#1B4965'} />
+            <rect x="340" y="280" width="40" height="20" rx="5" fill={isDarkMode ? '#3A7BD5' : '#62B6CB'} />
+            {/* Gradiente para modo oscuro */}
+            <defs>
+              <linearGradient id="gradient-dark-header" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#3A7BD5" stopOpacity="0.2" />
+                <stop offset="50%" stopColor="#6A11CB" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#F53844" stopOpacity="0.2" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`}>
+            Arias Digital Soft
           </h1>
         </div>
         
@@ -119,6 +169,17 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
                   }`}
                 >
                   Cómo Funciona
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="#nuestro-equipo" 
+                  onClick={handleAnchorClick}
+                  className={`font-medium hover:opacity-80 transition-opacity ${
+                    isDarkMode ? 'text-white' : 'text-[#1B4965]'
+                  }`}
+                >
+                  Nuestro Equipo
                 </a>
               </li>
             </ul>

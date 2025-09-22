@@ -65,7 +65,7 @@ const Benefits = ({ isDarkMode = false }: BenefitsProps) => {
       className={`py-20 ${
         isDarkMode 
           ? 'bg-[#121212]' 
-          : 'bg-[#F5F5F5]'
+          : 'bg-gray-50'
       }`}
     >
       <div className="container mx-auto px-4">

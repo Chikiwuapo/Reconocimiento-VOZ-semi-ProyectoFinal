@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface RegistrationProps {
   isDarkMode?: boolean;
 }
 
 const Registration = ({ isDarkMode = false }: RegistrationProps) => {
-  const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,49 +41,67 @@ const Registration = ({ isDarkMode = false }: RegistrationProps) => {
                   ¡Comienza ahora!
                 </h2>
                 <p 
-                  className={`mb-6 ${
+                  className={`mb-8 ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}
                 >
-                  Regístrate para acceder a todas las funcionalidades de reconocimiento de voz y transformar tu forma de trabajar.
+                  Accede a todas las funcionalidades de reconocimiento de voz y transforma tu forma de trabajar.
                 </p>
                 
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-4">
-                    <label 
-                      htmlFor="email" 
-                      className={`block mb-2 ${
+                <div className="flex flex-col items-center">
+                  <motion.div
+                    className="flex flex-col items-center gap-4 mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <span 
+                      className={`text-lg font-medium ${
                         isDarkMode ? 'text-gray-300' : 'text-gray-700'
                       }`}
                     >
-                      Correo electrónico
-                    </label>
-                    <input 
-                      type="email" 
-                      id="email" 
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className={`w-full px-4 py-2 rounded-lg focus:outline-none ${
-                        isDarkMode 
-                          ? 'bg-[#121212] text-white border border-[#333] focus:border-[#6A11CB]' 
-                          : 'bg-white text-gray-800 border border-gray-300 focus:border-[#1B4965]'
-                      }`}
-                      placeholder="tu@correo.com"
-                      required
-                    />
-                  </div>
+                      Haz click aquí para comenzar
+                    </span>
+                    <motion.div
+                      animate={{ 
+                        y: [0, 8, 0],
+                        scale: [1, 1.1, 1]
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <svg 
+                        className={`w-8 h-8 ${
+                          isDarkMode ? 'text-[#6A11CB]' : 'text-[#1B4965]'
+                        }`}
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          strokeWidth={2} 
+                          d="M19 14l-7 7m0 0l-7-7m7 7V3" 
+                        />
+                      </svg>
+                    </motion.div>
+                  </motion.div>
                   
                   <button 
-                    type="submit" 
-                    className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
+                    onClick={handleSubmit}
+                    className={`py-3 px-8 rounded-lg font-medium transition-all transform hover:scale-105 ${
                       isDarkMode 
                         ? 'bg-[#6A11CB] hover:bg-[#5A0CB8] text-white' 
                         : 'bg-[#1B4965] hover:bg-[#0A3954] text-white'
                     }`}
                   >
-                    {submitted ? '¡Gracias por registrarte!' : 'Registrarme'}
+                    {submitted ? '¡Gracias por comenzar!' : 'Pruébalo gratis'}
                   </button>
-                </form>
+                </div>
                 
                 <p 
                   className={`mt-4 text-sm ${

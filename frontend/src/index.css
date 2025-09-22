@@ -68,4 +68,8 @@ html, body, #root {
   @keyframes slide-up { from { transform: translateY(12px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
   .animate-fade-in { animation: fade-in 500ms ease-out both; }
   .animate-slide-up { animation: slide-up 500ms ease-out both; }
+
+  /* Ocultar scrollbar para contenedores con scroll interno */
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
 }

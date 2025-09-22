@@ -1,4 +1,4 @@
-import React from 'react';
+ 
 
 interface FooterProps {
   isDarkMode?: boolean;
@@ -14,14 +14,14 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
         { name: "Características", href: "#beneficios" },
         { name: "Ejemplos", href: "#ejemplos" },
         { name: "Cómo funciona", href: "#como-funciona" },
-        { name: "Actualizaciones", href: "#" }
+        // Eliminados: Nuestro equipo, Actualizaciones
       ]
     },
     {
       title: "Empresa",
       links: [
         { name: "Acerca de", href: "#" },
-        { name: "Equipo", href: "#" },
+        { name: "Equipo", href: "#nuestro-equipo" },
         { name: "Contacto", href: "#" }
       ]
     },
@@ -30,49 +30,50 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
       links: [
         { name: "Términos de servicio", href: "#" },
         { name: "Política de privacidad", href: "#" },
-        { name: "Cookies", href: "#" }
+        // Eliminado: Cookies
       ]
     }
   ];
 
-  // Logo SVG
+  // Logo SVG idéntico al usado en Header/PromoCarousel (solo icono)
   const LogoSVG = () => (
-    <svg className="h-10 w-auto" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Ondas de sonido */}
-      <path 
-        d="M30,30 C35,20 35,40 40,30 C45,20 45,40 50,30" 
-        stroke={isDarkMode ? "#6A11CB" : "#1B4965"} 
-        strokeWidth="3" 
-        fill="none"
-      />
-      <path 
-        d="M20,30 C30,10 30,50 40,30 C50,10 50,50 60,30" 
-        stroke={isDarkMode ? "#3A7BD5" : "#62B6CB"} 
-        strokeWidth="2" 
-        fill="none"
-        opacity="0.6"
-      />
-      
-      {/* Texto */}
-      <text 
-        x="70" 
-        y="35" 
-        fontFamily="Arial" 
-        fontSize="18" 
-        fontWeight="bold" 
-        fill={isDarkMode ? "white" : "#1B4965"}
-      >
-        Ares digital soft
-      </text>
-      <text 
-        x="70" 
-        y="50" 
-        fontFamily="Arial" 
-        fontSize="12" 
-        fill={isDarkMode ? "#A0AEC0" : "#62B6CB"}
-      >
-        Reconocimiento de voz
-      </text>
+    <svg 
+      className="h-12 w-16 animate-[pulse_2.2s_ease-in-out_infinite]"
+      viewBox="0 0 500 400" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      style={{
+        filter: isDarkMode
+          ? 'drop-shadow(0 0 10px rgba(106,17,203,0.45)) drop-shadow(0 0 16px rgba(58,123,213,0.35))'
+          : 'drop-shadow(0 0 8px rgba(98,182,203,0.45)) drop-shadow(0 0 12px rgba(27,73,101,0.25))'
+      }}
+    >
+      <circle cx="250" cy="200" r="150" fill={isDarkMode ? 'url(#gradient-dark-footer)' : '#F8FAFC'} opacity="0.8" />
+      <circle cx="180" cy="150" r="10" fill={isDarkMode ? '#3A7BD5' : '#1B4965'} />
+      <circle cx="250" cy="120" r="15" fill={isDarkMode ? '#6A11CB' : '#62B6CB'} />
+      <circle cx="320" cy="150" r="10" fill={isDarkMode ? '#F53844' : '#1B4965'} />
+      <circle cx="200" cy="220" r="12" fill={isDarkMode ? '#6A11CB' : '#62B6CB'} />
+      <circle cx="300" cy="220" r="12" fill={isDarkMode ? '#3A7BD5' : '#1B4965'} />
+      <circle cx="250" cy="280" r="15" fill={isDarkMode ? '#F53844' : '#62B6CB'} />
+      <line x1="180" y1="150" x2="250" y2="120" stroke={isDarkMode ? '#3A7BD5' : '#1B4965'} strokeWidth="2" />
+      <line x1="250" y1="120" x2="320" y2="150" stroke={isDarkMode ? '#6A11CB' : '#62B6CB'} strokeWidth="2" />
+      <line x1="180" y1="150" x2="200" y2="220" stroke={isDarkMode ? '#F53844' : '#1B4965'} strokeWidth="2" />
+      <line x1="320" y1="150" x2="300" y2="220" stroke={isDarkMode ? '#3A7BD5' : '#62B6CB'} strokeWidth="2" />
+      <line x1="200" y1="220" x2="250" y2="280" stroke={isDarkMode ? '#6A11CB' : '#1B4965'} strokeWidth="2" />
+      <line x1="300" y1="220" x2="250" y2="280" stroke={isDarkMode ? '#F53844' : '#62B6CB'} strokeWidth="2" />
+      <line x1="250" y1="120" x2="250" y2="280" stroke={isDarkMode ? '#3A7BD5' : '#1B4965'} strokeOpacity="0.5" strokeWidth="1" strokeDasharray="5 5" />
+      <rect x="120" y="100" width="40" height="20" rx="5" fill={isDarkMode ? '#3A7BD5' : '#1B4965'} />
+      <rect x="340" y="100" width="40" height="20" rx="5" fill={isDarkMode ? '#F53844' : '#62B6CB'} />
+      <rect x="120" y="280" width="40" height="20" rx="5" fill={isDarkMode ? '#6A11CB' : '#1B4965'} />
+      <rect x="340" y="280" width="40" height="20" rx="5" fill={isDarkMode ? '#3A7BD5' : '#62B6CB'} />
+      <defs>
+        <linearGradient id="gradient-dark-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3A7BD5" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#6A11CB" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#F53844" stopOpacity="0.2" />
+        </linearGradient>
+      </defs>
     </svg>
   );
 
@@ -131,10 +132,14 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-16">
           <div className="col-span-2">
-            <div className="mb-6">
+            <div className="mb-6 flex items-center gap-3">
               <LogoSVG />
+              <div>
+                <div className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`}>Aries Digital Soft</div>
+                <div className={`${isDarkMode ? 'text-gray-400' : 'text-[#62B6CB]'} text-sm`}>Reconocimiento de voz</div>
+              </div>
             </div>
-            <p className="mb-4 max-w-xs">
+            <p className="mb-4 max-w-sm">
               Transformando la forma en que interactuamos con la tecnología a través del reconocimiento de voz avanzado.
             </p>
             <div className="flex space-x-4">
@@ -189,11 +194,31 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
             isDarkMode ? 'border-gray-800' : 'border-gray-200'
           }`}
         >
-          <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="mb-4 md:mb-0">
-              &copy; {currentYear} VoiceRec. Todos los derechos reservados.
+              &copy; {currentYear} Aries Digital Soft. Todos los derechos reservados.
             </p>
-            <div className="flex space-x-6">
+            <div className="flex items-center gap-3">
+              <a
+                href="#seguridad"
+                className={`${
+                  isDarkMode
+                    ? 'bg-[#121212] text-white hover:bg-[#1E1E1E]'
+                    : 'bg-white text-[#1B4965] hover:bg-gray-100'
+                } border rounded-md px-4 py-2 transition`}
+              >
+                Confianza y Seguridad
+              </a>
+              <a 
+                href="#contacto" 
+                className={`${
+                  isDarkMode 
+                    ? 'hover:text-white' 
+                    : 'hover:text-[#1B4965]'
+                } transition-colors`}
+              >
+                Contacto
+              </a>
               <a 
                 href="#" 
                 className={`${
@@ -213,16 +238,6 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
                 } transition-colors`}
               >
                 Privacidad
-              </a>
-              <a 
-                href="#" 
-                className={`${
-                  isDarkMode 
-                    ? 'hover:text-white' 
-                    : 'hover:text-[#1B4965]'
-                } transition-colors`}
-              >
-                Cookies
               </a>
             </div>
           </div>

@@ -16,12 +16,16 @@ export default function Navbar({ notifications = 0 }: { notifications?: number }
       <div className="container-page flex items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            {/* Abstract ML icon */}
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-              <path d="M4 7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1h2a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3h-2v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/>
+            {/* Icono pequeño similar al de PromoCarousel */}
+            <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+              <circle cx="12" cy="5.5" r="2.3" fill="#1B4965" />
+              <circle cx="6" cy="12" r="1.8" fill="#62B6CB" />
+              <circle cx="18" cy="12" r="1.8" fill="#1B4965" />
+              <circle cx="12" cy="18.5" r="2.3" fill="#62B6CB" />
+              <path d="M12 7.8 L6 12 L12 18.5 L18 12 L12 7.8 Z" stroke="#1B4965" strokeWidth="1.2" fill="none" />
             </svg>
           </span>
-          <span className="font-montserrat font-bold text-lg text-header">Blackboard</span>
+          <span className="font-montserrat font-bold text-lg text-header">Arias Digital Soft</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
