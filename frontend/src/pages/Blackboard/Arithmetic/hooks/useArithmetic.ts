@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { calculateAPI, getTrainedGesturesAPI, recognizeGestureAPI, saveGestureAPI } from '../services/arithmeticService'
 
 // Nota: evitamos extender la interfaz global de Window para prevenir conflictos de TS
@@ -38,7 +39,7 @@ export function useArithmetic() {
   const [confidence, setConfidence] = useState(0)
   const [rightDetected, setRightDetected] = useState(false)
   const [leftDetected, setLeftDetected] = useState(false)
-  const samplesTarget = 50
+  const samplesTarget = 500
   const [samplesCaptured, setSamplesCaptured] = useState(0)
   const [gestureMode, setGestureMode] = useState<'numero' | 'operacion'>('operacion')
   const [numeroVinculado, setNumeroVinculado] = useState<number>(1)
@@ -59,6 +60,16 @@ export function useArithmetic() {
   const [chartData, setChartData] = useState<number[]>([])
   const [showChart, setShowChart] = useState(false)
   const [, forceRender] = useState(0)
+
+  // Sincroniza la pestaña con el query param ?tab=train|test
+  const location = useLocation()
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const tab = params.get('tab')
+    if (tab === 'test' || tab === 'train') {
+      setActiveTab(tab as 'train' | 'test')
+    }
+  }, [location.search])
 
   // Mantener un ref sincronizado con el estado de recording para evitar cierres obsoletos en onResults
   useEffect(() => {

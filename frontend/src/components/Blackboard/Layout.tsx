@@ -25,7 +25,7 @@ export default function Layout({ children, pageTitle, pageSubtitle, notification
       </main>
       <footer className="mt-16 border-t border-slate-100">
         <div className="container-page py-8 text-sm text-slate-500 flex items-center justify-between">
-          <span>© {new Date().getFullYear()} Blackboard · Plataforma ML</span>
+          <span>© {new Date().getFullYear()} AresDigitalAcademy · Plataforma ML</span>
         </div>
       </footer>
       <NotificationCenter />

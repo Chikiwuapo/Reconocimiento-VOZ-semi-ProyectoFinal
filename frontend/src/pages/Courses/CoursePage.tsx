@@ -22,51 +22,7 @@ export type Lesson = {
   videoId?: string
 }
 
-function AccordionRow({ idx, lesson, onSelect }: { idx: number; lesson: Lesson; onSelect: () => void }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <li>
-      <button
-        className="w-full flex items-center justify-between py-3 text-left"
-        onClick={() => { setOpen(o => !o); onSelect() }}
-      >
-        <div>
-          <div className="font-medium text-header">{idx + 1}. {lesson.title}</div>
-          <div className="text-xs text-slate-500">Tipo: {lesson.type}{lesson.duration ? ` • ${lesson.duration}` : ''}</div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className={`badge ${lesson.status === 'completed' ? 'bg-green-100 text-green-700' : ''}`}>{lesson.status === 'completed' ? 'Completada' : 'Pendiente'}</span>
-          <svg viewBox="0 0 20 20" className={`h-5 w-5 text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`}><path d="M5 8l5 5 5-5" fill="currentColor"/></svg>
-        </div>
-      </button>
-      {open && (
-        <div className="pb-3 pl-1 text-sm text-slate-600">
-          <p>{lesson.description}</p>
-          {lesson.timestamps && lesson.timestamps.length > 0 && (
-            <div className="mt-2">
-              <div className="text-xs font-semibold text-slate-500">Marcadores</div>
-              <ul className="mt-1 grid grid-cols-2 gap-2">
-                {lesson.timestamps.map((t, i) => (
-                  <li key={i} className="rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-700">{t.time} — {t.label}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {lesson.attachments && lesson.attachments.length > 0 && (
-            <div className="mt-2">
-              <div className="text-xs font-semibold text-slate-500">Adjuntos</div>
-              <ul className="mt-1 grid grid-cols-2 gap-2">
-                {lesson.attachments.map((a, i) => (
-                  <li key={i}><a href={a.url} className="text-primary hover:underline text-xs">{a.name}</a></li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-    </li>
-  )
-}
+// Accordion removed; sidebar now shows fixed chapters list
 
 export default function CoursePage() {
   const { slug } = useParams<{ slug: string }>()
@@ -83,45 +39,39 @@ export default function CoursePage() {
   }, [slug])
   // Contenido diferente por curso (slug)
   const catalog: Record<string, { lessons: Lesson[]; instructor: { name: string; avatarUrl: string; bio: string } }> = {
-    'face-recognition': {
-      lessons: [
-        { id: 'fr-1', title: 'Introducción al Reconocimiento Facial', type: 'video', duration: '10:20', description: 'Panorama general del curso y objetivos.', timestamps: [{ time: '00:01:23', label: 'Introducción' }], attachments: [{ name: 'apuntes-introduccion.pdf', url: '#' }], status: 'pending', videoId: 'ysz5S6PUM-U' },
-        { id: 'fr-2', title: 'Instalación (OpenCV, dlib)', type: 'video', duration: '08:20', description: 'Instalación y verificación de dependencias.', attachments: [{ name: 'requirements.txt', url: '#' }], status: 'pending', videoId: 'aqz-KE-bpKQ' },
-        { id: 'fr-3', title: 'Dataset y Preprocesamiento', type: 'video', duration: '12:15', description: 'Selección de dataset y pipeline de preprocesamiento.', status: 'pending', videoId: 'sBws8MSXN7A' },
-        { id: 'fr-4', title: 'Detección con Haar Cascades', type: 'video', duration: '09:05', description: 'Detección de rostros en imágenes y video.', status: 'pending', videoId: 'kXYiU_JCYtU' },
-        { id: 'fr-5', title: 'Embeddings y Reconocimiento', type: 'video', duration: '16:40', description: 'Embeddings, métricas y umbrales.', status: 'pending', videoId: 'kJQP7kiw5Fk' },
-        { id: 'fr-6', title: 'Proyecto final', type: 'resource', duration: '—', description: 'Enunciado del proyecto final.', attachments: [{ name: 'guia-proyecto.pdf', url: '#' }], status: 'pending' },
-      ],
-      instructor: { name: 'Ing. Laura Méndez', avatarUrl: 'https://i.pravatar.cc/100?img=68', bio: 'Ingeniera de Software con especialización en Visión Computacional e IA, con 8+ años de experiencia.' }
-    },
     'hand-recognition': {
       lessons: [
-        { id: 'hr-1', title: 'Introducción a MediaPipe Hands', type: 'video', duration: '07:10', description: 'Qué es MediaPipe y cómo usarlo.', status: 'pending', videoId: 'ysz5S6PUM-U' },
-        { id: 'hr-2', title: 'Lectura de landmarks', type: 'video', duration: '11:00', description: 'Coordenadas y normalización.', status: 'pending', videoId: 'aqz-KE-bpKQ' },
+        { id: 'hr-main', title: 'Reconocimiento de Manos', type: 'video', duration: '—', description: 'Clase principal', status: 'pending', videoUrl: 'https://youtu.be/ipHKQVtwRas' },
       ],
       instructor: { name: 'Ing. Carlos Díaz', avatarUrl: 'https://i.pravatar.cc/100?img=33', bio: 'ML Engineer enfocado en visión por computadora y XR.' }
     },
+    'face-recognition': {
+      lessons: [
+        { id: 'fr-main', title: 'Reconocimiento Facial Avanzado', type: 'video', duration: '—', description: 'Clase principal', status: 'pending', videoUrl: 'https://youtu.be/cTSVYwxHn9g' },
+      ],
+      instructor: { name: 'Ing. Laura Méndez', avatarUrl: 'https://i.pravatar.cc/100?img=68', bio: 'Ingeniera de Software con especialización en Visión Computacional e IA, con 8+ años de experiencia.' }
+    },
     'voice-recognition': {
       lessons: [
-        { id: 'vr-1', title: 'Fundamentos de Speech-to-Text', type: 'video', duration: '09:10', description: 'STT, sampling y features básicos.', status: 'pending', videoId: 'ysz5S6PUM-U' },
+        { id: 'vr-main', title: 'Reconocimiento de Voz con IA', type: 'video', duration: '—', description: 'Clase principal', status: 'pending', videoUrl: 'https://youtu.be/vMLjbDRXtMM' },
       ],
       instructor: { name: 'Dra. Sofía Ramos', avatarUrl: 'https://i.pravatar.cc/100?img=12', bio: 'Doctora en Procesamiento de Señales, foco en audio e IA.' }
     },
     'hand-math-ops': {
       lessons: [
-        { id: 'hm-1', title: 'Representación de gestos numéricos', type: 'video', duration: '06:30', description: 'Construcción del diccionario de gestos.', status: 'pending', videoId: 'ysz5S6PUM-U' },
+        { id: 'hm-main', title: 'Operaciones Matemáticas con Manos', type: 'video', duration: '—', description: 'Clase principal', status: 'pending', videoUrl: 'https://youtu.be/-TedLoX7t3s' },
       ],
       instructor: { name: 'Ing. Daniela Pérez', avatarUrl: 'https://i.pravatar.cc/100?img=20', bio: 'Educadora y desarrolladora de herramientas educativas con IA.' }
     },
     'ai-agent': {
       lessons: [
-        { id: 'aa-1', title: 'Qué es un Agente IA', type: 'video', duration: '08:50', description: 'Conceptos, herramientas y memoria.', status: 'pending', videoId: 'aqz-KE-bpKQ' },
+        { id: 'aa-main', title: 'Desarrollo de Agente IA', type: 'video', duration: '—', description: 'Clase principal', status: 'pending', videoUrl: 'https://youtu.be/DjI7IEGio3s' },
       ],
       instructor: { name: 'MSc. Julio Vera', avatarUrl: 'https://i.pravatar.cc/100?img=49', bio: 'Investigador en sistemas multiagente y LLM apps.' }
     },
     'chatbot-automation': {
       lessons: [
-        { id: 'cb-1', title: 'Arquitectura de un chatbot', type: 'video', duration: '10:00', description: 'NLU, NLG y orquestación.', status: 'pending', videoId: 'sBws8MSXN7A' },
+        { id: 'cb-main', title: 'Desarrollo de Chatbot', type: 'video', duration: '—', description: 'Clase principal', status: 'pending', videoUrl: 'https://youtu.be/lCiW3BaOP04' },
       ],
       instructor: { name: 'Lic. Valeria Núñez', avatarUrl: 'https://i.pravatar.cc/100?img=5', bio: 'Especialista en plataformas conversacionales y CX.' }
     },
@@ -134,13 +84,11 @@ export default function CoursePage() {
 
   const CURRENT_KEY = `course-current:${slug ?? 'face-recognition'}`
   const [currentIndex, setCurrentIndex] = useState(0)
-
-  const completedCount = useMemo(
-    () => lessons.filter(l => l.status === 'completed').length,
-    [lessons]
-  )
+  // Progreso en tiempo real desde el reproductor (una sola lección)
+  const [watchPct, setWatchPct] = useState(0)
   const total = lessons.length
-  const progressPct = Math.round((completedCount / total) * 100)
+  const completedCount = useMemo(() => lessons.filter(l => l.status === 'completed').length, [lessons])
+  const progressPct = Math.max(watchPct, Math.round((completedCount / total) * 100))
 
   // Persistencia en localStorage
   useEffect(() => {
@@ -178,6 +126,57 @@ export default function CoursePage() {
   }, [slug])
 
   const current = lessons[currentIndex]
+
+  // Capítulos ("Lecciones que aprenderás") en base al curso
+  const chaptersBySlug: Record<string, { time: string; label: string }[]> = {
+    'hand-recognition': [
+      { time: '00:00', label: 'Introducción y objetivos' },
+      { time: '01:30', label: 'Configuración de entorno' },
+      { time: '03:10', label: 'MediaPipe Hands y puntos clave' },
+      { time: '06:00', label: 'Demostración práctica' },
+    ],
+    'face-recognition': [
+      { time: '00:00', label: 'Panorama de reconocimiento facial' },
+      { time: '02:00', label: 'Modelos y embeddings' },
+      { time: '04:30', label: 'Umbrales y comparaciones' },
+      { time: '07:45', label: 'Demo en vivo' },
+    ],
+    'voice-recognition': [
+      { time: '00:00', label: 'Fundamentos de STT' },
+      { time: '01:20', label: 'Muestreo y features' },
+      { time: '03:50', label: 'Inferencia y precisión' },
+      { time: '06:10', label: 'Casos de uso' },
+    ],
+    'hand-math-ops': [
+      { time: '00:00', label: 'Gestos y operaciones' },
+      { time: '02:10', label: 'Dataset y etiquetado' },
+      { time: '04:00', label: 'Entrenamiento y validación' },
+      { time: '06:30', label: 'Demo de resultados' },
+    ],
+    'ai-agent': [
+      { time: '00:00', label: '¿Qué es un Agente IA?' },
+      { time: '01:30', label: 'Herramientas y memoria' },
+      { time: '04:00', label: 'Orquestación y planificación' },
+      { time: '07:00', label: 'Demo de agente' },
+    ],
+    'chatbot-automation': [
+      { time: '00:00', label: 'Arquitectura general' },
+      { time: '01:40', label: 'NLU/NLG y flujo' },
+      { time: '03:30', label: 'Integraciones' },
+      { time: '05:50', label: 'Demostración' },
+    ],
+  }
+  const chapters = chaptersBySlug[slug ?? 'face-recognition'] ?? []
+  const chaptersSeconds = useMemo(() => {
+    const parse = (t: string) => {
+      // Expect mm:ss or hh:mm:ss
+      const parts = t.split(':').map(n => Number(n))
+      if (parts.length === 2) return parts[0] * 60 + parts[1]
+      if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
+      return 0
+    }
+    return chapters.map(c => parse(c.time))
+  }, [chapters])
 
   const markCompleted = () => {
     setLessons(prev => prev.map((l, i) => i === currentIndex ? { ...l, status: 'completed' } : l))
@@ -254,7 +253,30 @@ export default function CoursePage() {
             transition={{ duration: 0.35 }}
             className="lg:col-span-2 bg-white rounded-xl p-4 shadow-lg border border-gray-200"
           >
-            <VideoPlayer videoId={current.videoId} src={current.videoUrl} />
+            <VideoPlayer 
+              videoId={current.videoId} 
+              src={current.videoUrl}
+              onProgress={({ percent, current: currentTime }) => {
+                // Calcular progreso por capítulos alcanzados
+                if (chaptersSeconds.length > 0) {
+                  const reached = chaptersSeconds.filter(s => currentTime >= s).length
+                  const pctByChapters = Math.round((reached / chaptersSeconds.length) * 100)
+                  setWatchPct(pctByChapters)
+                  if (pctByChapters >= 100 && current.status !== 'completed') {
+                    setLessons(prev => prev.map((l, i) => i === currentIndex ? { ...l, status: 'completed' } : l))
+                  }
+                } else {
+                  setWatchPct(percent)
+                  if (percent >= 90 && current.status !== 'completed') {
+                    setLessons(prev => prev.map((l, i) => i === currentIndex ? { ...l, status: 'completed' } : l))
+                  }
+                }
+              }}
+              onEnded={() => {
+                setLessons(prev => prev.map((l, i) => i === currentIndex ? { ...l, status: 'completed' } : l))
+                setWatchPct(100)
+              }}
+            />
 
             <div className="mt-4 flex items-center justify-between">
               <button 
@@ -322,10 +344,17 @@ export default function CoursePage() {
             <div className="h-3" />
             <div className="bg-white rounded-xl p-4 shadow-soft">
               <h3 className="text-header text-base font-semibold">Lecciones que aprenderás</h3>
-              <ul className="mt-3 divide-y divide-slate-100">
-                {lessons.map((l, i) => (
-                  <AccordionRow key={l.id} idx={i} lesson={l} onSelect={() => { /* no cambia video */ }} />
-                ))}
+              <ul className="mt-3 space-y-2">
+                {chapters.length === 0 ? (
+                  <li className="text-sm text-slate-600">Este curso no tiene capítulos listados.</li>
+                ) : (
+                  chapters.map((c, i) => (
+                    <li key={i} className="flex items-center justify-between text-sm">
+                      <span className="text-slate-700">{c.label}</span>
+                      <span className="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md">{c.time}</span>
+                    </li>
+                  ))
+                )}
               </ul>
             </div>
           </motion.aside>

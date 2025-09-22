@@ -1,15 +1,15 @@
-import { Suspense, useState, useMemo } from 'react'
+import { Suspense, useState, useMemo, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Spline from '@splinetool/react-spline'
 
 type Model = { id: string; title: string; description: string; emoji: string; imageUrl: string; favorite?: boolean; features: string[] }
 type Course = { id: string; title: string; progress: string; img: string; completed?: boolean }
-type TestedModel = { id: string; title: string; result: string; color: string; tested?: boolean }
+// tested models removed from UI for now
 
 type Props = {
   userName: string
   models?: Model[]
   watchedCourses?: Course[]
-  testedModels?: TestedModel[]
   onToggleFavorite?: (id: string) => void
 }
 
@@ -17,24 +17,63 @@ export default function HeroUnified({
   userName, 
   models = [], 
   watchedCourses = [], 
-  testedModels = [],
   onToggleFavorite
 }: Props) {
-  const [active, setActive] = useState<'creados'|'favoritos'|'vistos'|'probados'|null>(null)
+  const [active, setActive] = useState<'creados'|'favoritos'|'vistos'|null>(null)
+  const navigate = useNavigate()
 
   // Calcular datos dinámicos
   const favoriteModels = useMemo(() => models.filter(m => !!m.favorite), [models])
   const completedCourses = useMemo(() => watchedCourses.filter(c => c.completed), [watchedCourses])
-  const testedModelsCount = useMemo(() => testedModels.filter(t => t.tested).length, [testedModels])
+  // 'probados' section removed; no need to compute testedModelsCount
+
+  const [trainedCount, setTrainedCount] = useState<number>(() => {
+    try { return Number(localStorage.getItem('trained_models_count') || '0') } catch { return 0 }
+  })
+  useEffect(() => {
+    const handler = () => {
+      try { setTrainedCount(Number(localStorage.getItem('trained_models_count') || '0')) } catch {}
+    }
+    window.addEventListener('trained:updated', handler as any)
+    // also refresh on focus to keep it in sync
+    window.addEventListener('focus', handler)
+    return () => {
+      window.removeEventListener('trained:updated', handler as any)
+      window.removeEventListener('focus', handler)
+    }
+  }, [])
 
   const cardsLeft = [
+    { key: 'entrenados', label: 'Modelos entrenados', value: trainedCount, desc: 'Incrementa al iniciar entrenamiento.' , color: '#0EA5E9'},
     { key: 'creados', label: 'Modelos creados', value: models.length, desc: 'Tus modelos que has creado en la plataforma.' , color: '#3B82F6'},
     { key: 'favoritos', label: 'Modelos favoritos', value: favoriteModels.length, desc: 'Modelos marcados como favoritos.' , color: '#F59E0B'},
   ] as const
   const cardsRight = [
     { key: 'vistos', label: 'Cursos vistos', value: completedCourses.length, desc: 'Cursos que has completado en la plataforma.' , color: '#10B981'},
-    { key: 'probados', label: 'Modelos probados', value: testedModelsCount, desc: 'Modelos que has probado en la plataforma.' , color: '#8B5CF6'},
   ] as const
+
+  // Número animado suave para valores de tarjetas
+  function Counter({ value, duration = 600 }: { value: number; duration?: number }) {
+    const [display, setDisplay] = useState(0)
+    const prevRef = useRef(0)
+    useEffect(() => {
+      const start = prevRef.current
+      const end = value
+      const startTs = performance.now()
+      let raf = 0
+      const tick = (t: number) => {
+        const p = Math.min(1, (t - startTs) / duration)
+        const eased = 1 - Math.pow(1 - p, 3) // easeOutCubic
+        const val = Math.round(start + (end - start) * eased)
+        setDisplay(val)
+        if (p < 1) raf = requestAnimationFrame(tick)
+      }
+      raf = requestAnimationFrame(tick)
+      prevRef.current = end
+      return () => cancelAnimationFrame(raf)
+    }, [value, duration])
+    return <>{display}</>
+  }
 
   const renderDetail = () => {
     if (!active) return null
@@ -57,8 +96,9 @@ export default function HeroUnified({
               </div>
               <div className="mt-1 font-semibold text-yellow-600">{m.title}</div>
               <div className="text-slate-600 text-sm line-clamp-2">{m.description}</div>
-              <div className="mt-3 flex justify-end">
-                <button className="btn-secondary">Entrenar</button>
+              <div className="mt-3 flex justify-end gap-2">
+                <button className="btn-secondary" onClick={() => navigate('/arithmetic?tab=train')}>Entrenar</button>
+                <button className="btn" onClick={() => navigate('/arithmetic?tab=test')}>Probar</button>
               </div>
             </div>
           ))}
@@ -84,24 +124,27 @@ export default function HeroUnified({
               </div>
               <div className="mt-1 font-semibold text-blue-600">{m.title}</div>
               <div className="text-slate-600 text-sm line-clamp-2">{m.description}</div>
-              <div className="mt-3 flex justify-end">
-                <button className="btn-secondary">Entrenar</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )
-    }
-    if (active === 'probados') {
-      return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {testedModels.filter(t => t.tested).map(t => (
-            <div key={t.id} className="p-4 rounded-xl border bg-white shadow-soft" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
-              <div className="text-slate-600 text-xs">Resultado</div>
-              <div className="mt-1 font-semibold" style={{ color: t.color }}>{t.title}</div>
-              <div className="text-slate-600 text-sm">{t.result}</div>
-              <div className="mt-3 flex justify-end">
-                <button className="btn-secondary">Ver detalles</button>
+              {/* Características del modelo */}
+              {Array.isArray(m.features) && m.features.length > 0 && (
+                <ul className="mt-3 space-y-1 text-sm text-slate-600 list-disc pl-5">
+                  {m.features.map((f, idx) => (
+                    <li key={idx} className="leading-snug">{f}</li>
+                  ))}
+                </ul>
+              )}
+              {/* Agregar característica (solo UI) */}
+              <div className="mt-3 flex items-center gap-2">
+                <input placeholder="Agregar característica" className="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const val = (e.target as HTMLInputElement).value.trim()
+                    if (val) {
+                      window.dispatchEvent(new CustomEvent('app:notify', { detail: `Característica agregada: ${val}` }))
+                      ;(e.target as HTMLInputElement).value = ''
+                    }
+                  }
+                }} />
+                <button className="btn-secondary" onClick={() => navigate('/arithmetic?tab=train')}>Entrenar</button>
+                <button className="btn" onClick={() => navigate('/arithmetic?tab=test')}>Probar</button>
               </div>
             </div>
           ))}
@@ -149,26 +192,27 @@ export default function HeroUnified({
           {/* Greeting top-right */}
           <div className="absolute top-4 right-4 md:top-6 md:right-6 lg:top-8 lg:right-8 text-right">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-header drop-shadow-sm">Hola, {userName} 👋</h1>
-            <p className="text-slate-700 mt-1 max-w-md ml-auto">¡Explora el mundo del Machine Learning con tus propios modelos!</p>
+            <p className="text-slate-700 mt-1 max-w-md ml-auto">No necesitas ser un experto en Machine Learning. 
+            <br></br>¡Explora el mundo con tus propios modelos!</p>
           </div>
 
-          {/* Cards bottom-left */}
+          {/* Cards bottom-left (2 tarjetas) */}
           <div className="absolute bottom-4 left-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-            {cardsLeft.map(c => (
-              <div key={c.key} className="text-left p-4 rounded-xl border bg-white/95 backdrop-blur shadow-soft" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
+            {[cardsLeft[0], cardsLeft[1]].map(c => (
+              <div key={c.key} className="text-left p-4 rounded-xl border bg-white/95 backdrop-blur shadow-soft hover:shadow-lg transition-shadow" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
                 <div className="text-slate-600 text-sm">{c.label}</div>
-                <div className="mt-1 text-2xl font-bold" style={{ color: c.color }}>{c.value}</div>
+                <div className="mt-1 text-2xl font-bold" style={{ color: c.color }}><Counter value={c.value as number} /></div>
                 <div className="mt-1 text-xs text-slate-500 max-w-[22ch]">{c.desc}</div>
               </div>
             ))}
           </div>
 
-          {/* Cards bottom-right */}
+          {/* Cards bottom-right (2 tarjetas) */}
           <div className="absolute bottom-4 right-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-            {cardsRight.map(c => (
-              <div key={c.key} className="text-left p-4 rounded-xl border bg-white/95 backdrop-blur shadow-soft" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
+            {[{ key: 'favoritos', label: 'Modelos favoritos', value: favoriteModels.length, desc: 'Modelos marcados como favoritos.', color: '#F59E0B' }, cardsRight[0]].map(c => (
+              <div key={c.key} className="text-left p-4 rounded-xl border bg-white/95 backdrop-blur shadow-soft hover:shadow-lg transition-shadow" style={{ borderColor: 'rgba(15,23,42,0.08)' }}>
                 <div className="text-slate-600 text-sm">{c.label}</div>
-                <div className="mt-1 text-2xl font-bold" style={{ color: c.color }}>{c.value}</div>
+                <div className="mt-1 text-2xl font-bold" style={{ color: c.color }}><Counter value={c.value as number} /></div>
                 <div className="mt-1 text-xs text-slate-500 max-w-[22ch]">{c.desc}</div>
               </div>
             ))}

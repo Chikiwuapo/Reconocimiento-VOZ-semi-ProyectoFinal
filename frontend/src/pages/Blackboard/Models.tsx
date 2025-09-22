@@ -12,6 +12,7 @@ export default function Models() {
   const [isTraining, setIsTraining] = useState(false)
   const [showModelSelection, setShowModelSelection] = useState(false)
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
   const [selectedModel, setSelectedModel] = useState<ModelType | null>(null)
   const { user, addModel, updateModel, removeModel, setModels } = useUserStore()
   const createdModels = user.models as unknown as ModelType[]
@@ -25,6 +26,7 @@ export default function Models() {
     totalTrainingSessions: 0,
     averageAccuracy: 0
   })
+  const [recordsCount, setRecordsCount] = useState<number>(0)
 
   // Cargar datos del localStorage (solo sesiones) al inicializar y scroll automático arriba
   useEffect(() => {
@@ -38,6 +40,22 @@ export default function Models() {
     saveDataToStorage()
     updateStats()
   }, [user.models, trainingSessions])
+
+  // Cargar cantidad de registros guardados desde backend (gestos entrenados)
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/operaciones/gestos_entrenados')
+        if (!res.ok) throw new Error('No se pudo obtener registros')
+        const data = await res.json()
+        const count = Array.isArray(data?.gestos) ? data.gestos.length : (Array.isArray(data) ? data.length : 0)
+        setRecordsCount(count)
+      } catch {
+        setRecordsCount(0)
+      }
+    }
+    load()
+  }, [])
 
   // Bloquear scroll cuando el modal esté abierto
   useEffect(() => {
@@ -81,11 +99,8 @@ export default function Models() {
   const updateStats = () => {
     const totalModels = createdModels.length
     const activeModels = createdModels.filter(model => (model as any).isActive).length
-    const totalTrainingSessions = trainingSessions.length
-    const completedModels = createdModels.filter(model => (model as any).accuracy)
-    const averageAccuracy = completedModels.length > 0 
-      ? completedModels.reduce((sum, model: any) => sum + (model.accuracy || 0), 0) / completedModels.length
-      : 0
+    const totalTrainingSessions = Number(localStorage.getItem('trained_models_count') || '0')
+    const averageAccuracy = 0
 
     setModelStats({
       totalModels,
@@ -178,9 +193,17 @@ export default function Models() {
     // Notificación
     window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
 
+    // Aumentar contador de entrenamientos (UI metric) y notificar al hero
+    try {
+      const key = 'trained_models_count'
+      const n = Number(localStorage.getItem(key) || '0')
+      localStorage.setItem(key, String((Number.isFinite(n) ? n : 0) + 1))
+      window.dispatchEvent(new CustomEvent('trained:updated'))
+    } catch {}
+
     // Si el modelo es de operaciones aritméticas, navegar a la vista dedicada
     if (model.id === 'aritmeticas') {
-      navigate('/arithmetic')
+      navigate('/arithmetic?tab=train')
     }
   }
 
@@ -291,25 +314,11 @@ export default function Models() {
     updateModel(modelId, { isActive: !found?.isActive })
   }
 
-  const useModel = (modelId: string) => {
-    const model = createdModels.find(m => m.id === modelId)
-    if (model && model.isActive) {
-      alert(`Usando modelo: ${model.name}\nPrecisión: ${model.accuracy}\nEstado: Activo`)
-      // Aquí implementarías la lógica real de uso del modelo
-    } else {
-      alert('El modelo debe estar activo para poder usarlo')
-    }
-  }
+  // useModel removido: flujo ahora va hacia Arithmetic
 
 
 
-  const viewModel = (model: ModelType) => {
-    // Guardar la información del modelo en localStorage para la página de entrenamiento
-    localStorage.setItem('selectedModelForTraining', JSON.stringify(model))
-    
-    // Navegar a la página de entrenamiento
-    navigate('/training')
-  }
+  // viewModel removido
 
   // Funciones de filtrado y búsqueda
   const filteredModels = createdModels.filter(model => {
@@ -325,11 +334,14 @@ export default function Models() {
   })
 
   const clearAllData = () => {
-    if (confirm('¿Estás seguro de que quieres eliminar todos los modelos y datos? Esta acción no se puede deshacer.')) {
-      setModels([] as any)
-      setTrainingSessions([])
-      localStorage.removeItem('trainingSessions')
-    }
+    setShowClearConfirm(true)
+  }
+
+  const doClearAll = () => {
+    setModels([] as any)
+    setTrainingSessions([])
+    try { localStorage.removeItem('trainingSessions') } catch {}
+    setShowClearConfirm(false)
   }
 
   const getColorClasses = (color: string) => {
@@ -424,11 +436,11 @@ export default function Models() {
               <div className="bg-white rounded-xl p-6 shadow-lg">
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-2xl">🎯</span>
+                    <span className="text-2xl">🗂️</span>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Precisión Promedio</p>
-                    <p className="text-2xl font-bold text-gray-800">{modelStats.averageAccuracy.toFixed(1)}%</p>
+                    <p className="text-sm text-gray-600">Registros guardados</p>
+                    <p className="text-2xl font-bold text-gray-800">{recordsCount}</p>
                   </div>
                 </div>
               </div>
@@ -453,14 +465,22 @@ export default function Models() {
               <h2 className="text-2xl font-bold text-gray-800">
                 🎯 Tus Modelos Creados
               </h2>
-              {createdModels.length > 0 && (
+              <div className="flex items-center gap-2">
                 <button 
-                  onClick={clearAllData}
-                  className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                  onClick={handleStartTraining}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow"
                 >
-                  Limpiar Todo
+                  Agregar modelo
                 </button>
-              )}
+                {createdModels.length > 0 && (
+                  <button 
+                    onClick={clearAllData}
+                    className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                  >
+                    Limpiar Todo
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Controles de búsqueda y filtros */}
@@ -582,51 +602,33 @@ export default function Models() {
                           {model.description}
                         </p>
                         
-                        {/* Información de estado y precisión */}
+                        {/* Información resumida */}
                         <div className="grid grid-cols-2 gap-2 mb-3">
                           <div className="bg-gray-50 rounded-lg p-2">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Estado</div>
-                            <div className="text-xs font-semibold text-gray-800">
-                              {isTraining ? 'Entrenando' : model.status === 'completed' ? 'Completado' : 'Pendiente'}
-                            </div>
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Completado</div>
+                            <div className="text-xs font-semibold text-gray-800">{(model as any).status === 'Completado' || (model as any).status === 'completed' ? 'Sí' : 'No'}</div>
                           </div>
                           <div className="bg-gray-50 rounded-lg p-2">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Precisión</div>
-                            <div className="text-xs font-semibold text-gray-800">
-                              {model.accuracy ? `${model.accuracy.toFixed(1)}%` : 'N/A'}
-                            </div>
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Registros guardados</div>
+                            <div className="text-xs font-semibold text-gray-800">{recordsCount}</div>
                           </div>
                         </div>
                         
-                        {/* Barra de progreso si está entrenando */}
-                        {isTraining && (
-                          <div className="mb-3">
-                            <div className="flex justify-between text-xs text-gray-600 mb-1">
-                              <span>Progreso</span>
-                              <span>{trainingProgress}%</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
-                              <div 
-                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${trainingProgress}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                        )}
+                        {/* Se removió barra de entrenamiento */}
                         
                         {/* Botones de acción */}
                         <div className="flex flex-col gap-2 mt-auto">
                           {model.status === 'completed' ? (
                             <>
                               <button 
-                                onClick={() => useModel(model.id)}
+                                onClick={() => { updateModel(model.id, { isActive: true }); navigate('/arithmetic?tab=test') }}
                                 className={`w-full ${colors.bg} text-white py-2 px-3 rounded-lg text-xs font-medium transition-all transform hover:scale-105 shadow-md`}
                                 disabled={!model.isActive}
                               >
                                 {model.isActive ? 'Usar' : 'Inactivo'}
                               </button>
                               <button 
-                                onClick={() => viewModel(model)}
+                                onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic?tab=test') }}
                                 className="w-full bg-blue-100 text-blue-700 py-2 px-3 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors shadow-md"
                               >
                                 Mira tu modelo
@@ -634,21 +636,8 @@ export default function Models() {
                             </>
                           ) : (
                             <>
-                              {/* Barra de progreso pequeña */}
-                               <div className="w-full">
-                                 <div className="flex justify-between text-xs text-gray-600 mb-1">
-                                   <span>Entrenamiento</span>
-                                   <span>{isTraining ? `${trainingProgress}%` : '0%'}</span>
-                                 </div>
-                                 <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                                   <div 
-                                     className={`${colors.bg.replace('bg-', 'bg-')} h-2 rounded-full transition-all duration-300`}
-                                     style={{ width: `${isTraining ? trainingProgress : 0}%` }}
-                                   ></div>
-                                 </div>
-                               </div>
                               <button 
-                                onClick={() => viewModel(model)}
+                                onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic?tab=test') }}
                                 className="w-full bg-blue-100 text-blue-700 py-2 px-3 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors shadow-md"
                               >
                                 Mira tu modelo
@@ -755,6 +744,21 @@ export default function Models() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmación para Limpiar Todo */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowClearConfirm(false)} />
+          <div className="relative w-full max-w-md bg-white rounded-xl shadow-2xl p-6">
+            <h3 className="text-lg font-semibold text-header">¿Limpiar todos los modelos?</h3>
+            <p className="text-sm text-slate-600 mt-1">Esta acción eliminará tus modelos locales y sesiones de entrenamiento. No se puede deshacer.</p>
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <button className="btn" onClick={() => setShowClearConfirm(false)}>Cancelar</button>
+              <button className="btn-accent-purple" onClick={doClearAll}>Confirmar</button>
             </div>
           </div>
         </div>

@@ -51,19 +51,25 @@ export default function ProfileModal({ onClose, onConfirm }: Props) {
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
       <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 ${mounted ? 'opacity-100' : 'opacity-0'}`} onClick={onClose} />
       <div ref={dialogRef} className={`relative w-full max-w-lg bg-white rounded-xl shadow-soft p-6 transform transition-all duration-200 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`} role="dialog" aria-modal="true">
-        <h2 className="text-xl font-semibold text-header">Perfil</h2>
-        <div className="mt-4 flex items-center gap-4">
-          <img src={avatarPreview} alt="Avatar" className="h-16 w-16 rounded-full border border-slate-200" />
-          <div>
-            <div className="text-sm text-slate-600">Foto de perfil</div>
-            <div className="mt-2 flex gap-2">
-              <button className="btn" onClick={pickFile}>Subir imagen</button>
-              <input type="file" accept="image/*" ref={fileInput} onChange={onFile} className="hidden" />
-            </div>
-          </div>
+        <h2 className="text-xl font-semibold text-header text-center">Perfil</h2>
+        <div className="mt-4 flex flex-col items-center">
+          <img src={avatarPreview} alt="Avatar" className="h-28 w-28 rounded-full border border-slate-200 object-cover shadow-sm" />
+          <button
+            className="mt-3 inline-flex items-center justify-center h-10 w-10 rounded-lg border border-slate-200 hover:bg-slate-50 transition focus:outline-none focus:ring-2 focus:ring-primary"
+            onClick={pickFile}
+            aria-label="Subir imagen"
+            title="Subir imagen"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-header">
+              <path d="M12 16V4"/>
+              <path d="M8 8l4-4 4 4"/>
+              <path d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/>
+            </svg>
+          </button>
+          <input type="file" accept="image/*" ref={fileInput} onChange={onFile} className="hidden" />
         </div>
 
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-slate-600 mb-1">Nombre</label>
             <input disabled={!editing} value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-slate-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" />
@@ -76,8 +82,11 @@ export default function ProfileModal({ onClose, onConfirm }: Props) {
 
         <div className="mt-6 flex items-center justify-end gap-2">
           <button className="btn" onClick={onClose}>Cerrar</button>
-          <button className="btn-accent-cyan" onClick={() => setEditing((e) => !e)}>{editing ? 'Bloquear' : 'Editar'}</button>
-          <button className="btn-accent-purple" onClick={() => setShowConfirm(true)}>Confirmar Cambios</button>
+          {!editing ? (
+            <button className="btn-accent-cyan" onClick={() => setEditing(true)}>Editar</button>
+          ) : (
+            <button className="btn-accent-purple" onClick={() => setShowConfirm(true)}>Confirmar cambios</button>
+          )}
         </div>
 
         {showConfirm && (

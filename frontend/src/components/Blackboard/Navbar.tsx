@@ -52,7 +52,7 @@ export default function Navbar({ notifications = 0 }: { notifications?: number }
               <path d="M4 7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1h2a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3h-2v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/>
             </svg>
           </span>
-          <span className="font-poppins font-bold text-lg text-header">Blackboard</span>
+          <span className="font-poppins font-bold text-lg text-header">AresDigitalAcademy</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
@@ -91,7 +91,19 @@ export default function Navbar({ notifications = 0 }: { notifications?: number }
           <button onClick={() => setOpenProfile(true)} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
             <img src={user.profile.avatarDataUrl || '/src/assets/avatar.svg'} alt="Avatar" className="h-10 w-10 rounded-full border border-slate-200 object-cover" />
           </button>
-          <button className="hidden sm:inline-flex items-center gap-1 text-sm text-slate-600 hover:text-header transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md px-2 py-1" onClick={() => alert('Cerrar sesión')}>📤 Cerrar sesión</button>
+          <button
+            className="hidden sm:inline-flex items-center gap-2 text-sm text-slate-600 hover:text-header transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md px-3 py-2 border border-slate-200 hover:bg-slate-50"
+            onClick={() => alert('Cerrar sesión')}
+            title="Cerrar sesión"
+            aria-label="Cerrar sesión"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4">
+              <path d="M10 17l5-5-5-5"/>
+              <path d="M15 12H3"/>
+              <path d="M21 21V3"/>
+            </svg>
+            <span>Cerrar sesión</span>
+          </button>
         </div>
       </div>
     </header>

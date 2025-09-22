@@ -1,5 +1,6 @@
 import Layout from '../../../components/Blackboard/Layout'
 import { useArithmetic } from './hooks/useArithmetic'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Arithmetic() {
   const {
@@ -21,7 +22,38 @@ export default function Arithmetic() {
     currentOperationRef, mpReady,
   } = useArithmetic()
 
+  // UI de entrenamiento (simulación visual) – no altera la lógica de guardado
+  const [trainUIVisible, setTrainUIVisible] = useState(false)
+  const [trainProgress, setTrainProgress] = useState(0)
+  const [trainSeries, setTrainSeries] = useState<number[]>([])
+  const [trainModalOpen, setTrainModalOpen] = useState(false)
+  const timerRef = useRef<number | null>(null)
+
+  const startTrainingUI = () => {
+    // Muestra contenedor, reinicia progreso y serie
+    setTrainUIVisible(true)
+    setTrainProgress(0)
+    setTrainSeries([0])
+    if (timerRef.current) window.clearInterval(timerRef.current)
+    // Simular incremento con jitter hasta 100%
+    timerRef.current = window.setInterval(() => {
+      setTrainProgress(prev => {
+        const next = Math.min(100, prev + Math.random() * 8 + 4)
+        setTrainSeries(s => [...s, Math.round(next)])
+        if (next >= 100) {
+          if (timerRef.current) window.clearInterval(timerRef.current)
+          timerRef.current = null
+          setTrainModalOpen(true)
+        }
+        return next
+      })
+    }, 300)
+  }
+
+  useEffect(() => () => { if (timerRef.current) window.clearInterval(timerRef.current) }, [])
+
   return (
+    <>
     <Layout>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
         <div className="max-w-6xl mx-auto mb-6">
@@ -79,7 +111,14 @@ export default function Arithmetic() {
                     <button type="button" disabled={!cameraActive} onClick={toggleRecording} className={`px-4 py-2 rounded-xl text-white shadow ${recording ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'} disabled:opacity-50`}>
                       {recording ? 'Detener Grabación' : 'Grabar Gesto'}
                     </button>
-                    <button type="button" onClick={saveGesture} title={samplesCaptured === 0 ? 'Graba algunas muestras antes de guardar' : 'Guardar gesto entrenado'} className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-xl shadow">Guardar Gesto</button>
+                    <button
+                      type="button"
+                      onClick={() => { saveGesture(); startTrainingUI() }}
+                      title={samplesCaptured === 0 ? 'Graba algunas muestras antes de guardar' : 'Entrenará el modelo y guardará los registros'}
+                      className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-xl shadow"
+                    >
+                      Entrenar Modelo
+                    </button>
                   </>
                 )}
                 {activeTab === 'test' && (
@@ -96,15 +135,7 @@ export default function Arithmetic() {
                 <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">Progreso: <b>{Math.min(100, Math.round((samplesCaptured / Math.max(1, samplesTarget)) * 100))}%</b></div>
               </div>
 
-              {activeTab === 'train' && showChart && chartData.length > 1 && (
-                <div className="mt-6 bg-white border border-gray-100 rounded-2xl p-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-gray-700">Evolución de confianza por muestra</h3>
-                    <button className="text-xs text-indigo-600 hover:underline" onClick={() => setShowChart(false)}>Ocultar</button>
-                  </div>
-                  <ChartLine data={chartData} />
-                </div>
-              )}
+              {/* Legacy training chart removed per request */}
             </div>
           </div>
 
@@ -141,6 +172,25 @@ export default function Arithmetic() {
                         <option value="multiplicacion">Multiplicación (*)</option>
                         <option value="division">División (/)</option>
                       </select>
+                    </div>
+                  )}
+
+                  {/* Panel de entrenamiento visual */}
+                  {trainUIVisible && (
+                    <div className="mt-4 border rounded-xl p-4 bg-gray-50">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-semibold text-gray-700">Entrenando modelo…</h4>
+                        <span className="text-xs text-gray-500">{Math.round(trainProgress)}%</span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-2 bg-indigo-600 rounded-full transition-all" style={{ width: `${Math.round(trainProgress)}%` }} />
+                      </div>
+                      {trainSeries.length > 1 && (
+                        <div className="mt-4">
+                          <div className="mb-1 text-xs text-gray-600">Evolución del entrenamiento (registros vs %)</div>
+                          <ChartLine data={trainSeries} />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -194,7 +244,6 @@ export default function Arithmetic() {
                         <div key={g.id} className="flex items-center justify-between border rounded-lg px-3 py-2">
                           <div className="text-sm">
                             <div className="font-medium">{g.nombre_display}</div>
-                            <div className="text-gray-500">Precisión: {typeof g.precision === 'number' ? (g.precision*100).toFixed(1) : g.precision}%</div>
                           </div>
                           <div className="text-xs text-gray-400">#{g.id}</div>
                         </div>
@@ -208,6 +257,22 @@ export default function Arithmetic() {
         </div>
       </div>
     </Layout>
+
+    {/* Modal de éxito de entrenamiento */}
+    {trainModalOpen && (
+      <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/40" onClick={() => setTrainModalOpen(false)} />
+        <div className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl p-6 text-center">
+          <div className="text-3xl mb-2">✅</div>
+          <h3 className="text-lg font-semibold text-header">Entrenamiento exitoso</h3>
+          <p className="text-sm text-slate-600 mt-1">Tu modelo se ha entrenado correctamente.</p>
+          <div className="mt-4">
+            <button className="btn-accent-purple" onClick={() => setTrainModalOpen(false)}>Confirmar</button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   )
 }
 
