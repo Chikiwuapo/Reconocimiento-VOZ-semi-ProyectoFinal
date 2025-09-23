@@ -16,7 +16,7 @@ export default function Arithmetic() {
     setOperando1, setOperador, setOperando2,
     setActiveTab, setShowChart,
     // acciones
-    startCamera, stopCamera, toggleRecording, saveGesture, recognizeCurrent,
+    startCamera, stopCamera, toggleRecording, saveGesture, saveGestureTwoHands, recognizeCurrent,
     clearOperation, calculateFromOperation, calcular,
     // util
     currentOperationRef, mpReady,
@@ -118,6 +118,14 @@ export default function Arithmetic() {
                       className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-xl shadow"
                     >
                       Entrenar Modelo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { saveGestureTwoHands(); startTrainingUI() }}
+                      title="Exige que haya frames con ambas manos visibles durante la grabación"
+                      className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 py-2 rounded-xl shadow"
+                    >
+                      Entrenar 2 manos
                     </button>
                   </>
                 )}

@@ -54,13 +54,17 @@ def guardar_gesto(request):
         
         numero_vinculado = data.get('numero_vinculado')
         operacion_vinculada = data.get('operacion_vinculada')
+        if isinstance(operacion_vinculada, str):
+            operacion_vinculada = operacion_vinculada.lower()
         landmarks_data = data.get('landmarks_data')
-        precision = data.get('precision', 0.0)
-        # Usar claves del modelo ('left'|'right'|'both')
-        tipo_mano = data.get('tipo_mano', 'right')
-        numero_muestras = data.get('numero_muestras', 0)
-        landmarks_izquierda = data.get('landmarks_izquierda')
-        landmarks_derecha = data.get('landmarks_derecha')
+        precision = float(data.get('precision', 0.0) or 0.0)
+        # Normalizar tipo de mano
+        tipo_mano = (data.get('tipo_mano') or 'right').lower()
+        if tipo_mano not in ('left', 'right', 'both'):
+            tipo_mano = 'right'
+        numero_muestras = int(data.get('numero_muestras', 0) or 0)
+        landmarks_izquierda = data.get('landmarks_izquierda') or []
+        landmarks_derecha = data.get('landmarks_derecha') or []
 
         # Validaciones explícitas con respuesta clara
         if (numero_vinculado is None and operacion_vinculada is None) or not landmarks_data:
@@ -70,7 +74,7 @@ def guardar_gesto(request):
         if operacion_vinculada is not None:
             operaciones_validas = [choice[0] for choice in TipoOperacion.choices]
             if operacion_vinculada not in operaciones_validas:
-                return JsonResponse({'success': False,'error': 'Operación no válida'}, status=400)
+                return JsonResponse({'success': False,'error': f'Operación no válida: {operacion_vinculada}. Válidas: {operaciones_validas}'}, status=400)
 
         if numero_vinculado is not None:
             nombre_display = f"Número {numero_vinculado}"
@@ -83,15 +87,23 @@ def guardar_gesto(request):
         else:
             filter_params['operacion_vinculada'] = operacion_vinculada
 
+        # Ajustar numero_muestras a la longitud efectiva del arreglo principal si aplica
+        try:
+            effective_samples = len(landmarks_data) if isinstance(landmarks_data, list) else 0
+        except Exception:
+            effective_samples = 0
+        if not numero_muestras:
+            numero_muestras = effective_samples
+
         gesto, created = GestoMano.objects.update_or_create(
             **filter_params,
             defaults={
                 'nombre_display': nombre_display,
-                'landmarks_data': json.dumps(landmarks_data),
+                'landmarks_data': json.dumps(landmarks_data, ensure_ascii=False),
                 'precision_entrenamiento': precision,
                 'numero_muestras': numero_muestras,
-                'landmarks_mano_izquierda': json.dumps(landmarks_izquierda) if landmarks_izquierda else None,
-                'landmarks_mano_derecha': json.dumps(landmarks_derecha) if landmarks_derecha else None,
+                'landmarks_mano_izquierda': json.dumps(landmarks_izquierda, ensure_ascii=False) if landmarks_izquierda else None,
+                'landmarks_mano_derecha': json.dumps(landmarks_derecha, ensure_ascii=False) if landmarks_derecha else None,
                 'activo': True
             }
         )
@@ -99,7 +111,10 @@ def guardar_gesto(request):
         return JsonResponse({'success': True,'message': f'Gesto "{nombre_display}" {"creado" if created else "actualizado"} exitosamente','gesto_id': gesto.id,'created': created})
     
     except Exception as e:
-        logger.error(f"Error inesperado en guardar_gesto: {str(e)}")
+        logger.exception("Error inesperado en guardar_gesto")
+        # Incluir detalles sólo en modo DEBUG para facilitar diagnóstico
+        if getattr(settings, 'DEBUG', False):
+            return JsonResponse({'success': False, 'error': 'Error interno del servidor', 'detail': str(e)}, status=500)
         return JsonResponse({'success': False, 'error': 'Error interno del servidor'}, status=500)
 
 def vista_interaccion(request):
