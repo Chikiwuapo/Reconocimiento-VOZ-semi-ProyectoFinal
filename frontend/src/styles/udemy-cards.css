@@ -1,0 +1,155 @@
+/* Estilos de tarjetas tipo Udemy para la sección de cursos */
+
+.course-card.udemy {
+  border: 1px solid #e5e7eb; /* slate-200 */
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  transition: box-shadow .2s ease, transform .2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.course-card.udemy:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(28, 37, 54, 0.15), 0 2px 6px rgba(28,37,54,0.08);
+}
+
+/* Contenedor media 16:9 (si se usa imagen). En las actuales se reutiliza el bloque superior existente */
+.course-card.udemy .course-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #0f172a; /* slate-900 */
+  overflow: hidden;
+}
+.course-card.udemy .course-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Cuerpo */
+.course-card.udemy .course-body {
+  padding: 14px 16px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto; /* ocupar el espacio disponible */
+}
+.course-card.udemy .course-title {
+  color: #111827; /* gray-900 */
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.course-card.udemy .course-subtitle {
+  color: #4b5563; /* gray-600 */
+  font-size: 13px;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+/* Rating compacto */
+.course-card.udemy .rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.course-card.udemy .rating-row .score {
+  color: #F59E0B; /* amber-500 */
+  font-weight: 700;
+  font-size: 13px;
+}
+.course-card.udemy .rating-row .count {
+  color: #6b7280; /* gray-500 */
+  font-size: 12px;
+}
+
+/* Meta chips */
+.course-card.udemy .course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.course-card.udemy .badge-udemy {
+  background: #eef2ff; /* indigo-50 */
+  color: #3730a3; /* indigo-800 */
+  border-radius: 9999px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.course-card.udemy .badge-udemy.neutral {
+  background: #f3f4f6; /* gray-100 */
+  color: #374151; /* gray-700 */
+  font-weight: 600;
+}
+
+/* Footer: precio + CTA */
+.course-card.udemy .course-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto; /* empuja el footer al fondo para igualar alturas */
+}
+.course-card.udemy .price {
+  color: #111827;
+  font-weight: 800;
+}
+.course-card.udemy .cta {
+  background: #8A2BE2; /* accent-purple */
+  color: #fff;
+  border: 1px solid rgba(138,43,226,.15);
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.course-card.udemy .cta:hover {
+  background: #7a22d1;
+  box-shadow: 0 8px 18px rgba(138, 43, 226, .18);
+}
+
+/* Estado deshabilitado para cursos próximos */
+.course-card.udemy .cta.disabled,
+.course-card.udemy .cta[disabled] {
+  background: #e5e7eb; /* slate-200 */
+  color: #6b7280; /* gray-500 */
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Dark theme overrides */
+[data-theme='dark'] .course-card.udemy {
+  background: #0b0b0b; /* near black to match landing */
+  border-color: #374151; /* gray-700 */
+}
+[data-theme='dark'] .course-card.udemy .course-body {
+  background: #0b0b0b;
+  color: #f3f4f6; /* gray-100 */
+}
+[data-theme='dark'] .course-card.udemy .course-title {
+  color: #f3f4f6; /* gray-100 */
+}
+[data-theme='dark'] .course-card.udemy .course-subtitle {
+  color: #9ca3af; /* gray-400 */
+}
+[data-theme='dark'] .course-card.udemy .price {
+  color: #f9fafb; /* gray-50 */
+}
+[data-theme='dark'] .course-card.udemy .badge-udemy {
+  background: rgba(99,102,241,0.15); /* indigo tint */
+  color: #c7d2fe; /* indigo-200 */
+}
+[data-theme='dark'] .course-card.udemy .badge-udemy.neutral {
+  background: #1f2937; /* gray-800 */
+  color: #d1d5db; /* gray-300 */
+}

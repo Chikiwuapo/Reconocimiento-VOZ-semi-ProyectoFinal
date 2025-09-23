@@ -23,6 +23,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+package-lock.json*
+
+# Project logs (explicit)
+backend/facial_debug.log
 
 # === Frontend (Node/Vite/React) ===
 node_modules/

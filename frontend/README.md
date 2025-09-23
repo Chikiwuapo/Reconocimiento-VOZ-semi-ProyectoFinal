@@ -1,69 +1,92 @@
-# React + TypeScript + Vite
+# Frontend — React + TypeScript + Tailwind
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz de usuario para la plataforma de reconocimiento de gestos. Incluye dashboard, navegado responsive (con menú móvil), hero con Spline 3D, y vista de Aritmética con cámara como foco.
 
-Currently, two official plugins are available:
+## Tabla de Contenidos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Estructura de carpetas
+- Librerías y utilidades
+- Theming y dark mode
+- Navegación y rutas
+- Vista de Aritmética (cámara y acciones)
+- Estado (userStore)
+- Scripts de desarrollo
 
-## Expanding the ESLint configuration
+## Estructura de carpetas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+frontend/
+└─ src/
+   ├─ App.tsx / App.css
+   ├─ auth/
+   │  └─ userStore.ts
+   ├─ components/
+   │  ├─ Blackboard/
+   │  │  ├─ Navbar.tsx          # Navbar responsive con menú móvil y dark mode
+   │  │  ├─ Layout.tsx          # Layout general de páginas
+   │  │  ├─ HeroUnified.tsx     # Hero con Spline y tarjetas
+   │  │  ├─ ActivityCard.tsx
+   │  │  └─ ProfileModal.tsx    # Modal de perfil (tema oscuro soportado)
+   │  ├─ Course/
+   │  │  └─ CourseCard.tsx
+   │  └─ LandingComponents/
+   │     ├─ PromoCarousel.tsx
+   │     └─ OurTeam.tsx
+   └─ pages/
+      └─ Blackboard/
+         ├─ Dashboard.tsx
+         └─ Arithmetic/
+            ├─ Arithmetic.tsx        # Cámara, botones de acciones y métricas
+            ├─ hooks/useArithmetic.ts
+            └─ services/arithmeticService.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Librerías y utilidades
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- React 18 + TypeScript
+- Vite (dev server y build)
+- Tailwind CSS (estilos utilitarios)
+- Framer Motion (animaciones, hero y cards)
+- @splinetool/react-spline (escena 3D del hero)
+- react-router-dom (rutas)
+- Zustand (`auth/userStore.ts`) para estado de usuario y cursos
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Theming y dark mode
+
+- El hook `useTheme()` expone `isDarkMode` y `toggleDarkMode`.
+- Componentes como `Layout`, `Navbar`, `HeroUnified`, `ProfileModal` usan clases condicionales para asegurar contraste y legibilidad.
+
+## Navegación y rutas
+
+- `Navbar.tsx`: menú de escritorio y menú móvil (hamburguesa). En móvil, el dropdown incluye accesos a Inicio, Modelos, Perfil y Cerrar sesión.
+- Rutas principales: `Dashboard` y `Arithmetic`.
+
+## Vista de Aritmética
+
+- `Arithmetic.tsx` centra la cámara con un contenedor responsive (`aspect-[4/3]` en móvil y `aspect-video` en escritorio).
+- Acciones distribuidas en grilla 2 columnas, botones con altura uniforme (`h-12`) para Entrenamiento y Prueba.
+- `useArithmetic.ts` encapsula interacción con MediaPipe y la lógica de captura/entrenamiento/recognición.
+
+## Estado (userStore)
+
+- `auth/userStore.ts` maneja perfil (nombre, email, avatar), cursos vistos, modelos y favoritos. Expone utilidades como `toggleFavorite`, `recordCourseCompleted`, `updateProfile`, `setAvatar`.
+
+## Scripts de desarrollo
+
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .ts,.tsx"
+  }
+}
+```
+
+Ejecutar:
+
+```bash
+npm install
+npm run dev
 ```

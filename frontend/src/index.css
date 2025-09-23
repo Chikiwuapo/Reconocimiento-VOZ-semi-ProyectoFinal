@@ -1,68 +1,257 @@
+@import "tailwindcss";
+@import "./styles/udemy-cards.css";
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --color-background: #FFFFFF;
+  --color-header: #1B4965;
+  --color-primary: #62B6CB;
+  --color-alt: #F5F5F5;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+/* Variables de tema (sin @theme para evitar warnings del linter) */
+:root {
+  --accent-green: #28A745;
+  --accent-purple: #8A2BE2;
+  --accent-cyan: #00FFFF;
+  --font-poppins: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+html, body, #root {
+  height: 100%;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer base {
+  html {
+    font-family: var(--font-inter);
+    color: #1B4965;
+    background: var(--color-background);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-poppins);
+    color: #1B4965;
+  }
+  a {
+    color: var(--color-primary);
+    transition: opacity 150ms ease;
   }
   a:hover {
-    color: #747bff;
+    opacity: .9;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: none;
+    padding-left: 1rem; /* px-4 */
+    padding-right: 1rem;
   }
+  @media (min-width: 640px) { /* sm */
+    .container-page { padding-left: 1.5rem; padding-right: 1.5rem; } /* px-6 */
+  }
+  @media (min-width: 1024px) { /* lg */
+    .container-page { padding-left: 2rem; padding-right: 2rem; } /* px-8 */
+  }
+}
+
+@layer utilities {
+  /* Colores utilitarios (por si las clases de color por token no están disponibles) */
+  .text-header { color: var(--color-header); }
+  .text-primary { color: var(--color-primary); }
+  .bg-primary { background-color: var(--color-primary); }
+  .bg-alt { background-color: var(--color-alt); }
+  .bg-hero-gradient { background-image: linear-gradient(135deg, rgba(96,165,250,0.15) 0%, rgba(168,85,247,0.15) 100%); }
+  .bg-hero-solid { background-image: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%); }
+
+  .shadow-soft { box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+  .rounded-xl { border-radius: 14px; }
+
+  /* Utilidades de fuente para usar en elementos no encabezados */
+  .font-poppins { font-family: var(--font-poppins); }
+  .font-inter { font-family: var(--font-inter); }
+
+  .card { 
+    padding: 1.25rem; /* p-5 */
+    background: #fff; /* bg-white */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
+    border-radius: 14px; 
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+  }
+  .card:hover::before {
+    left: 100%;
+  }
+  .card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  }
+  
+  /* Estilos para carrusel de cursos */
+  .courses-carousel,
+  .models-carousel {
+    display: flex;
+    gap: 1rem;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    padding: 1rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    cursor: grab;
+    user-select: none;
+  }
+  .courses-carousel:active,
+  .models-carousel:active {
+    cursor: grabbing;
+  }
+  .courses-carousel::-webkit-scrollbar,
+  .models-carousel::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .course-card {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+  }
+
+  .course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Removed auto-scroll animations for manual navigation */
+  /* Base de botones unificada */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* gap-2 */
+    font-weight: 500; /* font-medium */
+    transition: all .2s ease; /* transition */
+    user-select: none; /* select-none */
+    height: 40px;
+    padding: 0 16px;
+    border-radius: 0.5rem;
+  }
+  .btn-lg { height: 48px; padding: 0 20px; }
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--color-primary);
+  }
+  .btn-accent-green {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--accent-green);
+  }
+  .btn-accent-purple {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--accent-purple);
+  }
+  .btn-accent-cyan {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: var(--color-header); height: 40px; padding: 0 16px; border-radius: .5rem; background-color: var(--accent-cyan);
+  }
+  .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #475569; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: #fff; border: 1px solid #cbd5e1;
+  }
+  .btn-secondary:hover { background-color: #f8fafc; }
+  .btn-accent-red {
+    display: inline-flex; align-items: center; justify-content: center; gap: .5rem; font-weight: 500; transition: all .2s ease; user-select: none;
+    color: #fff; height: 40px; padding: 0 16px; border-radius: .5rem; background-color: #DC2626;
+  }
+  .badge {
+    display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;
+    background-color: var(--color-alt); color: var(--color-header);
+  }
+
+  /* Cinta para favoritos */
+  .ribbon-fav { position: absolute; top: 12px; right: -6px; background: linear-gradient(135deg, #FBBF24, #F59E0B); color: #1F2937; font-weight: 700; font-size: 10px; padding: 4px 10px; transform: rotate(45deg); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
+
+  @keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes slide-up { from { transform: translateY(12px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+  @keyframes slide-in-left { from { transform: translateX(-30px); opacity: 0 } to { transform: translateX(0); opacity: 1 } }
+  @keyframes slide-in-right { from { transform: translateX(30px); opacity: 0 } to { transform: translateX(0); opacity: 1 } }
+  @keyframes bounce-in { 
+    0% { transform: scale(0.3); opacity: 0 }
+    50% { transform: scale(1.05) }
+    70% { transform: scale(0.9) }
+    100% { transform: scale(1); opacity: 1 }
+  }
+  @keyframes float { 
+    0%, 100% { transform: translateY(0px) }
+    50% { transform: translateY(-6px) }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(98, 182, 203, 0.3) }
+    50% { box-shadow: 0 0 20px rgba(98, 182, 203, 0.6), 0 0 30px rgba(98, 182, 203, 0.4) }
+  }
+  @keyframes scroll-infinite {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  
+  .animate-fade-in { animation: fade-in 500ms ease-out both; }
+  .animate-slide-up { animation: slide-up 500ms ease-out both; }
+  .animate-slide-in-left { animation: slide-in-left 600ms ease-out both; }
+  .animate-slide-in-right { animation: slide-in-right 600ms ease-out both; }
+  .animate-bounce-in { animation: bounce-in 700ms ease-out both; }
+  .animate-float { animation: float 3s ease-in-out infinite; }
+  .animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+  .animate-scroll-infinite { animation: scroll-infinite 30s linear infinite; }
+  
+  /* Delays para animaciones escalonadas */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  
+  /* Utilidad para truncar texto */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* Añadimos la propiedad estándar para compatibilidad con linters */
+    line-clamp: 2;
+  }
+
+  /* Ocultar scrollbar para contenedores con scroll interno */
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
+/* Dark theme overrides for base utilities */
+[data-theme='dark'] .card {
+  background: #111111; /* near-black for panels */
+}
+[data-theme='dark'] .course-card {
+  background: #0b0b0b;
+  border-color: #374151; /* gray-700 */
+}
+[data-theme='dark'] .btn-secondary {
+  background-color: #1f2937; /* gray-800 */
+  border-color: #374151; /* gray-700 */
+  color: #e5e7eb; /* slate-200 */
+}
+[data-theme='dark'] .btn-secondary:hover {
+  background-color: #111827; /* gray-900 */
 }
