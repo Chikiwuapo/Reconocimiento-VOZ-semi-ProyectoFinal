@@ -191,15 +191,16 @@ export default function HeroUnified({
           {/* Overlay gradient for readability */}
           <div className={`pointer-events-none absolute inset-0 ${isDarkMode ? 'bg-gradient-to-br from-gray-900/80 via-gray-900/40 to-transparent' : 'bg-gradient-to-br from-white/80 via-white/40 to-transparent'}`} />
 
-          {/* Greeting top-right */}
-          <div className="absolute top-4 right-4 md:top-6 md:right-6 lg:top-8 lg:right-8 text-right">
+          {/* Greeting header: right on desktop, full-width on mobile with CTA */}
+          <div className="absolute inset-x-4 top-4 md:inset-auto md:top-6 md:right-6 lg:top-8 lg:right-8 md:text-right">
             <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold drop-shadow-sm ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>Hola, {userName} 👋</h1>
-            <p className={`mt-1 max-w-md ml-auto ${isDarkMode ? 'text-gray-300' : 'text-slate-700'}`}>No necesitas ser un experto en Machine Learning. 
-            <br></br>¡Explora el mundo con tus propios modelos!</p>
+            <p className={`mt-1 max-w-xl md:max-w-md md:ml-auto ${isDarkMode ? 'text-gray-300' : 'text-slate-700'}`}>
+              No necesitas ser un experto en Machine Learning. ¡Explora el mundo con tus propios modelos!
+            </p>
           </div>
 
           {/* Cards bottom-left (2 tarjetas) */}
-          <div className="absolute bottom-4 left-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="absolute bottom-4 left-4 hidden md:grid grid-cols-1 md:grid-cols-2 gap-3">
             {[cardsLeft[0], cardsLeft[1]].map(c => (
               <div key={c.key} className={`text-left p-4 rounded-xl border backdrop-blur shadow-soft hover:shadow-lg transition-shadow ${isDarkMode ? 'bg-gray-900/95 border-gray-800' : 'bg-white/95'}`} style={!isDarkMode ? { borderColor: 'rgba(15,23,42,0.08)' } : {}}>
                 <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{c.label}</div>
@@ -210,7 +211,7 @@ export default function HeroUnified({
           </div>
 
           {/* Cards bottom-right (2 tarjetas) */}
-          <div className="absolute bottom-4 right-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="absolute bottom-4 right-4 hidden md:grid grid-cols-1 md:grid-cols-2 gap-3">
             {[{ key: 'favoritos', label: 'Modelos favoritos', value: favoriteModels.length, desc: 'Modelos marcados como favoritos.', color: '#F59E0B' }, cardsRight[0]].map(c => (
               <div key={c.key} className={`text-left p-4 rounded-xl border backdrop-blur shadow-soft hover:shadow-lg transition-shadow ${isDarkMode ? 'bg-gray-900/95 border-gray-800' : 'bg-white/95'}`} style={!isDarkMode ? { borderColor: 'rgba(15,23,42,0.08)' } : {}}>
                 <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{c.label}</div>
@@ -218,6 +219,19 @@ export default function HeroUnified({
                 <div className={`mt-1 text-xs max-w-[22ch] ${isDarkMode ? 'text-gray-500' : 'text-slate-500'}`}>{c.desc}</div>
               </div>
             ))}
+          </div>
+
+          {/* Mobile stat cards: show all 4 below hero */}
+          <div className="md:hidden px-4 pb-4">
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {[cardsLeft[0], cardsLeft[1], { key: 'favoritos', label: 'Modelos favoritos', value: favoriteModels.length, desc: 'Modelos marcados como favoritos.', color: '#F59E0B' }, cardsRight[0]].map(c => (
+                <div key={c.key} className={`text-left p-4 rounded-xl border shadow-soft ${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white'}`} style={!isDarkMode ? { borderColor: 'rgba(15,23,42,0.08)' } : {}}>
+                  <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{c.label}</div>
+                  <div className="mt-1 text-2xl font-bold" style={{ color: c.color }}><Counter value={c.value as number} /></div>
+                  <div className={`mt-1 text-xs ${isDarkMode ? 'text-gray-500' : 'text-slate-500'}`}>{c.desc}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

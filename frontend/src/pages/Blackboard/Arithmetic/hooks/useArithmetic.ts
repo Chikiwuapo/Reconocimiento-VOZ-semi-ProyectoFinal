@@ -283,34 +283,39 @@ export function useArithmetic() {
     const processed = normalized.slice(0, MAX_SAMPLES)
 
     const framesBoth = processed.filter(fr => fr.leftHand && fr.rightHand)
-    const bothHandsCount = framesBoth.length
     const leftOnly = processed.filter(fr => fr.leftHand && !fr.rightHand)
     const rightOnly = processed.filter(fr => fr.rightHand && !fr.leftHand)
     const landmarks_izquierda = processed.filter(fr => fr.leftHand).map(fr => fr.leftHand)
     const landmarks_derecha = processed.filter(fr => fr.rightHand).map(fr => fr.rightHand)
 
-    if (requireTwoHands && bothHandsCount === 0) {
+    if (requireTwoHands && framesBoth.length === 0) {
       setError('Para entrenar con 2 manos, asegúrate de que ambas estén visibles en la cámara durante la grabación.')
       return
     }
 
+    // Construir payload base
     const payload: any = {
       numero_vinculado: gestureMode === 'numero' ? Number(numeroVinculado) : null,
       operacion_vinculada: gestureMode === 'operacion' ? operacionVinculada : null,
-      // Para compatibilidad: enviamos tanto un arreglo completo como desgloses por mano
       landmarks_data: processed,
       numero_muestras: processed.length,
       tipo_mano: predominant,
       landmarks_izquierda,
       landmarks_derecha,
-      dos_manos: bothHandsCount > 0,
-      // Opcional: frames en los que hay ambas manos (muchos backends lo esperan así para entrenar 2 manos)
+      dos_manos: framesBoth.length > 0,
       frames_dos_manos: framesBoth,
       frames_izquierda_solo: leftOnly,
       frames_derecha_solo: rightOnly,
     }
 
-    console.debug('Saving gesture. Samples:', recordedRef.current.length)
+    // Si se requiere entrenar con 2 manos, normalizar explícitamente a 'both' y
+    // enviar sólo los frames donde aparecen ambas manos como landmarks_data
+    if (requireTwoHands) {
+      payload.tipo_mano = 'both'
+      payload.landmarks_data = framesBoth
+      payload.numero_muestras = framesBoth.length
+    }
+
     try {
       const data = await saveGestureAPI(payload)
       if (!data?.success) throw new Error(data?.error || 'No se pudo guardar el gesto')

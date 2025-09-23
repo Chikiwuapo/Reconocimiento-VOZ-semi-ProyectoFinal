@@ -40,14 +40,14 @@ const OurTeam: React.FC<OurTeamProps> = ({ isDarkMode = false }) => {
       name: 'Dev Backend',    
       handle: 'Specter-nim',
       status: 'Online',  
-      avatar: 'https://cdn.discordapp.com/attachments/1129926951394627785/1419909834332962897/Imagen_de_WhatsApp_2025-09-22_a_las_23.50.52_8ad0b13a.jpg?ex=68d37995&is=68d22815&hm=cca4a7a34ef7181f732ea5edcf41b413aff80f14f4528aa258c3a983d3cd0621&' 
+      avatar: 'https://i.pinimg.com/736x/6f/93/82/6f9382f56bcecc25e8ba4dec7744ab1f.jpg' 
     },
     { 
       id: 6, 
       name: 'Dev Backend',   
       handle: 'CH4IS7IANFLOO',   
       status: 'Online',  
-      avatar: 'https://cdn.discordapp.com/attachments/1129926951394627785/1419906176682033222/Imagen_de_WhatsApp_2025-09-22_a_las_23.31.29_2f61327a.jpg?ex=68d3762d&is=68d224ad&hm=e5b152dee35981e6d6dc71ae40f05069290532a8086c5b32d520642475d01a01&' 
+      avatar: 'https://i.redd.it/hjx35o1555g91.jpg' 
     },
   ];
 

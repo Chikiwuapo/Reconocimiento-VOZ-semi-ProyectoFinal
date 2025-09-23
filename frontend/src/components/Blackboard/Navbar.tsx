@@ -15,6 +15,7 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
   const hasNotifications = useMemo(() => notifCount > 0, [notifCount])
   const [openProfile, setOpenProfile] = useState(false)
   const [openCenter, setOpenCenter] = useState(false)
+  const [openMobile, setOpenMobile] = useState(false)
   const [items, setItems] = useState<{ id: string; message: string; ts: number }[]>([])
 
   const STORAGE_KEY = 'appNotifications'
@@ -52,7 +53,7 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
               <path d="M4 7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1h2a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3h-2v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/>
             </svg>
           </span>
-          <span className={`font-poppins font-bold text-lg ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>AresDigitalAcademy</span>
+          <span className={`font-poppins font-bold text-lg ${isDarkMode ? 'text-gray-100' : 'text-header'} hidden lg:inline`}>AresDigitalAcademy</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
@@ -117,15 +118,35 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
               <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 ring-2 ring-white text-[10px] leading-[14px] text-white flex items-center justify-center">{Math.min(notifCount, 9)}</span>
             )}
           </button>
-          <button onClick={() => setOpenProfile(true)} className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
+          {/* Avatar desktop only */}
+          <button
+            onClick={() => setOpenProfile(true)}
+            className="hidden md:inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full"
+            title="Perfil"
+            aria-label="Abrir perfil"
+          >
             <img src={user.profile.avatarDataUrl || '/src/assets/avatar.svg'} alt="Avatar" className={`h-10 w-10 rounded-full object-cover ${isDarkMode ? 'border border-gray-600' : 'border border-slate-200'}`} />
+          </button>
+          {/* Mobile hamburger */}
+          <button
+            className={`lg:hidden inline-flex items-center justify-center h-10 w-10 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${isDarkMode ? 'text-gray-200 hover:bg-gray-800 border border-gray-800' : 'text-header hover:bg-slate-100 border border-slate-200'}`}
+            aria-label="Abrir menú"
+            aria-controls="mobile-menu"
+            aria-expanded={openMobile}
+            onClick={() => setOpenMobile(v => !v)}
+          >
+            {openMobile ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5"><path d="M6 18L18 6"/><path d="M6 6l12 12"/></svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+            )}
           </button>
           <button
             className={`hidden sm:inline-flex items-center gap-2 text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md px-3 py-2 ${
               isDarkMode 
                 ? 'text-gray-300 hover:text-white border border-gray-600 hover:bg-gray-800' 
                 : 'text-slate-600 hover:text-header border border-slate-200 hover:bg-slate-50'
-            }`}
+              }`}
             onClick={() => alert('Cerrar sesión')}
             title="Cerrar sesión"
             aria-label="Cerrar sesión"
@@ -139,7 +160,46 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
           </button>
         </div>
       </div>
+      {/* Mobile dropdown menu */}
+      <div id="mobile-menu" className={`md:hidden border-t ${openMobile ? 'block' : 'hidden'} ${isDarkMode ? 'border-gray-800 bg-[#0A0A0A]' : 'border-slate-100 bg-white'}`}>
+        <nav className="container-page py-2">
+          <ul className="flex flex-col py-1">
+            {navItems.map(item => (
+              <li key={item.to}>
+                <NavLink
+                  to={item.to}
+                  className={({ isActive }) => `block px-3 py-2 rounded-md text-sm transition ${isDarkMode ? (isActive ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800') : (isActive ? 'text-header bg-slate-100' : 'text-slate-700 hover:text-header hover:bg-slate-50')}`}
+                  onClick={() => setOpenMobile(false)}
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+            {/* Perfil action to open Profile modal */}
+            <li className="mt-1">
+              <button
+                type="button"
+                className={`w-full text-left px-3 py-2 rounded-md text-sm transition ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-slate-700 hover:text-header hover:bg-slate-50'}`}
+                onClick={() => { setOpenMobile(false); setOpenProfile(true) }}
+              >
+                Perfil
+              </button>
+            </li>
+            {/* Cerrar sesión for mobile */}
+            <li className="mt-1">
+              <button
+                type="button"
+                className={`w-full text-left px-3 py-2 rounded-md text-sm transition ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-slate-700 hover:text-header hover:bg-slate-50'}`}
+                onClick={() => { setOpenMobile(false); alert('Cerrar sesión') }}
+              >
+                Cerrar sesión
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
+
     {/* Notification Center */}
     {openCenter && (
       <div className="fixed inset-0 z-40" onClick={() => setOpenCenter(false)}>

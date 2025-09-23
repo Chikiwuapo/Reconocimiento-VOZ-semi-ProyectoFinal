@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface PromoCarouselProps {
   isDarkMode?: boolean;
@@ -97,6 +98,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ isDarkMode = false }) => 
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.6 }}
                               >
+                                <Link to="/dashboard">
                                 <button 
                                   className={`w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-lg font-semibold text-white transition-all transform hover:scale-105 ${
                                     isDarkMode 
@@ -106,6 +108,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ isDarkMode = false }) => 
                                 >
                                   Pruébalo gratis
                                 </button>
+                                </Link>
                                 <button 
                                   className={`w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-lg font-semibold border-2 transition-all transform hover:scale-105 ${
                                     isDarkMode 
