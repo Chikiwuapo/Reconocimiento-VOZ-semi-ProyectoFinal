@@ -20,25 +20,6 @@ const Landing = () => {
     setIsDarkMode(prefersDarkMode);
   }, []);
 
-  // Bloquear scroll del body cuando el apartado de equipo esté completamente a la vista
-  useEffect(() => {
-    const teamSection = document.getElementById('team-wrapper');
-    if (!teamSection) return;
-
-    const onScroll = () => {
-      const rect = teamSection.getBoundingClientRect();
-      const fullyVisible = rect.top <= 0 && rect.bottom >= window.innerHeight;
-      document.body.style.overflow = fullyVisible ? 'hidden' : '';
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      document.body.style.overflow = '';
-    };
-  }, []);
-
   // Manejar cambio de tema
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -53,8 +34,8 @@ const Landing = () => {
           <Benefits isDarkMode={isDarkMode} />
           <Examples isDarkMode={isDarkMode} />
           <HowItWorks isDarkMode={isDarkMode} />
-          {/* Bloquear scroll de body cuando nuestro equipo esté completamente a la vista */}
-          <section id="team-wrapper">
+          {/* Nuestro equipo */}
+          <section id="team-wrapper" className="mt-12 md:mt-16">
             <OurTeam isDarkMode={isDarkMode} />
           </section>
           <Security isDarkMode={isDarkMode} />

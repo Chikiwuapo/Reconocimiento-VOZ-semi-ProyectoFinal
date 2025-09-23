@@ -29,9 +29,10 @@ interface Mission {
 
 interface MissionsPanelProps {
   models: Model[];
+  isDarkMode?: boolean;
 }
 
-const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
+const MissionsPanel: React.FC<MissionsPanelProps> = ({ models, isDarkMode = false }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { user, setMissions } = useUserStore();
   const missions = user.missions as Mission[];
@@ -219,10 +220,10 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
   const totalMissions = missions.length;
 
   return (
-     <div className="card bg-white shadow-soft">
+     <div className={`card shadow-soft ${isDarkMode ? 'bg-gray-900 border border-gray-800' : 'bg-white'}`}>
        {/* Header */}
        <div 
-         className="flex items-center justify-between p-4 cursor-pointer hover:bg-alt transition-colors rounded-xl"
+         className={`flex items-center justify-between p-4 cursor-pointer transition-colors rounded-xl ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-alt'}`}
          onClick={() => setIsExpanded(!isExpanded)}
        >
          <div className="flex items-center gap-3">
@@ -230,8 +231,8 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
              <Trophy className="w-5 h-5 text-primary" />
            </div>
            <div>
-             <h3 className="text-lg font-bold text-header font-poppins">Misiones de Modelos</h3>
-             <p className="text-slate-600 text-sm">
+             <h3 className={`text-lg font-bold font-poppins ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>Misiones de Modelos</h3>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>
                {activeMissions.length} pendientes • {completedMissions}/{totalMissions} completadas
              </p>
            </div>
@@ -241,9 +242,9 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
              {Math.round((completedMissions / totalMissions) * 100)}%
            </span>
            {isExpanded ? (
-             <ChevronUp className="w-5 h-5 text-slate-500" />
+             <ChevronUp className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`} />
            ) : (
-             <ChevronDown className="w-5 h-5 text-slate-500" />
+             <ChevronDown className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`} />
            )}
          </div>
        </div>
@@ -260,11 +261,11 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
             <div className="p-4 pt-0">
                {/* Progress Bar */}
                <div className="mb-4">
-                 <div className="flex justify-between text-sm text-slate-600 mb-2">
+                 <div className={`flex justify-between text-sm mb-2 ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>
                    <span>Progreso General</span>
                    <span>{Math.round((completedMissions / totalMissions) * 100)}%</span>
                  </div>
-                 <div className="w-full bg-slate-200 rounded-full h-2">
+                 <div className={`w-full rounded-full h-2 ${isDarkMode ? 'bg-gray-800' : 'bg-slate-200'}`}>
                    <motion.div
                      className="bg-primary h-2 rounded-full"
                      initial={{ width: 0 }}
@@ -284,7 +285,11 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
                        initial={{ opacity: 0, x: -20 }}
                        animate={{ opacity: 1, x: 0 }}
                        transition={{ delay: index * 0.1 }}
-                       className="bg-alt border border-slate-200 rounded-xl p-4 hover:border-primary/50 hover:bg-white transition-all duration-300 shadow-sm"
+                       className={`border rounded-xl p-4 hover:border-primary/50 transition-all duration-300 shadow-sm ${
+                         isDarkMode 
+                           ? 'bg-gray-800 border-gray-700 hover:bg-gray-700' 
+                           : 'bg-alt border-slate-200 hover:bg-white'
+                       }`}
                      >
                        <div className="flex items-start gap-3">
                          <div className={`p-2 rounded-lg flex-shrink-0 ${getMissionTypeColor(mission.type)}`}>
@@ -292,7 +297,7 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
                          </div>
                          <div className="flex-1 min-w-0">
                            <div className="flex items-center justify-between mb-1">
-                             <h4 className="text-header font-medium text-sm truncate font-poppins">{mission.title}</h4>
+                             <h4 className={`font-medium text-sm truncate font-poppins ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>{mission.title}</h4>
                              <div className="flex items-center gap-1">
                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getMissionTypeColor(mission.type)}`}>
                                  {mission.type === 'training' ? 'Entrenamiento' :
@@ -309,12 +314,12 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
                                </span>
                              </div>
                            </div>
-                           <p className="text-slate-600 text-xs mb-2 line-clamp-2">{mission.description}</p>
+                           <p className={`text-xs mb-2 line-clamp-2 ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{mission.description}</p>
                            <div className="flex items-center justify-between">
                              <span className="text-primary text-xs font-medium">{mission.reward}</span>
                              {mission.progress > 0 && (
                                <div className="flex items-center gap-2">
-                                 <div className="w-16 bg-slate-200 rounded-full h-1">
+                                 <div className={`w-16 rounded-full h-1 ${isDarkMode ? 'bg-gray-700' : 'bg-slate-200'}`}>
                                    <div
                                      className={`h-1 rounded-full transition-all duration-500 ${
                                        mission.type === 'training' ? 'bg-blue-500' :
@@ -329,7 +334,7 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
                                      style={{ width: `${mission.progress}%` }}
                                    />
                                  </div>
-                                 <span className="text-xs text-slate-500">{Math.round(mission.progress)}%</span>
+                                 <span className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-slate-500'}`}>{Math.round(mission.progress)}%</span>
                                </div>
                              )}
                            </div>
@@ -342,8 +347,8 @@ const MissionsPanel: React.FC<MissionsPanelProps> = ({ models }) => {
                  {activeMissions.length === 0 && (
                    <div className="text-center py-8">
                      <Trophy className="w-12 h-12 text-primary mx-auto mb-3" />
-                     <p className="text-header font-poppins font-medium">¡Todas las misiones completadas!</p>
-                     <p className="text-slate-600 text-sm">Excelente trabajo entrenando modelos</p>
+                     <p className={`font-poppins font-medium ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>¡Todas las misiones completadas!</p>
+            <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>Excelente trabajo entrenando modelos</p>
                    </div>
                  )}
                </div>

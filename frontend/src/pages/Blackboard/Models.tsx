@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../../components/Blackboard/Layout'
 import type { ModelType, TrainingSession, ModelStats } from '../../types'
 import { useUserStore } from '../../auth/userStore'
+import { useTheme } from '../../App'
 
 export default function Models() {
   const navigate = useNavigate()
+  const { isDarkMode } = useTheme()
   
   // Estados principales
   const [trainingProgress, setTrainingProgress] = useState(0)
@@ -372,7 +374,7 @@ export default function Models() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+      <div className={`min-h-screen p-6 transition-colors duration-300 ${isDarkMode ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-50 to-gray-100'}`}>
         <div className="w-full max-w-none">
           {/* Header */}
           <div className="text-center mb-12">
@@ -409,50 +411,50 @@ export default function Models() {
           {/* Panel de Estadísticas */}
           {createdModels.length > 0 && (
             <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-100'}`}>
                     <span className="text-2xl">📊</span>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Total Modelos</p>
-                    <p className="text-2xl font-bold text-gray-800">{modelStats.totalModels}</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total Modelos</p>
+                    <p className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{modelStats.totalModels}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-green-900/50' : 'bg-green-100'}`}>
                     <span className="text-2xl">✅</span>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Modelos Activos</p>
-                    <p className="text-2xl font-bold text-gray-800">{modelStats.activeModels}</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Modelos Activos</p>
+                    <p className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{modelStats.activeModels}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-purple-900/50' : 'bg-purple-100'}`}>
                     <span className="text-2xl">🗂️</span>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Registros guardados</p>
-                    <p className="text-2xl font-bold text-gray-800">{recordsCount}</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Registros guardados</p>
+                    <p className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{recordsCount}</p>
                   </div>
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl p-6 shadow-lg">
+              <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-orange-900/50' : 'bg-orange-100'}`}>
                     <span className="text-2xl">🏃</span>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm text-gray-600">Entrenamientos</p>
-                    <p className="text-2xl font-bold text-gray-800">{modelStats.totalTrainingSessions}</p>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Entrenamientos</p>
+                    <p className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{modelStats.totalTrainingSessions}</p>
                   </div>
                 </div>
               </div>
@@ -462,7 +464,7 @@ export default function Models() {
           {/* Sección: Tus modelos creados */}
           <div className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
                 🎯 Tus Modelos Creados
               </h2>
               <div className="flex items-center gap-2">
@@ -475,7 +477,7 @@ export default function Models() {
                 {createdModels.length > 0 && (
                   <button 
                     onClick={clearAllData}
-                    className="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isDarkMode ? 'bg-red-900/50 text-red-300 hover:bg-red-900/70' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}
                   >
                     Limpiar Todo
                   </button>
@@ -492,14 +494,14 @@ export default function Models() {
                     placeholder="Buscar modelos por nombre o tipo..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDarkMode ? 'bg-gray-800 border-gray-600 text-gray-100 placeholder-gray-400' : 'border-gray-300 bg-white text-gray-900'}`}
                   />
                 </div>
                 <div className="flex gap-2">
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isDarkMode ? 'bg-gray-800 border-gray-600 text-gray-100' : 'border-gray-300 bg-white text-gray-900'}`}
                   >
                     <option value="all">Todos</option>
                     <option value="active">Activos</option>
@@ -513,13 +515,13 @@ export default function Models() {
             {/* Mostrar modelos creados o mensaje vacío */}
             {createdModels.length === 0 ? (
               <div className="text-center py-16">
-                <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl text-gray-400">🎤</span>
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+                  <span className={`text-4xl ${isDarkMode ? 'text-gray-300' : 'text-gray-400'}`}>🎤</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                   No tienes modelos creados aún
                 </h3>
-                <p className="text-gray-500 mb-6">
+                <p className={`mb-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   Haz clic en "Comenzar Entrenamiento" para crear tu primer modelo personalizado
                 </p>
                 <button 
@@ -536,7 +538,7 @@ export default function Models() {
                   const isTraining = currentSession?.modelId === model.id
                   
                   return (
-                    <div key={model.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 overflow-hidden">
+                    <div key={model.id} className={`rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border overflow-hidden ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
                       {/* Header con gradiente y círculo blanco */}
                       <div className={`bg-gradient-to-r ${model.bgColor} h-16 relative`}>
                         <div className="absolute top-2 left-2 w-5 h-5 bg-white/30 rounded-full"></div>
@@ -580,7 +582,9 @@ export default function Models() {
                             <button
                               onClick={() => toggleModelActive(model.id)}
                               className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors ${
-                                model.isActive ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                                model.isActive 
+                                  ? (isDarkMode ? 'bg-green-900/50 text-green-400' : 'bg-green-100 text-green-600')
+                                  : (isDarkMode ? 'bg-gray-700 text-gray-500' : 'bg-gray-100 text-gray-400')
                               }`}
                               title={model.isActive ? 'Desactivar' : 'Activar'}
                             >
@@ -589,7 +593,7 @@ export default function Models() {
                             {/* Botón eliminar */}
                             <button
                               onClick={() => deleteModel(model.id)}
-                              className="w-6 h-6 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs hover:bg-red-200 transition-colors"
+                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors ${isDarkMode ? 'bg-red-900/50 text-red-400 hover:bg-red-900/70' : 'bg-red-100 text-red-600 hover:bg-red-200'}`}
                               title="Eliminar modelo"
                             >
                               ×
@@ -597,20 +601,20 @@ export default function Models() {
                           </div>
                         </div>
                         
-                        <h3 className="text-sm font-bold text-gray-800 mb-2">{model.name}</h3>
-                        <p className="text-gray-600 text-xs mb-3 leading-relaxed line-clamp-2">
+                        <h3 className={`text-sm font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{model.name}</h3>
+                        <p className={`text-xs mb-3 leading-relaxed line-clamp-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           {model.description}
                         </p>
                         
                         {/* Información resumida */}
                         <div className="grid grid-cols-2 gap-2 mb-3">
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Completado</div>
-                            <div className="text-xs font-semibold text-gray-800">{(model as any).status === 'Completado' || (model as any).status === 'completed' ? 'Sí' : 'No'}</div>
+                          <div className={`rounded-lg p-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                            <div className={`text-xs uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Completado</div>
+                            <div className={`text-xs font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{(model as any).status === 'Completado' || (model as any).status === 'completed' ? 'Sí' : 'No'}</div>
                           </div>
-                          <div className="bg-gray-50 rounded-lg p-2">
-                            <div className="text-xs text-gray-500 uppercase tracking-wide">Registros guardados</div>
-                            <div className="text-xs font-semibold text-gray-800">{recordsCount}</div>
+                          <div className={`rounded-lg p-2 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                            <div className={`text-xs uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Registros guardados</div>
+                            <div className={`text-xs font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{recordsCount}</div>
                           </div>
                         </div>
                         
@@ -629,7 +633,7 @@ export default function Models() {
                               </button>
                               <button 
                                 onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic?tab=test') }}
-                                className="w-full bg-blue-100 text-blue-700 py-2 px-3 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors shadow-md"
+                                className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-blue-900/50 text-blue-300 hover:bg-blue-900/70' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                               >
                                 Mira tu modelo
                               </button>
@@ -638,7 +642,7 @@ export default function Models() {
                             <>
                               <button 
                                 onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic?tab=test') }}
-                                className="w-full bg-blue-100 text-blue-700 py-2 px-3 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors shadow-md"
+                                className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-blue-900/50 text-blue-300 hover:bg-blue-900/70' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                               >
                                 Mira tu modelo
                               </button>
@@ -658,7 +662,7 @@ export default function Models() {
       {/* Modal de selección de modelos */}
       {showModelSelection && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className={`rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
             {/* Header del modal */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
               <div className="flex items-center justify-between">
@@ -680,7 +684,7 @@ export default function Models() {
                   <div 
                     key={model.id}
                     onClick={() => handleModelSelect(model)}
-                    className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 cursor-pointer hover:border-blue-300 overflow-hidden"
+                    className={`rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border cursor-pointer hover:border-blue-300 overflow-hidden ${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-100'}`}
                   >
                     {/* Header con gradiente y círculo blanco */}
                     <div className={`bg-gradient-to-r ${model.bgColor} h-16 relative`}>
@@ -717,26 +721,26 @@ export default function Models() {
                         </div>
                       </div>
                       
-                      <h3 className="text-sm font-bold text-gray-800 mb-2">{model.name}</h3>
-                      <p className="text-gray-600 text-xs mb-3 leading-relaxed line-clamp-2">
+                      <h3 className={`text-sm font-bold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{model.name}</h3>
+                      <p className={`text-xs mb-3 leading-relaxed line-clamp-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         {model.description}
                       </p>
                       
                       {/* Información adicional */}
                       <div className="grid grid-cols-2 gap-2 mb-3">
-                        <div className="bg-gray-50 rounded-lg p-2">
-                          <div className="text-xs text-gray-500 uppercase tracking-wide">Duración</div>
-                          <div className="text-xs font-semibold text-gray-800">{model.duration}</div>
+                        <div className={`rounded-lg p-2 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-50'}`}>
+                          <div className={`text-xs uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Duración</div>
+                          <div className={`text-xs font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{model.duration}</div>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-2">
-                          <div className="text-xs text-gray-500 uppercase tracking-wide">Nivel</div>
-                          <div className="text-xs font-semibold text-gray-800">{model.difficulty}</div>
+                        <div className={`rounded-lg p-2 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-50'}`}>
+                          <div className={`text-xs uppercase tracking-wide ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Nivel</div>
+                          <div className={`text-xs font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{model.difficulty}</div>
                         </div>
                       </div>
                       
                       {/* Indicador de selección */}
                       <div className="mt-auto pt-2">
-                        <div className="text-center text-xs text-gray-500">
+                        <div className={`text-center text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                           Haz clic para seleccionar
                         </div>
                       </div>
@@ -753,9 +757,9 @@ export default function Models() {
       {showClearConfirm && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowClearConfirm(false)} />
-          <div className="relative w-full max-w-md bg-white rounded-xl shadow-2xl p-6">
-            <h3 className="text-lg font-semibold text-header">¿Limpiar todos los modelos?</h3>
-            <p className="text-sm text-slate-600 mt-1">Esta acción eliminará tus modelos locales y sesiones de entrenamiento. No se puede deshacer.</p>
+          <div className={`relative w-full max-w-md rounded-xl shadow-2xl p-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
+            <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>¿Limpiar todos los modelos?</h3>
+            <p className={`text-sm mt-1 ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>Esta acción eliminará tus modelos locales y sesiones de entrenamiento. No se puede deshacer.</p>
             <div className="mt-4 flex items-center justify-end gap-2">
               <button className="btn" onClick={() => setShowClearConfirm(false)}>Cancelar</button>
               <button className="btn-accent-purple" onClick={doClearAll}>Confirmar</button>
@@ -767,7 +771,7 @@ export default function Models() {
       {/* Modal de confirmación */}
       {showConfirmationModal && selectedModel && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+          <div className={`rounded-2xl max-w-md w-full shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
             {/* Header del modal */}
             <div className={`bg-gradient-to-r ${selectedModel.bgColor} text-white p-6 rounded-t-2xl`}>
               <div className="text-center">
@@ -781,29 +785,29 @@ export default function Models() {
             {/* Contenido del modal */}
             <div className="p-6">
               <div className="text-center mb-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
                   ¿Crear {selectedModel.name}?
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Estás a punto de crear un modelo de entrenamiento para {selectedModel.type.toLowerCase()}. 
                   Este proceso tomará aproximadamente {selectedModel.duration}.
                 </p>
               </div>
 
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-gray-800 mb-2">Detalles del modelo:</h4>
+              <div className={`rounded-lg p-4 mb-6 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+                <h4 className={`font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>Detalles del modelo:</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Tipo:</span>
-                    <span className="font-medium">{selectedModel.type}</span>
+                    <span className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Tipo:</span>
+                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModel.type}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Duración estimada:</span>
-                    <span className="font-medium">{selectedModel.duration}</span>
+                    <span className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Duración estimada:</span>
+                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModel.duration}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Nivel de dificultad:</span>
-                    <span className="font-medium">{selectedModel.difficulty}</span>
+                    <span className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Nivel de dificultad:</span>
+                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModel.difficulty}</span>
                   </div>
                 </div>
               </div>
@@ -814,7 +818,7 @@ export default function Models() {
                     setShowConfirmationModal(false)
                     setSelectedModel(null)
                   }}
-                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                  className={`flex-1 px-4 py-2 rounded-lg transition-colors font-medium ${isDarkMode ? 'text-gray-300 bg-gray-700 hover:bg-gray-600' : 'text-gray-700 bg-gray-200 hover:bg-gray-300'}`}
                 >
                   Cancelar
                 </button>
@@ -833,7 +837,7 @@ export default function Models() {
       {/* Modal de progreso de entrenamiento */}
       {isTraining && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+          <div className={`rounded-2xl max-w-md w-full shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
               <div className="text-center">
                 <h2 className="text-xl font-bold mb-2">🎤 Entrenando Modelo</h2>
@@ -844,10 +848,10 @@ export default function Models() {
             <div className="p-6">
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Progreso del entrenamiento</span>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Progreso del entrenamiento</span>
                   <span className="text-sm font-bold text-blue-600">{trainingProgress}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className={`w-full rounded-full h-3 ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
                   <div 
                     className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500"
                     style={{width: `${trainingProgress}%`}}
@@ -857,7 +861,7 @@ export default function Models() {
 
               <div className="text-center">
                 <div className="text-2xl mb-2">⏳</div>
-                <p className="text-gray-600 text-sm">
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Por favor espera mientras entrenamos tu modelo...
                 </p>
               </div>

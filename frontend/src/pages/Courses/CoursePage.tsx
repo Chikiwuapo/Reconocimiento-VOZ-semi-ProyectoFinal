@@ -6,6 +6,7 @@ import InstructorCard from '../../components/Course/InstructorCard.tsx'
 import LessonContent from '../../components/Course/LessonContent.tsx'
 import Comments from '../../components/Course/Comments.tsx'
 import VideoPlayer from '../../components/Course/VideoPlayer.tsx'
+import { useTheme } from '../../App'
 
 export type LessonType = 'video' | 'resource' | 'quiz'
 
@@ -26,6 +27,7 @@ export type Lesson = {
 
 export default function CoursePage() {
   const { slug } = useParams<{ slug: string }>()
+  const { isDarkMode } = useTheme()
   const courseTitle = useMemo(() => {
     const map: Record<string, string> = {
       'face-recognition': 'Reconocimiento Facial con IA',
@@ -195,45 +197,87 @@ export default function CoursePage() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100 p-8 shadow-lg">
+      <section className={`relative overflow-hidden rounded-2xl border p-8 shadow-lg ${
+        isDarkMode 
+          ? 'border-gray-800 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
+          : 'border-gray-200 bg-gradient-to-br from-white via-gray-50 to-gray-100'
+      }`}>
         {/* Efectos de fondo */}
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-100/30 via-gray-200/20 to-gray-300/30" />
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-200/40 to-gray-300/40 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-gray-100/40 to-gray-200/40 rounded-full blur-2xl" />
+        <div className={`absolute inset-0 ${
+          isDarkMode 
+            ? 'bg-gradient-to-r from-gray-800/30 via-gray-700/20 to-gray-800/30' 
+            : 'bg-gradient-to-r from-gray-100/30 via-gray-200/20 to-gray-300/30'
+        }`} />
+        <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl ${
+          isDarkMode 
+            ? 'bg-gradient-to-br from-gray-700/40 to-gray-800/40' 
+            : 'bg-gradient-to-br from-gray-200/40 to-gray-300/40'
+        }`} />
+        <div className={`absolute bottom-0 left-0 w-24 h-24 rounded-full blur-2xl ${
+          isDarkMode 
+            ? 'bg-gradient-to-tr from-gray-800/40 to-gray-700/40' 
+            : 'bg-gradient-to-tr from-gray-100/40 to-gray-200/40'
+        }`} />
         
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-3 h-3 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full animate-pulse" />
-              <span className="text-gray-600 text-sm font-medium uppercase tracking-wider">Curso Activo</span>
+              <div className={`w-3 h-3 rounded-full animate-pulse ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-gray-500 to-gray-400' 
+                  : 'bg-gradient-to-r from-gray-400 to-gray-600'
+              }`} />
+              <span className={`text-sm font-medium uppercase tracking-wider ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>Curso Activo</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-800 mb-3">{courseTitle}</h1>
-            <p className="text-gray-600 text-lg leading-relaxed">Aprende paso a paso con lecciones prácticas, recursos descargables y proyecto final.</p>
+            <h1 className={`text-3xl md:text-4xl font-extrabold tracking-tight mb-3 ${
+              isDarkMode ? 'text-gray-100' : 'text-gray-800'
+            }`}>{courseTitle}</h1>
+            <p className={`text-lg leading-relaxed ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>Aprende paso a paso con lecciones prácticas, recursos descargables y proyecto final.</p>
           </div>
           <div className="flex flex-col gap-3">
-            <div className="text-center text-gray-500 text-sm">
+            <div className={`text-center text-sm ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            }`}>
               {completedCount} de {total} lecciones completadas
             </div>
           </div>
         </div>
         
         {/* Barra de progreso mejorada */}
-        <div className="relative z-10 mt-8 p-4 bg-white/70 rounded-xl border border-gray-200">
+        <div className={`relative z-10 mt-8 p-4 rounded-xl border ${
+          isDarkMode 
+            ? 'bg-gray-800/70 border-gray-700' 
+            : 'bg-white/70 border-gray-200'
+        }`}>
           <div className="flex items-center justify-between mb-3">
-            <div className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-800">Progreso del curso:</span> {completedCount} de {total} lecciones
+            <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <span className={`font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>Progreso del curso:</span> {completedCount} de {total} lecciones
             </div>
-            <div className="text-lg font-bold text-gray-800">{progressPct}%</div>
+            <div className={`text-lg font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{progressPct}%</div>
           </div>
-          <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+          <div className={`relative h-3 rounded-full overflow-hidden ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+          }`}>
             <div 
-              className="h-3 bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500 rounded-full transition-all duration-500 relative"
+              className={`h-3 rounded-full transition-all duration-500 relative ${
+                isDarkMode 
+                  ? 'bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700' 
+                  : 'bg-gradient-to-r from-gray-300 via-gray-400 to-gray-500'
+              }`}
               style={{ width: `${progressPct}%` }}
             >
-              <div className="absolute inset-0 bg-white/30 rounded-full animate-pulse" />
+              <div className={`absolute inset-0 rounded-full animate-pulse ${
+                isDarkMode ? 'bg-white/20' : 'bg-white/30'
+              }`} />
             </div>
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-2">
+          <div className={`flex justify-between text-xs mt-2 ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
+          }`}>
             <span>Iniciado</span>
             <span>En progreso</span>
             <span>Completado</span>
@@ -251,7 +295,11 @@ export default function CoursePage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            className="lg:col-span-2 bg-white rounded-xl p-4 shadow-lg border border-gray-200"
+            className={`lg:col-span-2 rounded-xl p-4 shadow-lg border ${
+              isDarkMode 
+                ? 'bg-gray-800 border-gray-700' 
+                : 'bg-white border-gray-200'
+            }`}
           >
             <VideoPlayer 
               videoId={current.videoId} 
@@ -280,7 +328,11 @@ export default function CoursePage() {
 
             <div className="mt-4 flex items-center justify-between">
               <button 
-                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isDarkMode 
+                    ? 'bg-gray-700 hover:bg-gray-600 text-gray-200' 
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                }`}
                 onClick={() => {
                   if (currentIndex > 0) {
                     setCurrentIndex(currentIndex - 1);
@@ -291,12 +343,16 @@ export default function CoursePage() {
                 ← Anterior
               </button>
               
-              <div className="text-gray-600 text-sm">
+              <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Lección {currentIndex + 1} de {lessons.length}
               </div>
               
               <button 
-                className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`px-6 py-3 font-medium rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isDarkMode 
+                    ? 'bg-gray-600 hover:bg-gray-500 text-gray-200' 
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-800'
+                }`}
                 onClick={advanceNext}
                 disabled={currentIndex === lessons.length - 1}
               >
@@ -313,10 +369,14 @@ export default function CoursePage() {
 
             <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <h3 className="text-gray-800 text-lg font-semibold mb-2">Descripción extendida</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <h3 className={`text-lg font-semibold mb-2 ${
+                  isDarkMode ? 'text-gray-100' : 'text-gray-800'
+                }`}>Descripción extendida</h3>
+                <p className={`text-sm leading-relaxed ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>
                   {current.description} En esta sección ampliamos la explicación y agregamos recursos de
-                  apoyo. Diseñado con una estética limpia y moderna con tonos blancos y grises.
+                  apoyo. Diseñado con una estética limpia y moderna.
                 </p>
               </div>
             </div>
@@ -342,16 +402,109 @@ export default function CoursePage() {
             <div className="h-3" />
 
             <div className="h-3" />
-            <div className="bg-white rounded-xl p-4 shadow-soft">
-              <h3 className="text-header text-base font-semibold">Lecciones que aprenderás</h3>
+            <div className={`rounded-xl p-4 shadow-lg border ${
+              isDarkMode 
+                ? 'bg-gray-800 border-gray-700' 
+                : 'bg-white border-gray-200'
+            }`}>
+              <h3 className={`text-lg font-semibold mb-4 ${
+                isDarkMode ? 'text-gray-100' : 'text-gray-800'
+              }`}>Información del curso</h3>
+              
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Duración total</span>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>2h 30min</span>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Lecciones</span>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>{lessons.length}</span>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Nivel</span>
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>Intermedio</span>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Certificado</span>
+                  <span className="text-green-600 text-sm font-medium">Incluido</span>
+                </div>
+              </div>
+              
+              <div className={`mt-6 pt-4 border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                <h4 className={`text-sm font-semibold mb-3 ${
+                  isDarkMode ? 'text-gray-100' : 'text-gray-800'
+                }`}>Progreso del curso</h4>
+                <div className="space-y-2">
+                  {lessons.map((lesson, index) => (
+                    <div 
+                      key={lesson.id}
+                      className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                        index === currentIndex 
+                          ? isDarkMode 
+                            ? 'bg-blue-900/50 border border-blue-700' 
+                            : 'bg-blue-50 border border-blue-200'
+                          : isDarkMode 
+                            ? 'hover:bg-gray-700' 
+                            : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => setCurrentIndex(index)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
+                          index <= currentIndex 
+                            ? 'bg-green-500 text-white' 
+                            : isDarkMode 
+                              ? 'bg-gray-600 text-gray-300' 
+                              : 'bg-gray-200 text-gray-600'
+                        }`}>
+                          {index <= currentIndex ? '✓' : index + 1}
+                        </div>
+                        <span className={`text-sm ${
+                          index === currentIndex 
+                            ? isDarkMode 
+                              ? 'text-blue-300 font-medium' 
+                              : 'text-blue-700 font-medium'
+                            : isDarkMode 
+                              ? 'text-gray-200' 
+                              : 'text-gray-700'
+                        }`}>
+                          {lesson.title}
+                        </span>
+                      </div>
+                      <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{lesson.duration}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="h-3" />
+
+            <div className={`rounded-xl p-4 shadow-lg border ${
+              isDarkMode 
+                ? 'bg-gray-800 border-gray-700' 
+                : 'bg-white border-gray-200'
+            }`}>
+              <h3 className={`text-base font-semibold ${
+                isDarkMode ? 'text-gray-100' : 'text-gray-800'
+              }`}>Lecciones que aprenderás</h3>
               <ul className="mt-3 space-y-2">
                 {chapters.length === 0 ? (
-                  <li className="text-sm text-slate-600">Este curso no tiene capítulos listados.</li>
+                  <li className={`text-sm ${
+                    isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                  }`}>Este curso no tiene capítulos listados.</li>
                 ) : (
                   chapters.map((c, i) => (
                     <li key={i} className="flex items-center justify-between text-sm">
-                      <span className="text-slate-700">{c.label}</span>
-                      <span className="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-md">{c.time}</span>
+                      <span className={isDarkMode ? 'text-gray-200' : 'text-gray-700'}>{c.label}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-md ${
+                        isDarkMode 
+                          ? 'text-gray-300 bg-gray-700 border border-gray-600' 
+                          : 'text-gray-500 bg-gray-50 border border-gray-200'
+                      }`}>{c.time}</span>
                     </li>
                   ))
                 )}

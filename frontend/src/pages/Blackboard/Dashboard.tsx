@@ -7,10 +7,13 @@ import ModelDetailsModal from '../../components/Blackboard/ModelDetailsModal'
 import HeroUnified from '../../components/Blackboard/HeroUnified'
 import MissionsPanel from '../../components/Blackboard/MissionsPanel'
 import { useUserStore } from '../../auth/userStore'
+import { useTheme } from '../../App'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { useMemo, useState } from 'react'
-export default function Dashboard() { 
+import { useMemo, useState, useEffect } from 'react'
+export default function Dashboard() {
+  // Usar el contexto global de tema
+  const { isDarkMode, toggleDarkMode } = useTheme(); 
   const { user, toggleFavorite, recordCourseCompleted } = useUserStore()
   const navigate = useNavigate()
   const userName = user.profile.name || 'Usuario'
@@ -72,26 +75,59 @@ export default function Dashboard() {
     show: { opacity: 1, y: 0 }
   }
   return (
-    
-    <Layout>
-      <HeroUnified 
-        userName={userName} 
-        models={models}
-        watchedCourses={watchedCourses}
-      />
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#0A0A0A]' : 'bg-gray-50'}`}>
+      <div className="min-h-screen">
+        <Layout>
+          {/* Botón de cambio de tema en la parte superior */}
+          <div className="container-page pt-4">
+            <div className="flex justify-end mb-4">
+              <button 
+                onClick={toggleDarkMode}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm ${
+                  isDarkMode 
+                    ? 'bg-gray-800 text-gray-200 border border-gray-700 hover:bg-gray-700' 
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+                aria-label={isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+              >
+                {isDarkMode ? (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Tema Claro
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                    Tema Oscuro
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
 
-      {/* Panel de Misiones (sincronizado con user store) */}
-      <div className="container-page mt-8">
-        <MissionsPanel models={models} />
-      </div>
+          <HeroUnified 
+            userName={userName} 
+            models={models}
+            watchedCourses={watchedCourses}
+            isDarkMode={isDarkMode}
+          />
 
-      <div className="container-page mt-8 animate-slide-up">
-        <h2 className="text-2xl font-bold text-header animate-slide-in-left">Tus modelos creados</h2>
-        <p className="text-slate-600 mt-1 animate-slide-in-left delay-100">Explora tus modelos creados</p>
-        {models.length === 0 ? (
-          <div className="mt-6 card text-center p-8">
-            <p className="text-lg font-semibold text-header mb-2">No esperes más, ten la experiencia de probar los modelos que te ofrecemos</p>
-            <p className="text-slate-600 mb-4">Crea o prueba modelos y observa cómo se actualiza tu panel en tiempo real.</p>
+          {/* Panel de Misiones (sincronizado con user store) */}
+          <div className="container-page mt-8">
+            <MissionsPanel models={models} isDarkMode={isDarkMode} />
+          </div>
+
+          <div className="container-page mt-8 animate-slide-up">
+            <h2 className={`text-2xl font-bold animate-slide-in-left ${isDarkMode ? 'text-white' : 'text-header'}`}>Tus modelos creados</h2>
+            <p className={`mt-1 animate-slide-in-left delay-100 ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>Explora tus modelos creados</p>
+            {models.length === 0 ? (
+              <div className={`mt-6 card text-center p-8 ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+                <p className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-header'}`}>No esperes más, ten la experiencia de probar los modelos que te ofrecemos</p>
+                <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>Crea o prueba modelos y observa cómo se actualiza tu panel en tiempo real.</p>
             <Link to="/models" className="inline-block px-6 py-3 rounded-lg bg-emerald-600 text-white font-medium shadow-soft hover:bg-emerald-700 transition-transform hover:-translate-y-0.5">
               Quiero crear un modelo!! 🤯
             </Link>
@@ -109,21 +145,22 @@ export default function Dashboard() {
                 onToggleFavorite={() => toggleFavorite(m.id)}
                 onTrain={() => { incrementTrainedCount(); navigate('/arithmetic?tab=train') }}
                 onViewDetails={() => setDetailId(m.id)}
+                isDarkMode={isDarkMode}
               />
             ))}
           </div>
         )}
       </div>
 
-      {/* Sección de Modelo Entrenado eliminada por requerimiento */}
-      {/* Sección de Cursos de IA y Reconocimiento */}
-        <section className="container-page mt-8 animate-slide-up">
-          <div className="flex items-center justify-between mb-6 animate-fade-in">
-            <div>
-              <h2 className="text-2xl font-bold text-header animate-slide-in-left">Cursos de IA y Reconocimiento</h2>
-              <p className="text-slate-600 mt-1 animate-slide-in-left delay-100">Explora nuestros cursos especializados en inteligencia artificial</p>
+          {/* Sección de Modelo Entrenado eliminada por requerimiento */}
+          {/* Sección de Cursos de IA y Reconocimiento */}
+          <section className="container-page mt-8 animate-slide-up">
+            <div className="flex items-center justify-between mb-6 animate-fade-in">
+              <div>
+                <h2 className={`text-2xl font-bold animate-slide-in-left ${isDarkMode ? 'text-white' : 'text-header'}`}>Cursos de IA y Reconocimiento</h2>
+                <p className={`mt-1 animate-slide-in-left delay-100 ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>Explora nuestros cursos especializados en inteligencia artificial</p>
+              </div>
             </div>
-          </div>
           
           {/* Grid estático de cursos con animaciones */}
           <div id="cursos" className="courses-grid">
@@ -144,6 +181,7 @@ export default function Dashboard() {
                   accent="emerald"
                   onComplete={() => completeCourseByTitle("Reconocimiento de Manos con MediaPipe")}
                   completed={watchedCourses.some(c => c.title.includes("MediaPipe") && c.completed)}
+                  isDarkMode={isDarkMode}
                 />
               </motion.div>
 
@@ -158,6 +196,7 @@ export default function Dashboard() {
                   accent="blue"
                   onComplete={() => completeCourseByTitle("Reconocimiento Facial Avanzado")}
                   completed={watchedCourses.some(c => c.title.includes("Facial") && c.completed)}
+                  isDarkMode={isDarkMode}
                 />
               </motion.div>
 
@@ -172,6 +211,7 @@ export default function Dashboard() {
                   accent="purple"
                   onComplete={() => completeCourseByTitle("Reconocimiento de Voz con IA")}
                   completed={watchedCourses.some(c => c.title.includes("Voz") && c.completed)}
+                  isDarkMode={isDarkMode}
                 />
               </motion.div>
 
@@ -186,6 +226,7 @@ export default function Dashboard() {
                   accent="orange"
                   onComplete={() => completeCourseByTitle("Operaciones Matemáticas con Reconocimiento de Manos")}
                   completed={watchedCourses.some(c => c.title.includes("Matemáticas") && c.completed)}
+                  isDarkMode={isDarkMode}
                 />
               </motion.div>
 
@@ -200,6 +241,7 @@ export default function Dashboard() {
                   accent="indigo"
                   onComplete={() => completeCourseByTitle("Desarrollo de Agente IA Avanzado")}
                   completed={watchedCourses.some(c => c.title.includes("Agente") && c.completed)}
+                  isDarkMode={isDarkMode}
                 />
               </motion.div>
 
@@ -214,11 +256,12 @@ export default function Dashboard() {
                   accent="teal"
                   onComplete={() => completeCourseByTitle("Chatbot Automatizado con IA")}
                   completed={watchedCourses.some(c => c.title.includes("Chatbot") && c.completed)}
+                  isDarkMode={isDarkMode}
                 />
               </motion.div>
 
               {/* Detección de Emociones en Voz – PRÓXIMAMENTE */}
-              <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full">
+              <motion.div variants={card} className={`course-card udemy rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
                 <div className="relative h-40 bg-gradient-to-br from-fuchsia-500 to-rose-600 overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                   <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-bold">PRÓXIMAMENTE</div>
@@ -284,8 +327,11 @@ export default function Dashboard() {
           ]}
           onClose={() => setDetailId(null)}
           onTest={() => navigate('/arithmetic?tab=test')}
+          isDarkMode={isDarkMode}
         />
       )}
-    </Layout>
+        </Layout>
+      </div>
+    </div>
   )
 }

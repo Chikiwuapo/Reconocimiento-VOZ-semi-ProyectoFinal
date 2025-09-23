@@ -1,5 +1,5 @@
 import React from 'react';
-import ScrollStack, { ScrollStackItem } from './ScrollStack';
+import ProfileCard from './ProfileCard';
 
 interface OurTeamProps {
   isDarkMode?: boolean;
@@ -7,54 +7,54 @@ interface OurTeamProps {
 
 const OurTeam: React.FC<OurTeamProps> = ({ isDarkMode = false }) => {
   const teamMembers = [
-    {
-      id: 1,
-      name: "Daniel",
-      role: "Desarrollador Frontend",
-      description: "Especialista en React y TypeScript, responsable de crear interfaces de usuario intuitivas y responsivas.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
-      skills: ["React", "TypeScript", "Tailwind CSS", "Framer Motion"]
+    { 
+      id: 1, 
+      name: 'Favio Arias',  
+      role: 'CEO & Founder',  
+      handle: 'favio-arias',  
+      status: 'Online',  
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=300&auto=format&fit=crop' 
     },
-    {
-      id: 2,
-      name: "María",
-      role: "Desarrolladora Backend",
-      description: "Experta en Python y Django, encargada de la arquitectura del servidor y las APIs.",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=1000&auto=format&fit=crop",
-      skills: ["Python", "Django", "PostgreSQL", "REST APIs"]
+    { 
+      id: 2, 
+      name: 'María González',   
+      role: 'AI/ML Engineer',   
+      handle: 'maria-ai',  
+      status: 'Online',  
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?q=80&w=300&auto=format&fit=crop' 
     },
-    {
-      id: 3,
-      name: "Carlos",
-      role: "Especialista en Machine Learning",
-      description: "Investigador en IA y reconocimiento de voz, desarrolla los algoritmos de procesamiento de audio.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format&fit=crop",
-      skills: ["Python", "TensorFlow", "PyTorch", "Audio Processing"]
+    { 
+      id: 3, 
+      name: 'Carlos Mendoza',  
+      role: 'Backend Developer',        
+      handle: 'carlos-backend',    
+      status: 'Busy',    
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=300&auto=format&fit=crop' 
     },
-    {
-      id: 4,
-      name: "Ana",
-      role: "Diseñadora UX/UI",
-      description: "Creadora de experiencias de usuario excepcionales, diseña interfaces que conectan tecnología y personas.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop",
-      skills: ["Figma", "Adobe XD", "User Research", "Prototyping"]
+    { 
+      id: 4, 
+      name: 'Ana Rodríguez',     
+      role: 'UX/UI Designer',     
+      handle: 'ana-design', 
+      status: 'Online',  
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=300&auto=format&fit=crop' 
     },
-    {
-      id: 5,
-      name: "Luis",
-      role: "DevOps Engineer",
-      description: "Responsable de la infraestructura y despliegue, asegura que todo funcione de manera eficiente y segura.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop",
-      skills: ["Docker", "AWS", "CI/CD", "Linux"]
+    { 
+      id: 5, 
+      name: 'Luis Fernández',    
+      role: 'Frontend Developer',    
+      handle: 'luis-frontend',
+      status: 'Online',  
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&auto=format&fit=crop' 
     },
-    {
-      id: 6,
-      name: "Sofia",
-      role: "Project Manager",
-      description: "Coordina el equipo y gestiona los tiempos del proyecto, asegurando que todos trabajemos hacia el mismo objetivo.",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1000&auto=format&fit=crop",
-      skills: ["Agile", "Scrum", "Team Leadership", "Project Planning"]
-    }
+    { 
+      id: 6, 
+      name: 'Sofía Martínez',   
+      role: 'QA Engineer',    
+      handle: 'sofia-qa',   
+      status: 'Online',  
+      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=300&auto=format&fit=crop' 
+    },
   ];
 
   return (
@@ -62,104 +62,48 @@ const OurTeam: React.FC<OurTeamProps> = ({ isDarkMode = false }) => {
       id="nuestro-equipo"
       className={`min-h-screen py-16 ${isDarkMode ? 'bg-[#0D0D0D]' : 'bg-white'}`}
     >
-      <div className="container mx-auto px-4">
+      <div className="w-full px-2 sm:px-4 lg:px-6">
         {/* Encabezado arriba y centrado */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <h2
-            className={`text-3xl md:text-4xl font-bold mb-3 ${
+            className={`text-4xl md:text-5xl font-bold mb-4 ${
               isDarkMode ? 'text-white' : 'text-[#1B4965]'
             }`}
           >
             Nuestro Equipo
           </h2>
           <p
-            className={`${
+            className={`text-lg ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            } max-w-3xl mx-auto`}
+            } max-w-4xl mx-auto leading-relaxed`}
           >
-            Conoce al equipo de desarrolladores que está trabajando en este proyecto de reconocimiento de voz.
+            Conoce al talentoso equipo de profesionales que está desarrollando las mejores soluciones de reconocimiento de voz e inteligencia artificial.
           </p>
         </div>
 
-        {/* Contenedor centrado y más ancho para el ScrollStack */}
-        <div className="mx-auto w-full max-w-6xl">
-          <div className={`rounded-2xl ${
-            isDarkMode ? 'bg-[#0F0F0F] border border-[#1f1f1f]' : 'bg-white shadow-soft'
-          } h-[64vh] overflow-hidden`}>
-            <ScrollStack 
-              useWindowScroll={false}
-              itemDistance={150}
-              itemScale={0.06}
-              itemStackDistance={50}
-              stackPosition="25%"
-              scaleEndPosition="15%"
-              baseScale={0.78}
-              rotationAmount={2}
-              blurAmount={1.2}
-              className={`h-full no-scrollbar ${isDarkMode ? 'bg-[#0F0F0F]' : 'bg-white'}`}
-            >
-              {teamMembers.map((member) => (
-                <ScrollStackItem 
-                  key={member.id}
-                  itemClassName={`${
-                    isDarkMode 
-                      ? 'bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] text-white' 
-                      : 'bg-gradient-to-br from-white to-gray-50 text-gray-800'
-                  }`}
-                >
-                  <div className="flex flex-col md:flex-row items-center gap-8">
-                    <div className="flex-shrink-0">
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-32 h-32 rounded-full object-cover shadow-lg"
-                      />
-                    </div>
-                    
-                    <div className="flex-1 text-center md:text-left">
-                      <h3 
-                        className={`text-2xl font-bold mb-2 ${
-                          isDarkMode ? 'text-white' : 'text-[#1B4965]'
-                        }`}
-                      >
-                        {member.name}
-                      </h3>
-                      
-                      <p 
-                        className={`text-lg font-semibold mb-4 ${
-                          isDarkMode ? 'text-[#6A11CB]' : 'text-[#62B6CB]'
-                        }`}
-                      >
-                        {member.role}
-                      </p>
-                      
-                      <p 
-                        className={`text-base mb-6 ${
-                          isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                        }`}
-                      >
-                        {member.description}
-                      </p>
-                      
-                      <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                        {member.skills.map((skill, index) => (
-                          <span
-                            key={index}
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              isDarkMode 
-                                ? 'bg-[#6A11CB]/20 text-[#6A11CB] border border-[#6A11CB]/30' 
-                                : 'bg-[#62B6CB]/20 text-[#62B6CB] border border-[#62B6CB]/30'
-                            }`}
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+        {/* Grid de Profile Cards mejorado */}
+        <div className="w-full overflow-x-hidden">
+          <div className="relative">
+            {/* Grid responsivo para las 6 cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 lg:gap-6 justify-items-center">
+              {teamMembers.map((m) => (
+                <div key={m.id} className="w-full max-w-[280px] flex justify-center">
+                  <div className="transform origin-center scale-[0.65] sm:scale-[0.7] lg:scale-[0.75] xl:scale-[0.6] hover:scale-[0.7] sm:hover:scale-[0.75] lg:hover:scale-[0.8] xl:hover:scale-[0.65] transition-transform duration-300 ease-in-out">
+                    <ProfileCard
+                      name={m.name}
+                      title={m.role}
+                      handle={m.handle}
+                      status={m.status}
+                      avatarUrl={m.avatar}
+                      showUserInfo={true}
+                      enableTilt={true}
+                      enableMobileTilt={false}
+                      onContactClick={() => window.alert(`Contactar a ${m.name} - ${m.role}`)}
+                    />
                   </div>
-                </ScrollStackItem>
+                </div>
               ))}
-            </ScrollStack>
+            </div>
           </div>
         </div>
       </div>

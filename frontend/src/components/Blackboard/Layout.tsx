@@ -6,12 +6,14 @@ type LayoutProps = {
   pageTitle?: string
   pageSubtitle?: string
   notifications?: number
+  isDarkMode?: boolean
+  toggleDarkMode?: () => void
 }
 
-export default function Layout({ children, pageTitle, pageSubtitle, notifications = 0 }: LayoutProps) {
+export default function Layout({ children, pageTitle, pageSubtitle, notifications = 0, isDarkMode = false, toggleDarkMode }: LayoutProps) {
   return (
-    <div className="min-h-full bg-white">
-      <Navbar notifications={notifications} />
+    <div className={`min-h-full ${isDarkMode ? 'bg-[#0D0D0D]' : 'bg-white'}`}>
+      <Navbar notifications={notifications} isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
       {pageTitle ? (
         <div className="bg-white border-b border-slate-100">
           <div className="container-page py-6">

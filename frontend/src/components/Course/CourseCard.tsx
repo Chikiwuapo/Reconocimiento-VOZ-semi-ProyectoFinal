@@ -9,9 +9,10 @@ type Props = {
   accent?: 'emerald' | 'blue' | 'purple' | 'orange' | 'indigo' | 'teal' | 'cyan' | 'fuchsia'
   onComplete?: () => void
   completed?: boolean
+  isDarkMode?: boolean
 }
 
-export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '', to, accent = 'blue', onComplete, completed = false }: Props) {
+export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '', to, accent = 'blue', onComplete, completed = false, isDarkMode = false }: Props) {
   const map: Record<string, string> = {
     emerald: 'from-emerald-400 to-teal-600',
     blue: 'from-blue-500 to-indigo-700',
@@ -23,7 +24,7 @@ export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '',
     fuchsia: 'from-fuchsia-500 to-rose-600',
   }
   return (
-    <div className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-pointer h-full">
+    <div className={`course-card udemy rounded-lg overflow-hidden group cursor-pointer h-full ${isDarkMode ? 'bg-gray-900 border border-gray-800' : 'bg-white'}`}>
       <div className={`relative h-40 bg-gradient-to-br ${map[accent]} overflow-hidden`}>
         <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
         <div className="absolute inset-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -37,14 +38,14 @@ export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '',
           </div>
         )}
       </div>
-      <div className="course-body">
-        <div className="course-title">{title}</div>
-        <div className="course-subtitle">{subtitle}</div>
+      <div className={`course-body ${isDarkMode ? 'text-gray-100' : ''}`}>
+        <div className={`course-title ${isDarkMode ? 'text-gray-100' : ''}`}>{title}</div>
+        <div className={`course-subtitle ${isDarkMode ? 'text-gray-400' : ''}`}>{subtitle}</div>
         <div className="course-footer">
           <div className="flex gap-2 items-center">
             <Link to={to} className="btn-accent-cyan flex-1 text-center">Ver curso</Link>
             {completed ? (
-              <div className="flex items-center justify-center gap-2 py-2 text-green-600 font-semibold">
+              <div className={`flex items-center justify-center gap-2 py-2 font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>
                 <span>✓</span>
                 <span>Completado</span>
               </div>
