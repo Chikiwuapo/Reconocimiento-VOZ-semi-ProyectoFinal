@@ -21,7 +21,7 @@
 
 ## Arquitectura General
 
-```mermaid
+```
 flowchart LR
   subgraph Browser [Frontend React]
     UI[UI/UX
