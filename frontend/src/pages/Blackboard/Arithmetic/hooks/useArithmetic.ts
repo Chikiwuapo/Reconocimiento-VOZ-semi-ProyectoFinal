@@ -83,6 +83,7 @@ export function useArithmetic() {
       window.clearInterval(samplerRef.current)
       samplerRef.current = null
     }
+
     if (recording) {
       samplerRef.current = window.setInterval(() => {
         const lf = lastFrameRef.current
@@ -251,7 +252,8 @@ export function useArithmetic() {
     })
   }
 
-  const saveGesture = async () => {
+  // Helper para construir y enviar payload; si requireTwoHands=true exige frames con ambas manos
+  const saveGestureInternal = async (requireTwoHands: boolean) => {
     if (!cameraActive) {
       setError('La cámara no está activa')
       return
@@ -270,24 +272,42 @@ export function useArithmetic() {
       return
     }
 
-    const processed = recordedRef.current.map(f => ({
-      confidence: f.confidence,
+    // Normaliza frames y evita payloads gigantes
+    const normalized = recordedRef.current.map(f => ({
+      confidence: f.confidence || 0,
       timestamp: f.timestamp,
       leftHand: f.leftHand ? f.leftHand.map(p => ({ x: p.x, y: p.y, z: p.z })) : null,
       rightHand: f.rightHand ? f.rightHand.map(p => ({ x: p.x, y: p.y, z: p.z })) : null,
     }))
+    const MAX_SAMPLES = 600
+    const processed = normalized.slice(0, MAX_SAMPLES)
 
+    const framesBoth = processed.filter(fr => fr.leftHand && fr.rightHand)
+    const bothHandsCount = framesBoth.length
+    const leftOnly = processed.filter(fr => fr.leftHand && !fr.rightHand)
+    const rightOnly = processed.filter(fr => fr.rightHand && !fr.leftHand)
     const landmarks_izquierda = processed.filter(fr => fr.leftHand).map(fr => fr.leftHand)
     const landmarks_derecha = processed.filter(fr => fr.rightHand).map(fr => fr.rightHand)
+
+    if (requireTwoHands && bothHandsCount === 0) {
+      setError('Para entrenar con 2 manos, asegúrate de que ambas estén visibles en la cámara durante la grabación.')
+      return
+    }
 
     const payload: any = {
       numero_vinculado: gestureMode === 'numero' ? Number(numeroVinculado) : null,
       operacion_vinculada: gestureMode === 'operacion' ? operacionVinculada : null,
+      // Para compatibilidad: enviamos tanto un arreglo completo como desgloses por mano
       landmarks_data: processed,
-      numero_muestras: recordedRef.current.length,
+      numero_muestras: processed.length,
       tipo_mano: predominant,
       landmarks_izquierda,
       landmarks_derecha,
+      dos_manos: bothHandsCount > 0,
+      // Opcional: frames en los que hay ambas manos (muchos backends lo esperan así para entrenar 2 manos)
+      frames_dos_manos: framesBoth,
+      frames_izquierda_solo: leftOnly,
+      frames_derecha_solo: rightOnly,
     }
 
     console.debug('Saving gesture. Samples:', recordedRef.current.length)
@@ -309,6 +329,10 @@ export function useArithmetic() {
       window.dispatchEvent(new CustomEvent('app:notify', { detail: e?.message || 'No se pudo guardar el gesto' }))
     }
   }
+
+  // Exponer funciones públicas de guardado
+  const saveGesture = async () => saveGestureInternal(false)
+  const saveGestureTwoHands = async () => saveGestureInternal(true)
 
   const recognizeCurrent = async () => {
     if (!lastFrameRef.current) return
@@ -420,7 +444,7 @@ export function useArithmetic() {
     setOperando1, setOperador, setOperando2,
     setActiveTab, setShowChart, setError,
     // acciones
-    startCamera, stopCamera, toggleRecording, saveGesture, recognizeCurrent,
+    startCamera, stopCamera, toggleRecording, saveGesture, saveGestureTwoHands, recognizeCurrent,
     clearOperation, calculateFromOperation, calcular,
     // util
     currentOperationRef, mpReady,
