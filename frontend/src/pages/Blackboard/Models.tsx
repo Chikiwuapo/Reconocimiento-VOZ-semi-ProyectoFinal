@@ -30,6 +30,20 @@ export default function Models() {
   })
   const [recordsCount, setRecordsCount] = useState<number>(0)
 
+  // Registrar modelo entrenado (único por id) en localStorage
+  const markModelTypeTrained = (id: string) => {
+    try {
+      const key = 'trained_models_ids'
+      const raw = localStorage.getItem(key)
+      const arr: string[] = raw ? JSON.parse(raw) : []
+      if (!arr.includes(id)) {
+        const next = [...arr, id]
+        localStorage.setItem(key, JSON.stringify(next))
+        window.dispatchEvent(new CustomEvent('trained:updated'))
+      }
+    } catch {}
+  }
+
   // Cargar datos del localStorage (solo sesiones) al inicializar y scroll automático arriba
   useEffect(() => {
     loadDataFromStorage()
@@ -101,7 +115,13 @@ export default function Models() {
   const updateStats = () => {
     const totalModels = createdModels.length
     const activeModels = createdModels.filter(model => (model as any).isActive).length
-    const totalTrainingSessions = Number(localStorage.getItem('trained_models_count') || '0')
+    // Leer ids únicos de modelos entrenados
+    let totalTrainingSessions = 0
+    try {
+      const raw = localStorage.getItem('trained_models_ids')
+      const arr: string[] = raw ? JSON.parse(raw) : []
+      totalTrainingSessions = Array.isArray(arr) ? arr.length : 0
+    } catch { totalTrainingSessions = 0 }
     const averageAccuracy = 0
 
     setModelStats({
@@ -195,13 +215,7 @@ export default function Models() {
     // Notificación
     window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
 
-    // Aumentar contador de entrenamientos (UI metric) y notificar al hero
-    try {
-      const key = 'trained_models_count'
-      const n = Number(localStorage.getItem(key) || '0')
-      localStorage.setItem(key, String((Number.isFinite(n) ? n : 0) + 1))
-      window.dispatchEvent(new CustomEvent('trained:updated'))
-    } catch {}
+    // Ya no incrementamos aquí; el conteo se realiza al entrar a entrenar (una vez por modelo)
 
     // Si el modelo es de operaciones aritméticas, navegar a la vista dedicada
     if (model.id === 'aritmeticas') {
@@ -243,6 +257,8 @@ export default function Models() {
   }
 
   const startTraining = (model: ModelType) => {
+    // Asegurar contador único por tipo/modelo al entrar a entrenar
+    if (model?.id) markModelTypeTrained(model.id)
     const session: TrainingSession = {
       id: `session_${Date.now()}`,
       modelId: model.id,
@@ -374,7 +390,7 @@ export default function Models() {
 
   return (
     <Layout>
-      <div className={`min-h-screen p-6 transition-colors duration-300 ${isDarkMode ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-50 to-gray-100'}`}>
+      <div className={`min-h-[80vh] p-4 md:p-6 transition-colors duration-300 ${isDarkMode ? 'bg-gradient-to-br from-gray-900 to-gray-800' : 'bg-gradient-to-br from-gray-50 to-gray-100'}`}>
         <div className="w-full max-w-none">
           {/* Header */}
           <div className="text-center mb-12">
@@ -382,7 +398,7 @@ export default function Models() {
           </div>
 
           {/* Tarjeta grande para crear modelo - ANCHO COMPLETO */}
-          <div className="mb-12 w-full">
+          <div className="mb-8 md:mb-10 w-full">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 w-full">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -410,7 +426,7 @@ export default function Models() {
 
           {/* Panel de Estadísticas */}
           {createdModels.length > 0 && (
-            <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className={`rounded-xl p-6 shadow-lg ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
                 <div className="flex items-center">
                   <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDarkMode ? 'bg-blue-900/50' : 'bg-blue-100'}`}>
@@ -462,7 +478,7 @@ export default function Models() {
           )}
 
           {/* Sección: Tus modelos creados */}
-          <div className="mb-12">
+          <div className="mb-8 md:mb-10">
             <div className="flex items-center justify-between mb-6">
               <h2 className={`text-2xl font-bold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
                 🎯 Tus Modelos Creados

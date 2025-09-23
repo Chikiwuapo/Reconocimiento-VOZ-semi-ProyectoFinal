@@ -10,6 +10,7 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
   const [scrolled, setScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Función para ocultar/mostrar el header al hacer scroll
   const hideOnScroll = useCallback(() => {
@@ -64,6 +65,7 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
   // Resetear la visibilidad cuando se hace click en enlaces de anchor
   const handleAnchorClick = () => {
     setIsVisible(true);
+    setMobileOpen(false);
   };
 
   return (
@@ -78,7 +80,7 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
             : 'bg-transparent'
       } ${isVisible ? 'transform-none' : 'transform -translate-y-full'}`}
     >
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-3 sm:py-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
           {/* Icono idéntico al de la primera promo del PromoCarousel, escalado al header */}
           <svg 
@@ -130,8 +132,8 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
               </linearGradient>
             </defs>
           </svg>
-          <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`}>
-            Arias Digital Soft
+          <h1 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`}>
+            AriasDigitalSoft
           </h1>
         </div>
         
@@ -186,10 +188,21 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
           </nav>
           
           {/* Menú móvil */}
-          <button className="md:hidden p-2" aria-label="Menú">
-            <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+          <button 
+            className="md:hidden p-2" 
+            aria-label="Abrir menú"
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen(o => !o)}
+          >
+            {mobileOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${isDarkMode ? 'text-white' : 'text-[#1B4965]'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
           </button>
           
           <div className="flex items-center gap-4">
@@ -222,6 +235,26 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
               Ir al Blackboard
             </Link>
           </div>
+        </div>
+      </div>
+
+      {/* Panel deslizante móvil (no afecta layout) */}
+      <div className="relative md:hidden">
+        <div 
+          className={`absolute left-0 top-full w-full overflow-hidden transition-[max-height,opacity] duration-200 ${
+            mobileOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+          } ${isDarkMode ? 'bg-[#111111] text-white' : 'bg-white text-[#1B4965]'} border-t ${isDarkMode ? 'border-gray-800' : 'border-gray-200'} shadow-lg`}
+          aria-hidden={!mobileOpen}
+        >
+          <nav className="container mx-auto px-4 py-3">
+            <ul className="flex flex-col gap-3">
+              <li><a href="#beneficios" onClick={handleAnchorClick} className="py-2">Beneficios</a></li>
+              <li><a href="#ejemplos" onClick={handleAnchorClick} className="py-2">Ejemplos</a></li>
+              <li><a href="#como-funciona" onClick={handleAnchorClick} className="py-2">Cómo Funciona</a></li>
+              <li><a href="#nuestro-equipo" onClick={handleAnchorClick} className="py-2">Nuestro Equipo</a></li>
+              <li><a href="#contacto" onClick={handleAnchorClick} className="py-2">Contacto</a></li>
+            </ul>
+          </nav>
         </div>
       </div>
     </header>

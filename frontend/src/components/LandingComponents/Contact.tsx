@@ -48,7 +48,7 @@ const Contact: React.FC<ContactProps> = ({ isDarkMode = false }) => {
     : 'bg-gradient-to-r from-[#1B4965] to-[#62B6CB] hover:from-[#0A3954] hover:to-[#4A9CA8] text-white';
 
   return (
-    <section id="contacto" className={`py-20 ${isDarkMode ? 'bg-[#0D0D0D]' : 'bg-white'}`}>
+    <section id="contacto" className={`py-20 ${isDarkMode ? 'bg-[#0D0D0D]' : 'bg-[#EAF6F9]'}`}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <div className={`rounded-lg shadow-lg p-8 ${cardBase}`}>

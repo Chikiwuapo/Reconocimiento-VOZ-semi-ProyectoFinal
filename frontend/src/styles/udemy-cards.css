@@ -126,3 +126,30 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* Dark theme overrides */
+[data-theme='dark'] .course-card.udemy {
+  background: #0b0b0b; /* near black to match landing */
+  border-color: #374151; /* gray-700 */
+}
+[data-theme='dark'] .course-card.udemy .course-body {
+  background: #0b0b0b;
+  color: #f3f4f6; /* gray-100 */
+}
+[data-theme='dark'] .course-card.udemy .course-title {
+  color: #f3f4f6; /* gray-100 */
+}
+[data-theme='dark'] .course-card.udemy .course-subtitle {
+  color: #9ca3af; /* gray-400 */
+}
+[data-theme='dark'] .course-card.udemy .price {
+  color: #f9fafb; /* gray-50 */
+}
+[data-theme='dark'] .course-card.udemy .badge-udemy {
+  background: rgba(99,102,241,0.15); /* indigo tint */
+  color: #c7d2fe; /* indigo-200 */
+}
+[data-theme='dark'] .course-card.udemy .badge-udemy.neutral {
+  background: #1f2937; /* gray-800 */
+  color: #d1d5db; /* gray-300 */
+}

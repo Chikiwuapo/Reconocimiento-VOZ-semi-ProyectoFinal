@@ -238,3 +238,20 @@ html, body, #root {
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
 }
+
+/* Dark theme overrides for base utilities */
+[data-theme='dark'] .card {
+  background: #111111; /* near-black for panels */
+}
+[data-theme='dark'] .course-card {
+  background: #0b0b0b;
+  border-color: #374151; /* gray-700 */
+}
+[data-theme='dark'] .btn-secondary {
+  background-color: #1f2937; /* gray-800 */
+  border-color: #374151; /* gray-700 */
+  color: #e5e7eb; /* slate-200 */
+}
+[data-theme='dark'] .btn-secondary:hover {
+  background-color: #111827; /* gray-900 */
+}

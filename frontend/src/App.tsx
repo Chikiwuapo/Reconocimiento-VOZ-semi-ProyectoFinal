@@ -29,9 +29,11 @@ function App() {
     if (isDarkMode) {
       document.body.className = 'bg-[#0A0A0A] text-gray-100 min-h-screen'
       document.documentElement.style.backgroundColor = '#0A0A0A'
+      document.documentElement.setAttribute('data-theme', 'dark')
     } else {
       document.body.className = 'bg-gray-50 text-gray-900 min-h-screen'
       document.documentElement.style.backgroundColor = '#f9fafb'
+      document.documentElement.setAttribute('data-theme', 'light')
     }
   }, [isDarkMode])
 

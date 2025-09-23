@@ -52,8 +52,11 @@ const Examples = ({ isDarkMode = false }: ExamplesProps) => {
   // calcular ancho de slide para peeks laterales y centrado exacto
   useEffect(() => {
     const calc = () => {
-      const w = containerRef.current?.offsetWidth || 1200
-      const sw = Math.round(w * 0.78) // más centrado; vecina más oculta pero visible
+      const w = containerRef.current?.offsetWidth || window.innerWidth || 1200
+      let ratio = 0.78
+      if (w < 640) ratio = 0.92 // móviles: tarjeta más ancha
+      else if (w < 1024) ratio = 0.86 // tablets: un poco más ancha
+      const sw = Math.round(w * ratio)
       setSlideWidth(sw)
       setSidePad(Math.max(0, Math.round((w - sw) / 2)))
     }
@@ -335,7 +338,7 @@ const Examples = ({ isDarkMode = false }: ExamplesProps) => {
         </div>
 
         {/* Carrusel estilo TRAE (drag para navegar) a ancho completo */}
-        <div className={`w-full ${isDarkMode ? 'bg-[#0D0D0D]' : 'bg-white'} mb-12`}>
+        <div className={`w-full ${isDarkMode ? 'bg-[#0D0D0D]' : 'bg-white'} mb-10 md:mb-12`}>
           <div ref={containerRef} className="overflow-hidden">
             <motion.div
               drag="x"
@@ -347,7 +350,7 @@ const Examples = ({ isDarkMode = false }: ExamplesProps) => {
                 else setCurrent(current)
               }}
               style={{ x }}
-              className="flex gap-6 md:gap-10 select-none cursor-grab active:cursor-grabbing px-0"
+              className="flex gap-4 sm:gap-6 md:gap-10 select-none cursor-grab active:cursor-grabbing px-0"
             >
               {/* Espaciadores para centrar primera y última tarjeta */}
               <div style={{ minWidth: `${sidePad}px` }} />
@@ -362,7 +365,7 @@ const Examples = ({ isDarkMode = false }: ExamplesProps) => {
                     key={idx}
                     animate={{ scale: scaleVal, zIndex: zIndexVal }}
                     transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-                    className={`rounded-2xl p-6 md:p-10 grid grid-cols-1 lg:grid-cols-2 gap-6 items-center ${
+                    className={`rounded-2xl p-5 md:p-10 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6 items-center ${
                       isDarkMode ? 'bg-[#111111] border border-[#262626]' : 'bg-white'
                     } ${shadow}`}
                     style={{ minWidth: `${slideWidth}px` }}

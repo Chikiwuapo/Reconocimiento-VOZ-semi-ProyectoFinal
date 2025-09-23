@@ -111,7 +111,7 @@ const Security = ({ isDarkMode = false }: SecurityProps) => {
       className={`py-20 ${
         isDarkMode 
           ? 'bg-[#121212]' 
-          : 'bg-gray-50'
+          : 'bg-[#EAF6F9]'
       }`}
     >
       <div className="container mx-auto px-4">

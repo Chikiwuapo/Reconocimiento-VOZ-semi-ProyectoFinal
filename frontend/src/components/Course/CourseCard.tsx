@@ -38,7 +38,7 @@ export default function CourseCard({ title, subtitle, imageUrl, cornerCode = '',
           </div>
         )}
       </div>
-      <div className={`course-body ${isDarkMode ? 'text-gray-100' : ''}`}>
+      <div className={`course-body ${isDarkMode ? 'bg-gray-900 text-gray-100' : ''}`}>
         <div className={`course-title ${isDarkMode ? 'text-gray-100' : ''}`}>{title}</div>
         <div className={`course-subtitle ${isDarkMode ? 'text-gray-400' : ''}`}>{subtitle}</div>
         <div className="course-footer">

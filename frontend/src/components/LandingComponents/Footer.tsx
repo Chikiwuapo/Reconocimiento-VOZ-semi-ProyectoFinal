@@ -194,21 +194,21 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
             isDarkMode ? 'border-gray-800' : 'border-gray-200'
           }`}
         >
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="mb-4 md:mb-0">
-              &copy; {currentYear} Aries Digital Soft. Todos los derechos reservados.
-            </p>
-            <div className="flex items-center gap-3">
+          {/* En móvil y tablet: botón arriba, luego links y por último copyright */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="order-1 md:order-none">
               <a
                 href="#seguridad"
                 className={`${
                   isDarkMode
                     ? 'bg-[#121212] text-white hover:bg-[#1E1E1E]'
                     : 'bg-white text-[#1B4965] hover:bg-gray-100'
-                } border rounded-md px-4 py-2 transition`}
+                } border rounded-md px-4 py-2 transition inline-block`}
               >
                 Confianza y Seguridad
               </a>
+            </div>
+            <div className="flex items-center gap-3 order-2 md:order-none flex-wrap">
               <a 
                 href="#contacto" 
                 className={`${
@@ -240,6 +240,9 @@ const Footer = ({ isDarkMode = false }: FooterProps) => {
                 Privacidad
               </a>
             </div>
+            <p className="order-3 md:order-none text-sm md:text-base">
+              &copy; {currentYear} Aries Digital Soft. Todos los derechos reservados.
+            </p>
           </div>
         </div>
       </div>

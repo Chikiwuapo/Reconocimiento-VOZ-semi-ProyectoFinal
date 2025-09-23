@@ -10,10 +10,10 @@ import { useUserStore } from '../../auth/userStore'
 import { useTheme } from '../../App'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState} from 'react'
 export default function Dashboard() {
   // Usar el contexto global de tema
-  const { isDarkMode, toggleDarkMode } = useTheme(); 
+  const { isDarkMode } = useTheme(); 
   const { user, toggleFavorite, recordCourseCompleted } = useUserStore()
   const navigate = useNavigate()
   const userName = user.profile.name || 'Usuario'
@@ -53,13 +53,17 @@ export default function Dashboard() {
     window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Curso completado: ' + title }))
   }
 
-  // Counter of trained models (UI metric)
-  const TRAINED_KEY = 'trained_models_count'
-  const incrementTrainedCount = () => {
+  // Counter of trained models (UI metric) - count each model only once per user
+  const TRAINED_IDS_KEY = 'trained_models_ids'
+  const ensureCountForModel = (modelId: string) => {
     try {
-      const n = Number(localStorage.getItem(TRAINED_KEY) || '0')
-      localStorage.setItem(TRAINED_KEY, String((Number.isFinite(n) ? n : 0) + 1))
-      window.dispatchEvent(new CustomEvent('trained:updated'))
+      const raw = localStorage.getItem(TRAINED_IDS_KEY)
+      const set: string[] = raw ? JSON.parse(raw) : []
+      if (!set.includes(modelId)) {
+        const next = [...set, modelId]
+        localStorage.setItem(TRAINED_IDS_KEY, JSON.stringify(next))
+        window.dispatchEvent(new CustomEvent('trained:updated'))
+      }
     } catch {}
   }
   // testModel removed with 'Modelo Entrenado' section
@@ -78,36 +82,7 @@ export default function Dashboard() {
     <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#0A0A0A]' : 'bg-gray-50'}`}>
       <div className="min-h-screen">
         <Layout>
-          {/* Botón de cambio de tema en la parte superior */}
-          <div className="container-page pt-4">
-            <div className="flex justify-end mb-4">
-              <button 
-                onClick={toggleDarkMode}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-sm ${
-                  isDarkMode 
-                    ? 'bg-gray-800 text-gray-200 border border-gray-700 hover:bg-gray-700' 
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
-                aria-label={isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-              >
-                {isDarkMode ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    Tema Claro
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
-                    Tema Oscuro
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+          {/* Tema: se controla desde el Navbar (icono junto al botón de notificaciones) */}
 
           <HeroUnified 
             userName={userName} 
@@ -125,7 +100,7 @@ export default function Dashboard() {
             <h2 className={`text-2xl font-bold animate-slide-in-left ${isDarkMode ? 'text-white' : 'text-header'}`}>Tus modelos creados</h2>
             <p className={`mt-1 animate-slide-in-left delay-100 ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>Explora tus modelos creados</p>
             {models.length === 0 ? (
-              <div className={`mt-6 card text-center p-8 ${isDarkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+              <div className={`mt-6 card text-center p-8 rounded-xl border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-slate-200'}`}>
                 <p className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-header'}`}>No esperes más, ten la experiencia de probar los modelos que te ofrecemos</p>
                 <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-slate-600'}`}>Crea o prueba modelos y observa cómo se actualiza tu panel en tiempo real.</p>
             <Link to="/models" className="inline-block px-6 py-3 rounded-lg bg-emerald-600 text-white font-medium shadow-soft hover:bg-emerald-700 transition-transform hover:-translate-y-0.5">
@@ -143,7 +118,7 @@ export default function Dashboard() {
                 imageUrl={m.imageUrl}
                 favorite={m.favorite}
                 onToggleFavorite={() => toggleFavorite(m.id)}
-                onTrain={() => { incrementTrainedCount(); navigate('/arithmetic?tab=train') }}
+                onTrain={() => { ensureCountForModel(m.id); navigate('/arithmetic?tab=train') }}
                 onViewDetails={() => setDetailId(m.id)}
                 isDarkMode={isDarkMode}
               />
@@ -287,7 +262,7 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Traducción Automática en Tiempo Real – PRÓXIMAMENTE */}
-              <motion.div variants={card} className="course-card udemy bg-white rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full">
+              <motion.div variants={card} className={`course-card udemy rounded-lg overflow-hidden group cursor-not-allowed opacity-95 h-full ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white'}`}>
                 <div className="relative h-40 bg-gradient-to-br from-cyan-500 to-blue-600 overflow-hidden">
                   <div className="absolute inset-0 bg-black bg-opacity-10 group-hover:bg-opacity-20 transition-all duration-300"></div>
                   <div className="absolute top-3 left-3 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-bold">PRÓXIMAMENTE</div>
@@ -298,9 +273,9 @@ export default function Dashboard() {
                      <div className="w-12 h-12 rounded-full border-2 border-white bg-cyan-600 flex items-center justify-center text-white font-bold text-sm group-hover:scale-110 transition-transform duration-300">TR</div>
                    </div>
                 </div>
-                <div className="course-body">
-                  <div className="course-title">Traducción Automática en Tiempo Real</div>
-                  <div className="course-subtitle">Por AresDigitalAcademy • En desarrollo</div>
+                <div className={`course-body ${isDarkMode ? 'bg-gray-900 text-gray-100' : ''}`}>
+                  <div className={`course-title ${isDarkMode ? 'text-gray-100' : ''}`}>Traducción Automática en Tiempo Real</div>
+                  <div className={`course-subtitle ${isDarkMode ? 'text-gray-400' : ''}`}>Por AresDigitalAcademy • En desarrollo</div>
                   <div className="course-meta">
                     <span className="badge-udemy">PRÓXIMAMENTE</span>
                     <span className="badge-udemy neutral">Streaming • Speech</span>
