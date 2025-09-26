@@ -30,7 +30,12 @@ except Exception:
 
 
 def index(request):
-    return redirect('login')
+    return redirect('bienvenido')
+
+
+def bienvenido_view(request):
+    """Vista para la pantalla de bienvenida de AriasDigitalSoft"""
+    return render(request, 'login/bienvenido.html')
 
 
 def login_view(request):
@@ -38,6 +43,13 @@ def login_view(request):
 
 
 def register_view(request):
+    # Importar modelos de voz para pending registration
+    from voz.models.models import PendingRegistration
+    from voz.views.views import get_or_create_pending_registration
+    
+    # Crear o obtener pending registration para esta sesión
+    pending_registration = get_or_create_pending_registration(request)
+    
     if request.method == 'POST':
         log = logging.getLogger('facial')
         nombres = request.POST.get('nombres')
@@ -129,7 +141,9 @@ def register_view(request):
             log.exception(f'register_view: excepción {e}')
             messages.error(request, f'Error al registrar: {e}')
 
-    return render(request, 'login/register.html')
+    return render(request, 'login/register.html', {
+        'pending_token': pending_registration.token
+    })
 
 
 @require_POST

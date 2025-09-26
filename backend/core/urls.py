@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('login.urls')),
     path("operaciones/", include("operaciones.urls")),
-    path("", include("operaciones.urls")),  # URLs principales en la raíz
+    path('voz/', include('voz.urls.urls')),
 ]

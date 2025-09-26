@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     # Local apps
     'login',
     "operaciones",
+    'voz',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -71,7 +74,10 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'login' / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'login' / 'templates',
+            BASE_DIR / 'voz' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
