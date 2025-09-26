@@ -41,9 +41,16 @@ export default function CaptureSamples() {
   const [showLimitModal, setShowLimitModal] = useState(false)
   const LIMIT = 300
 
-  // Auto activar cámara al entrar
+  // Auto activar cámara al entrar (espera a que MediaPipe esté listo)
   useEffect(() => {
-    startCamera() 
+    if (mpReady && !cameraActive) {
+      startCamera()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mpReady])
+
+  // Cleanup al desmontar el componente
+  useEffect(() => {
     return () => { stopCamera() }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -127,16 +134,16 @@ export default function CaptureSamples() {
           <p className={`${isDarkMode ? 'text-gray-300' : 'text-slate-600'} mt-1`}>Usa tu cámara para capturar registros etiquetados y guardarlos en la base de datos.</p>
         </div>
 
-        {/* Stats superiores */}
-        <div className="max-w-6xl mx-auto mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {statCard('Registros totales (BD)', dbCount, '🗂️')}
-          {statCard('Capturando', category === 'palabras' ? (word || '—') : selectedLabel, '🎯')}
-          {statCard('Capturados (sesión)', `${localSaved}/${LIMIT}`, '📸', localSaved >= LIMIT ? 'Límite alcanzado' : undefined)}
-        </div>
-
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           {/* Columna principal con cámara */}
           <div className="lg:col-span-2 flex flex-col gap-4">
+            {/* Stats superiores - Movidas arriba de la cámara */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              {statCard('Registros totales (BD)', dbCount, '🗂️')}
+              {statCard('Capturados (sesión)', `${localSaved}/${LIMIT}`, '📸', localSaved >= LIMIT ? 'Límite alcanzado' : undefined)}
+              {statCard('Capturando', category === 'palabras' ? (word || '—') : selectedLabel, '🎯')}
+            </div>
+            
             <CameraPanel 
               videoRef={videoRef}
               canvasRef={canvasRef}
@@ -194,7 +201,7 @@ export default function CaptureSamples() {
                 ) : (
                   <div>
                     <div className={`text-xs mb-2 ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Etiqueta</div>
-                    <div className="grid grid-cols-6 gap-2">
+                    <div className="grid grid-cols-10 gap-2">
                       {keys.map(k => (
                         <button key={k} onClick={() => setSelectedLabel(k)} className={`h-10 rounded-md text-sm border ${selectedLabel === k ? 'bg-indigo-600 text-white border-indigo-600' : (isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700' : 'bg-white border-slate-200 text-header hover:bg-slate-50')}`}>{k}</button>
                       ))}

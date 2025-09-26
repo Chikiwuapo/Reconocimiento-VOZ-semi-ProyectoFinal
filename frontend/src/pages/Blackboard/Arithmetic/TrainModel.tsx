@@ -173,6 +173,21 @@ export default function TrainModel() {
                   <input type="number" step={0.0001} min={0.0001} max={0.1} value={learningRate} onChange={(e)=>setLearningRate(parseFloat(e.target.value||'0.001'))} className={`w-full px-3 py-2 rounded-lg border ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-slate-300 text-slate-800'}`} />
                 </div>
                 <button onClick={onTrain} className="w-full h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow">Entrenar</button>
+                
+                {/* Resultados del entrenamiento - Solo mostrar cuando hay datos */}
+                {regData.length > 0 && (
+                  <div className={`mt-4 rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
+                    <div className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-slate-500'} mb-2`}>Resultados</div>
+                    <div className="space-y-2 text-xs">
+                      <div className={`${isDarkMode ? 'text-gray-200' : 'text-slate-700'}`}>
+                        Última precisión: <span className="font-semibold text-emerald-600">{(regData[regData.length-1].y * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className={`${isDarkMode ? 'text-gray-200' : 'text-slate-700'}`}>
+                        Mejor precisión: <span className="font-semibold text-emerald-600">{(Math.max(...regData.map(p=>p.y)) * 100).toFixed(1)}%</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -180,22 +195,6 @@ export default function TrainModel() {
             <div className="lg:col-span-2 flex flex-col gap-6">
               <BarChart data={barData} />
               <RegressionChart data={regData} />
-              {/* Resultados del entrenamiento */}
-              <div className={`rounded-xl p-4 border ${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-slate-200'} shadow`}>
-                <div className={`text-sm font-semibold ${isDarkMode ? 'text-gray-200' : 'text-header'}`}>Resultados</div>
-                {regData.length === 0 ? (
-                  <div className={`${isDarkMode ? 'text-gray-400' : 'text-slate-500'} text-sm mt-2`}>Aún no hay resultados. Inicia un entrenamiento.</div>
-                ) : (
-                  <div className={`grid grid-cols-2 gap-3 mt-2 text-sm ${isDarkMode ? 'text-gray-200' : 'text-slate-700'}`}>
-                    <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
-                      Última precisión: <span className="font-semibold">{(regData[regData.length-1].y * 100).toFixed(1)}%</span>
-                    </div>
-                    <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
-                      Mejor precisión: <span className="font-semibold">{(Math.max(...regData.map(p=>p.y)) * 100).toFixed(1)}%</span>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>

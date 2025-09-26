@@ -31,6 +31,7 @@ export default function PracticeModel() {
 
   const [showConfirm, setShowConfirm] = useState(false)
   const [confirmMsg, setConfirmMsg] = useState('')
+  const [showResults, setShowResults] = useState(false)
 
   // Auto activar cámara al entrar (espera a mpReady)
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function PracticeModel() {
 
   const onRecognize = async () => {
     await recognizeCurrent()
+    setShowResults(true)
     setConfirmMsg('Se realizó el reconocimiento con éxito.')
     setShowConfirm(true)
   }
@@ -72,6 +74,14 @@ export default function PracticeModel() {
                 <button onClick={clearOperation} className={`${isDarkMode ? 'bg-gray-800 hover:bg-gray-700 text-gray-100' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'} h-12 rounded-xl shadow`}>Limpiar</button>
                 <button onClick={calculateFromOperation} className="h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow">Calcular</button>
               </div>
+
+              {/* Tarjeta de Resultados - Solo aparece cuando se presiona Entrenar */}
+              {showResults && (
+                <div className={`mt-4 rounded-lg p-3 shadow-sm ${isDarkMode ? 'bg-gray-900 border border-gray-800' : 'bg-white border border-slate-200'}`}>
+                  <div className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-slate-500'} mb-2`}>Resultado</div>
+                  <div className={`${isDarkMode ? 'text-emerald-400' : 'text-emerald-700'} font-semibold text-base`}>{resultado ?? '—'}</div>
+                </div>
+              )}
             </div>
 
             {/* Panel lateral */}
@@ -89,11 +99,6 @@ export default function PracticeModel() {
                 <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
                   <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Expresión detectada</div>
                   <div className={`${isDarkMode ? 'text-gray-100' : 'text-header'} mt-1 font-semibold break-words`}>{expresion || '—'}</div>
-                </div>
-
-                <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
-                  <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Resultado</div>
-                  <div className={`${isDarkMode ? 'text-emerald-400' : 'text-emerald-700'} mt-1 font-semibold`}>{resultado ?? '—'}</div>
                 </div>
               </div>
             </div>

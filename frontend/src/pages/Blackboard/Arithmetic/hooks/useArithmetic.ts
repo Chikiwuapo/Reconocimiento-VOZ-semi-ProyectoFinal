@@ -164,21 +164,39 @@ export function useArithmetic() {
       console.warn('Camera start attempted before MediaPipe ready')
       return
     }
-    const cam = new (window as any).Camera(videoRef.current, {
-      onFrame: async () => {
-        if (!handsRef.current || !videoRef.current) return
-        await handsRef.current.send({ image: videoRef.current })
-      },
-      width: 640,
-      height: 360,
-    })
-    cam.start()
-    cameraRef.current = cam
-    setCameraActive(true)
+    
+    // Detener cámara existente si hay una
+    if (cameraRef.current) {
+      stopCamera()
+    }
+    
+    try {
+      const cam = new (window as any).Camera(videoRef.current, {
+        onFrame: async () => {
+          if (!handsRef.current || !videoRef.current) return
+          await handsRef.current.send({ image: videoRef.current })
+        },
+        width: 640,
+        height: 360,
+      })
+      await cam.start()
+      cameraRef.current = cam
+      setCameraActive(true)
+    } catch (error) {
+      console.error('Error starting camera:', error)
+      setCameraActive(false)
+    }
   }
 
   const stopCamera = () => {
-    try { cameraRef.current?.stop() } catch {}
+    if (cameraRef.current) {
+      try { 
+        cameraRef.current.stop() 
+        cameraRef.current = null
+      } catch (e) {
+        console.warn('Error stopping camera:', e)
+      }
+    }
     setCameraActive(false)
   }
 

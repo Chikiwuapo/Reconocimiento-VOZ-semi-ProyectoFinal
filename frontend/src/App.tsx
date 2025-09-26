@@ -3,7 +3,6 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import SplashScreen from './components/SplashScreen'
 import Blackboard from './pages/Blackboard/Blackboard'
 import Models from './pages/Blackboard/Models'
-import Arithmetic from './pages/Blackboard/Arithmetic/Arithmetic'
 import CaptureSamples from './pages/Blackboard/Arithmetic/CaptureSamples'
 import TrainModel from './pages/Blackboard/Arithmetic/TrainModel'
 import PracticeModel from './pages/Blackboard/Arithmetic/PracticeModel'
@@ -53,10 +52,9 @@ function App() {
           <Route path="/auth" element={<AuthFlowPage />} />
           <Route path="/blackboard" element={<Blackboard />} />
           <Route path="/models" element={<Models />} />
-          <Route path="/arithmetic" element={<Arithmetic />} />
           <Route path="/arithmetic/capture" element={<CaptureSamples />} />
-          <Route path="/arithmetic/train" element={<TrainModel />} />
-          <Route path="/arithmetic/practice" element={<PracticeModel />} />
+                <Route path="/arithmetic/train" element={<TrainModel />} />
+                <Route path="/arithmetic/practice" element={<PracticeModel />} />
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

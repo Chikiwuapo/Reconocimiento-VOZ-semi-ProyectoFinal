@@ -36,8 +36,8 @@ export default function ActivityCard({ title, description, emoji = '🤖', favor
         </button>
       </div>
       <div className="mt-auto p-5 pt-0 flex items-center gap-3">
-        <button className="btn-accent-purple transition-colors duration-300 group-hover:!bg-[var(--accent-cyan)]" onClick={onTrain}>Ver Acciones</button>
-        <button className={`text-sm transition ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-slate-600 hover:text-header'}`} onClick={onViewDetails}>Ver detalles</button>
+        <button className="btn-accent-purple transition-colors duration-300 group-hover:!bg-[var(--accent-cyan)]" onClick={onTrain}>Ir a practicar</button>
+        <button className={`text-sm transition ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-slate-600 hover:text-header'}`} onClick={onViewDetails}>Comenzar</button>
       </div>
     </div>
   )
