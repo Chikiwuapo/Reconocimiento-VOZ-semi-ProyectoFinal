@@ -1,9 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { createContext, useContext, useState, useEffect } from 'react'
 import SplashScreen from './components/SplashScreen'
-import Dashboard from './pages/Blackboard/Dashboard'
+import Blackboard from './pages/Blackboard/Blackboard'
 import Models from './pages/Blackboard/Models'
 import Arithmetic from './pages/Blackboard/Arithmetic/Arithmetic'
+import CaptureSamples from './pages/Blackboard/Arithmetic/CaptureSamples'
+import TrainModel from './pages/Blackboard/Arithmetic/TrainModel'
+import PracticeModel from './pages/Blackboard/Arithmetic/PracticeModel'
 import CoursePage from './pages/Courses/CoursePage'
 import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
@@ -15,14 +18,14 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  isDarkMode: true, // Por defecto tema oscuro
+  isDarkMode: false, // Por defecto tema claro
   toggleDarkMode: () => {}
 })
 
 export const useTheme = () => useContext(ThemeContext)
 
 function App() {
-  const [isDarkMode, setIsDarkMode] = useState(true) // Siempre tema oscuro por defecto
+  const [isDarkMode, setIsDarkMode] = useState(false) // Siempre tema claro por defecto
 
   useEffect(() => {
     // Aplicar clases globales al body para tema oscuro profundo
@@ -48,9 +51,12 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/splash" element={<SplashScreen />} />
           <Route path="/auth" element={<AuthFlowPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/blackboard" element={<Blackboard />} />
           <Route path="/models" element={<Models />} />
           <Route path="/arithmetic" element={<Arithmetic />} />
+          <Route path="/arithmetic/capture" element={<CaptureSamples />} />
+          <Route path="/arithmetic/train" element={<TrainModel />} />
+          <Route path="/arithmetic/practice" element={<PracticeModel />} />
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

@@ -1,21 +1,20 @@
 import Layout from '../../components/Blackboard/Layout'
 import { motion } from 'framer-motion'
-
 import ActivityCard from '../../components/Blackboard/ActivityCard'
 import CourseCard from '../../components/Course/CourseCard'
 import ModelDetailsModal from '../../components/Blackboard/ModelDetailsModal'
+import ModelActionsModal from '../../components/Blackboard/ModelActionsModal'
 import HeroUnified from '../../components/Blackboard/HeroUnified'
 import MissionsPanel from '../../components/Blackboard/MissionsPanel'
 import { useUserStore } from '../../auth/userStore'
 import { useTheme } from '../../App'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { useMemo, useState} from 'react'
 export default function Dashboard() {
   // Usar el contexto global de tema
   const { isDarkMode } = useTheme(); 
   const { user, toggleFavorite, recordCourseCompleted } = useUserStore()
-  const navigate = useNavigate()
   const userName = user.profile.name || 'Usuario'
   type ModelView = { id: string; title: string; description: string; emoji: string; imageUrl: string; favorite?: boolean; features: string[] }
   type Course = { id: string; title: string; progress: string; img: string; completed?: boolean }
@@ -37,6 +36,8 @@ export default function Dashboard() {
   const watchedCourses: Course[] = useMemo(() => user.watchedCourses, [user.watchedCourses])
   
   const [detailId, setDetailId] = useState<string | null>(null)
+  const [openActions, setOpenActions] = useState(false)
+  const [selectedModelType, setSelectedModelType] = useState<'vocales'|'abecedario'|'numeros'|'operaciones'|undefined>(undefined)
   const currentModel = models.find(m => m.id === detailId) || null
 
   // Favoritos se gestionan dentro de los componentes cuando sea necesario usando toggleFavorite
@@ -118,7 +119,18 @@ export default function Dashboard() {
                 imageUrl={m.imageUrl}
                 favorite={m.favorite}
                 onToggleFavorite={() => toggleFavorite(m.id)}
-                onTrain={() => { ensureCountForModel(m.id); navigate('/arithmetic?tab=train') }}
+                onTrain={() => { 
+                  ensureCountForModel(m.id); 
+                  // Infer modelType from original model type string
+                  const orig = (user.models.find(x => x.id === m.id)?.type || '').toLowerCase()
+                  let mt: 'vocales'|'abecedario'|'numeros'|'operaciones'|undefined = undefined
+                  if (orig.includes('vocal')) mt = 'vocales'
+                  else if (orig.includes('letra') || orig.includes('abecedario')) mt = 'abecedario'
+                  else if (orig.includes('númer') || orig.includes('numero') || orig.includes('numero') || orig.includes('numeros')) mt = 'numeros'
+                  else if (orig.includes('aritm') || orig.includes('operacion') || orig.includes('operación') || orig.includes('operaciones') || orig.includes('matem')) mt = 'operaciones'
+                  setSelectedModelType(mt)
+                  setOpenActions(true) 
+                }}
                 onViewDetails={() => setDetailId(m.id)}
                 isDarkMode={isDarkMode}
               />
@@ -301,10 +313,10 @@ export default function Dashboard() {
             'Origen: AresDigitalAcademy'
           ]}
           onClose={() => setDetailId(null)}
-          onTest={() => navigate('/arithmetic?tab=test')}
           isDarkMode={isDarkMode}
         />
       )}
+      <ModelActionsModal open={openActions} onClose={() => setOpenActions(false)} isDarkMode={isDarkMode} modelType={selectedModelType} />
         </Layout>
       </div>
     </div>

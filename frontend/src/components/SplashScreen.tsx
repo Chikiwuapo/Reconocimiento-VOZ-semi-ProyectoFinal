@@ -14,7 +14,7 @@ export default function SplashScreen({ duration = 5000 }: SplashScreenProps) {
     // Timer para la redirección automática
     const timer = setTimeout(() => {
       setIsLoading(false)
-      navigate('/dashboard')
+      navigate('/blackboard')
     }, duration)
 
     // Cleanup del timer si el componente se desmonta

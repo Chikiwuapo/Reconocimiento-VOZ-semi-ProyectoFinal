@@ -98,7 +98,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ isDarkMode = false }) => 
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.6 }}
                               >
-                                <Link to="/dashboard">
+                                <Link to="/auth">
                                 <button 
                                   className={`w-full sm:w-auto px-5 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-lg font-semibold text-white transition-all transform hover:scale-105 ${
                                     isDarkMode 

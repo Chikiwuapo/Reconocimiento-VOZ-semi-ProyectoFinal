@@ -2,9 +2,14 @@ import Layout from '../../../components/Blackboard/Layout'
 import { useArithmetic } from './hooks/useArithmetic'
 import { useEffect, useRef, useState } from 'react'
 import { useTheme } from '../../../App'
+import { useLocation } from 'react-router-dom'
 
-export default function Arithmetic() {
+type Mode = 'capture'|'train'|'practice'|'default'
+
+export default function Arithmetic({ modeOverride }: { modeOverride?: Mode } = {}) {
   const { isDarkMode } = useTheme()
+  const location = useLocation()
+  const [uiMode, setUiMode] = useState<Mode>('default')
   const {
     // refs
     videoRef, canvasRef,
@@ -12,11 +17,11 @@ export default function Arithmetic() {
     cameraActive, recording, confidence, rightDetected, leftDetected,
     samplesTarget, samplesCaptured, gestureMode, numeroVinculado, operacionVinculada,
     operando1, operador, operando2, loadingCalc, resultado, expresion, error,
-    activeTab, trainedGestures, chartData, showChart,
+    activeTab, trainedGestures,
     // setters
     setGestureMode, setNumeroVinculado, setOperacionVinculada,
     setOperando1, setOperador, setOperando2,
-    setActiveTab, setShowChart,
+    setActiveTab,
     // acciones
     startCamera, stopCamera, toggleRecording, saveGesture, saveGestureTwoHands, recognizeCurrent,
     clearOperation, calculateFromOperation, calcular,
@@ -53,6 +58,26 @@ export default function Arithmetic() {
   }
 
   useEffect(() => () => { if (timerRef.current) window.clearInterval(timerRef.current) }, [])
+
+  // Sync UI mode from props or query param and set active tab accordingly
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const modeParam = (params.get('mode') || '').toLowerCase()
+    const mode = (modeOverride || modeParam) as Mode
+    if (mode === 'capture') {
+      setUiMode('capture')
+      setActiveTab('train')
+    } else if (mode === 'train') {
+      setUiMode('train')
+      setActiveTab('train')
+    } else if (mode === 'practice') {
+      setUiMode('practice')
+      setActiveTab('test')
+    } else {
+      setUiMode('default')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search, modeOverride])
 
   return (
     <>
@@ -110,27 +135,42 @@ export default function Arithmetic() {
                 )}
                 {activeTab === 'train' && (
                   <>
+                    {/* Capture button always available in train tab */}
                     <button type="button" disabled={!cameraActive} onClick={toggleRecording} className={`px-4 h-12 rounded-xl text-white shadow col-span-2 md:col-span-1 ${recording ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'} disabled:opacity-50`}>
                       {recording ? 'Detener Grabación' : 'Grabar Gesto'}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => { saveGesture(); startTrainingUI() }}
-                      title={samplesCaptured === 0 ? 'Graba algunas muestras antes de guardar' : 'Entrenará el modelo y guardará los registros'}
-                      className="bg-violet-600 hover:bg-violet-700 text-white px-4 h-12 rounded-xl shadow col-span-2 md:col-span-1"
-                    >
-                      Entrenar Modelo
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { saveGestureTwoHands(); startTrainingUI() }}
-                      title="Exige que haya frames con ambas manos visibles durante la grabación"
-                      className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 h-12 rounded-xl shadow col-span-2 md:col-span-1"
-                    >
-                      Entrenar 2 manos
-                    </button>
-                    {/* Spacer to keep grid symmetry (4 items) */}
-                    <div className="hidden md:block" />
+                    {/* Conditional actions per uiMode */}
+                    {(uiMode === 'capture') && (
+                      <button
+                        type="button"
+                        onClick={() => { saveGesture(); /* no training UI in capture-only */ }}
+                        title={samplesCaptured === 0 ? 'Graba algunas muestras antes de guardar' : 'Guardar muestras'}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 h-12 rounded-xl shadow col-span-2 md:col-span-1"
+                      >
+                        Guardar Muestras
+                      </button>
+                    )}
+                    {(uiMode === 'train' || uiMode === 'default') && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => { saveGesture(); startTrainingUI() }}
+                          title={samplesCaptured === 0 ? 'Graba algunas muestras antes de guardar' : 'Entrenará el modelo y guardará los registros'}
+                          className="bg-violet-600 hover:bg-violet-700 text-white px-4 h-12 rounded-xl shadow col-span-2 md:col-span-1"
+                        >
+                          Entrenar Modelo
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { saveGestureTwoHands(); startTrainingUI() }}
+                          title="Exige que haya frames con ambas manos visibles durante la grabación"
+                          className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-4 h-12 rounded-xl shadow col-span-2 md:col-span-1"
+                        >
+                          Entrenar 2 manos
+                        </button>
+                        <div className="hidden md:block" />
+                      </>
+                    )}
                   </>
                 )}
                 {activeTab === 'test' && (
