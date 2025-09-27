@@ -311,11 +311,17 @@ class VoiceFormCommands {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         this.recognition = new SpeechRecognition();
 
-        // Configuración optimizada para transcripción
+        // Configuración optimizada para transcripción y rendimiento
         this.recognition.continuous = true;
-        this.recognition.interimResults = false;
+        this.recognition.interimResults = false; // Mantener false para mejor rendimiento
         this.recognition.lang = 'es-ES';
-        this.recognition.maxAlternatives = 5; // Más alternativas para mejor precisión
+        this.recognition.maxAlternatives = 3; // OPTIMIZACIÓN: Reducir de 5 a 3 para mejor rendimiento
+        
+        // OPTIMIZACIÓN: Configuración adicional para mejor calidad y rendimiento
+        if ('webkitSpeechRecognition' in window) {
+            // Configuraciones específicas para Chrome/WebKit
+            this.recognition.serviceURI = null; // Usar servicio local cuando sea posible
+        }
 
         // Eventos
         this.recognition.onstart = () => {
@@ -371,31 +377,40 @@ class VoiceFormCommands {
     processTranscription(transcript) {
         let commandExecuted = false;
 
+        // OPTIMIZACIÓN: Cache de patrones compilados para mejor rendimiento
+        if (!this.compiledPatterns) {
+            this.compiledPatterns = new Map();
+            for (const [pattern, action] of this.commands) {
+                this.compiledPatterns.set(pattern, action);
+            }
+        }
+
         // NUEVA LÓGICA: Solo procesar si se menciona explícitamente un campo
         // Ya NO hay modo automático que llene campos sin mencionar su nombre
         
-        // Buscar comando que coincida
-        for (const [pattern, action] of this.commands) {
+        // Buscar comando que coincida - optimizado con early return
+        for (const [pattern, action] of this.compiledPatterns) {
             const match = transcript.match(pattern);
             if (match) {
                 try {
                     action(match);
                     commandExecuted = true;
-                    // Reducir mensajes de confirmación para mayor fluidez
+                    // OPTIMIZACIÓN: Reducir mensajes de confirmación para mayor fluidez
                     // Solo mostrar confirmación para comandos importantes
                     if (transcript.includes('registrar') || transcript.includes('limpiar') || transcript.includes('borrar')) {
-                        this.showSuccess(`✅ ${transcript}`);
+                        this.showSuccess(`✅ Comando ejecutado`);
                     }
-                    break;
+                    return; // Early return para mejor rendimiento
                 } catch (error) {
                     console.error('Error ejecutando comando:', error);
                     this.showError('❌ Error ejecutando comando');
+                    return;
                 }
             }
         }
 
         if (!commandExecuted) {
-            // Si no es un comando reconocido, mostrar mensaje informativo
+            // Si no es un comando reconocido, mostrar mensaje informativo optimizado
             console.log('Texto no reconocido como comando:', transcript);
             // NO hacer nada más - no llenar campos automáticamente
         }
@@ -424,43 +439,63 @@ class VoiceFormCommands {
 
     // Función optimizada para capturar exactamente solo el contenido solicitado
     cleanTextContent(text) {
+        // OPTIMIZACIÓN: Cache de regex compiladas para mejor rendimiento
+        if (!this.cleaningRegexCache) {
+            this.cleaningRegexCache = {
+                commandPhrases1: /^(escribe|escribir|poner|pon|pone|coloca|colocar|introduce|introducir|ingresa|ingresar)\s+(en\s+)?(nombres?|apellidos?|email|correo|dni|documento)\s+/i,
+                commandPhrases2: /^(en\s+)?(nombres?|apellidos?|email|correo|dni|documento)\s+(escribe|escribir|poner|pon|pone|coloca|colocar|introduce|introducir|ingresa|ingresar)\s+/i,
+                commandPhrases3: /^(mi\s+)?(nombre|apellidos?|email|correo|dni)\s+(es|son)\s+/i,
+                commandPhrases4: /^(el\s+)?(nombre|apellido|email|correo|dni)\s+(de\s+)?/i,
+                commandWords: /\b(escribe|escribir|poner|pon|pone|coloca|colocar|introduce|introducir|ingresa|ingresar)\b/gi,
+                fieldWords: /\b(en\s+)?(nombres?|apellidos?|email|correo|dni|documento)(\s+es|\s+son)?\b/gi,
+                fillerWords: /\b(por favor|gracias|ahora|entonces|bueno|vale|ok|okay|perfecto|listo|dale|vamos|anda)\b/gi,
+                speechFiller: /\b(eh|um|uh|este|esta|esto|pues|ya|sí|si|muy bien)\b/gi,
+                contextWords: /\b(campo|formulario|registro|página|web|sitio|aplicación|sistema)\b/gi,
+                actionWords: /\b(escribir|escriba|escribo|escribes|completar|completa|completo|rellena|relleno)\b/gi,
+                multipleSpaces: /\s+/g,
+                specialCharsStart: /^[^\w\s]+/,
+                specialCharsEnd: /[^\w\s]+$/,
+                validationPattern: /^[^a-zA-Z0-9@._-]+$/
+            };
+        }
+
         // Paso 1: Eliminar frases de comando al inicio de manera más precisa
         let cleanText = text
-            .replace(/^(escribe|escribir|poner|pon|pone|coloca|colocar|introduce|introducir|ingresa|ingresar)\s+(en\s+)?(nombres?|apellidos?|email|correo|dni|documento)\s+/i, '')
-            .replace(/^(en\s+)?(nombres?|apellidos?|email|correo|dni|documento)\s+(escribe|escribir|poner|pon|pone|coloca|colocar|introduce|introducir|ingresa|ingresar)\s+/i, '')
-            .replace(/^(mi\s+)?(nombre|apellidos?|email|correo|dni)\s+(es|son)\s+/i, '')
-            .replace(/^(el\s+)?(nombre|apellido|email|correo|dni)\s+(de\s+)?/i, '')
+            .replace(this.cleaningRegexCache.commandPhrases1, '')
+            .replace(this.cleaningRegexCache.commandPhrases2, '')
+            .replace(this.cleaningRegexCache.commandPhrases3, '')
+            .replace(this.cleaningRegexCache.commandPhrases4, '')
             .trim();
 
         // Paso 2: Eliminar palabras de comando que puedan aparecer en cualquier posición
         cleanText = cleanText
-            .replace(/\b(escribe|escribir|poner|pon|pone|coloca|colocar|introduce|introducir|ingresa|ingresar)\b/gi, '')
-            .replace(/\b(en\s+)?(nombres?|apellidos?|email|correo|dni|documento)(\s+es|\s+son)?\b/gi, '')
+            .replace(this.cleaningRegexCache.commandWords, '')
+            .replace(this.cleaningRegexCache.fieldWords, '')
             .trim();
 
         // Paso 3: Eliminar palabras de relleno y muletillas
         cleanText = cleanText
-            .replace(/\b(por favor|gracias|ahora|entonces|bueno|vale|ok|okay|perfecto|listo|dale|vamos|anda)\b/gi, '')
-            .replace(/\b(eh|um|uh|este|esta|esto|pues|ya|sí|si|muy bien)\b/gi, '')
-            .replace(/\b(campo|formulario|registro|página|web|sitio|aplicación|sistema)\b/gi, '')
-            .replace(/\b(escribir|escriba|escribo|escribes|completar|completa|completo|rellena|relleno)\b/gi, '')
+            .replace(this.cleaningRegexCache.fillerWords, '')
+            .replace(this.cleaningRegexCache.speechFiller, '')
+            .replace(this.cleaningRegexCache.contextWords, '')
+            .replace(this.cleaningRegexCache.actionWords, '')
             .trim();
 
         // Paso 4: Limpiar espacios múltiples y normalizar
         cleanText = cleanText
-            .replace(/\s+/g, ' ')
+            .replace(this.cleaningRegexCache.multipleSpaces, ' ')
             .trim();
 
         // Paso 5: Eliminar caracteres especiales innecesarios al inicio y final (excepto para emails)
         if (!cleanText.includes('@')) {
             cleanText = cleanText
-                .replace(/^[^\w\s]+/, '') // Eliminar caracteres especiales al inicio
-                .replace(/[^\w\s]+$/, '') // Eliminar caracteres especiales al final
+                .replace(this.cleaningRegexCache.specialCharsStart, '') // Eliminar caracteres especiales al inicio
+                .replace(this.cleaningRegexCache.specialCharsEnd, '') // Eliminar caracteres especiales al final
                 .trim();
         }
 
         // Paso 6: Validación final - si queda muy poco contenido útil, devolver vacío
-        if (cleanText.length < 2 || /^[^a-zA-Z0-9@._-]+$/.test(cleanText)) {
+        if (cleanText.length < 2 || this.cleaningRegexCache.validationPattern.test(cleanText)) {
             return '';
         }
 
@@ -991,6 +1026,11 @@ class VoiceFormCommands {
                 // Si el contexto sugiere que se dijo "Eduard", mantenerlo
                 return 'Eduard';
             })
+            // Corrección específica para Favio vs Fabio
+            .replace(/\bfabio\b/gi, 'Favio')
+            .replace(/\bfabyo\b/gi, 'Favio')
+            .replace(/\bfabyo\b/gi, 'Favio')
+            .replace(/\bfabio\b/gi, 'Favio')
             // Otras correcciones comunes de nombres
             .replace(/\bmaria\b/gi, 'María')
             .replace(/\bjose\b/gi, 'José')
