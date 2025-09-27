@@ -12,11 +12,11 @@ export default function Arithmetic() {
     cameraActive, recording, confidence, rightDetected, leftDetected,
     samplesTarget, samplesCaptured, gestureMode, numeroVinculado, operacionVinculada,
     operando1, operador, operando2, loadingCalc, resultado, expresion, error,
-    activeTab, trainedGestures, chartData, showChart,
+    activeTab, trainedGestures,
     // setters
     setGestureMode, setNumeroVinculado, setOperacionVinculada,
     setOperando1, setOperador, setOperando2,
-    setActiveTab, setShowChart,
+    setActiveTab,
     // acciones
     startCamera, stopCamera, toggleRecording, saveGesture, saveGestureTwoHands, recognizeCurrent,
     clearOperation, calculateFromOperation, calcular,

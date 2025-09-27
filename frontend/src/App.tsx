@@ -7,6 +7,7 @@ import Arithmetic from './pages/Blackboard/Arithmetic/Arithmetic'
 import CoursePage from './pages/Courses/CoursePage'
 import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
+import Dashboard_admin from './pages/Dashboard-admin/UI/Dashboard_admin'
 
 // Contexto global para tema oscuro profundo
 interface ThemeContextType {
@@ -49,6 +50,7 @@ function App() {
           <Route path="/splash" element={<SplashScreen />} />
           <Route path="/auth" element={<AuthFlowPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin" element={<Dashboard_admin />} />
           <Route path="/models" element={<Models />} />
           <Route path="/arithmetic" element={<Arithmetic />} />
           <Route path="/courses/:slug" element={<CoursePage />} />
