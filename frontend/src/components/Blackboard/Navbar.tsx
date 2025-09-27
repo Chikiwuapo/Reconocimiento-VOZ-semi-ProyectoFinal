@@ -8,7 +8,6 @@ const navItems = [
   { to: '/models', label: 'Modelos' },
   { to: '/arithmetic/capture', label: 'Capturar' },
   { to: '/arithmetic/train', label: 'Entrenar' },
-  { to: '/arithmetic/practice', label: 'Practicar' },
 ]
 
 export default function Navbar({ notifications = 0, isDarkMode = false, toggleDarkMode }: { notifications?: number, isDarkMode?: boolean, toggleDarkMode?: () => void }) {

@@ -7,7 +7,7 @@ import HeroUnified from '../../components/Blackboard/HeroUnified'
 import MissionsPanel from '../../components/Blackboard/MissionsPanel'
 import { useUserStore } from '../../auth/userStore'
 import { useTheme } from '../../App'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useMemo, useState} from 'react'
 export default function Dashboard() {
@@ -34,8 +34,9 @@ export default function Dashboard() {
   
   const watchedCourses: Course[] = useMemo(() => user.watchedCourses, [user.watchedCourses])
   
-  const [detailId, setDetailId] = useState<string | null>(null)
+  const [detailId, setDetailId] = useState<string | null>(null) 
   const currentModel = models.find(m => m.id === detailId) || null
+  const navigate = useNavigate()
 
   // Favoritos se gestionan dentro de los componentes cuando sea necesario usando toggleFavorite
 
@@ -116,15 +117,18 @@ export default function Dashboard() {
                 imageUrl={m.imageUrl}
                 favorite={m.favorite}
                 onToggleFavorite={() => toggleFavorite(m.id)}
-                onTrain={() => { 
-                  ensureCountForModel(m.id); 
-                  // Navegar directamente a la página de práctica
-                  window.location.href = '/arithmetic/practice'
+                onTrain={() => {
+                  ensureCountForModel(m.id)
+                  const base = (m.features?.[0] || m.title || '').toLowerCase()
+                  let path = '/arithmetic/practice/operaciones'
+                  if (base.includes('vocal')) path = '/arithmetic/practice/vocales'
+                  else if (base.includes('letra') || base.includes('abecedario')) path = '/arithmetic/practice/abecedario'
+                  else if (base.includes('númer') || base.includes('numero') || base.includes('numeros')) path = '/arithmetic/practice/numeros'
+                  else if (base.includes('aritm') || base.includes('operacion') || base.includes('operación') || base.includes('operaciones') || base.includes('matem')) path = '/arithmetic/practice/operaciones'
+                  else if (base.includes('palabra')) path = '/arithmetic/practice/palabras'
+                  navigate(path)
                 }}
-                onViewDetails={() => {
-                  // Navegar directamente a la página de captura
-                  window.location.href = '/arithmetic/capture'
-                }}
+                onViewDetails={() => setDetailId(m.id)}
                 isDarkMode={isDarkMode}
               />
             ))}

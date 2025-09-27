@@ -5,7 +5,11 @@ import Blackboard from './pages/Blackboard/Blackboard'
 import Models from './pages/Blackboard/Models'
 import CaptureSamples from './pages/Blackboard/Arithmetic/CaptureSamples'
 import TrainModel from './pages/Blackboard/Arithmetic/TrainModel'
-import PracticeModel from './pages/Blackboard/Arithmetic/PracticeModel'
+import PracticeOperations from './pages/Blackboard/Arithmetic/practice/PracticeOperations'
+import PracticeVocales from './pages/Blackboard/Arithmetic/practice/PracticeVocales'
+import PracticeAbecedario from './pages/Blackboard/Arithmetic/practice/PracticeAbecedario'
+import PracticeNumeros from './pages/Blackboard/Arithmetic/practice/PracticeNumeros'
+import PracticePalabras from './pages/Blackboard/Arithmetic/practice/PracticePalabras'
 import CoursePage from './pages/Courses/CoursePage'
 import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
@@ -53,8 +57,12 @@ function App() {
           <Route path="/blackboard" element={<Blackboard />} />
           <Route path="/models" element={<Models />} />
           <Route path="/arithmetic/capture" element={<CaptureSamples />} />
-                <Route path="/arithmetic/train" element={<TrainModel />} />
-                <Route path="/arithmetic/practice" element={<PracticeModel />} />
+          <Route path="/arithmetic/train" element={<TrainModel />} />
+          <Route path="/arithmetic/practice/operaciones" element={<PracticeOperations />} />
+          <Route path="/arithmetic/practice/vocales" element={<PracticeVocales />} />
+          <Route path="/arithmetic/practice/abecedario" element={<PracticeAbecedario />} />
+          <Route path="/arithmetic/practice/numeros" element={<PracticeNumeros />} />
+          <Route path="/arithmetic/practice/palabras" element={<PracticePalabras />} />
           <Route path="/courses/:slug" element={<CoursePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
