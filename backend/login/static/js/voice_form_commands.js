@@ -381,7 +381,36 @@ Atajo: Ctrl+Shift+V para activar/desactivar
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar si estamos en la página de registro
     if (document.querySelector('input[name="nombres"]')) {
-        window.voiceFormCommands = new VoiceFormCommands();
-        console.log('Sistema de comandos de voz inicializado');
+        // Verificar si el usuario ha completado el proceso de consentimiento de voz
+        const voiceConsent = localStorage.getItem('voiceCommandsEnabled');
+        
+        // Solo inicializar si hay consentimiento Y registro completado
+        if (voiceConsent === 'true') {
+            // Verificar si realmente completó el proceso de registro de voz
+            const hasVoiceRegistration = sessionStorage.getItem('voice_registration_completed');
+            
+            if (hasVoiceRegistration) {
+                window.voiceFormCommands = new VoiceFormCommands();
+                console.log('Sistema de comandos de voz inicializado');
+            } else {
+                console.log('Comandos de voz no disponibles: registro de voz no completado');
+                // Limpiar consentimiento inválido
+                localStorage.removeItem('voiceCommandsEnabled');
+            }
+        } else {
+            console.log('Comandos de voz no disponibles: consentimiento no otorgado');
+        }
+        
+        // Escuchar el evento de registro de voz exitoso
+        document.addEventListener('voiceRegistered', function() {
+            console.log('Evento voiceRegistered recibido en voice_form_commands');
+            // Marcar que el registro se completó exitosamente
+            sessionStorage.setItem('voice_registration_completed', 'true');
+            // Inicializar comandos de voz si no están ya inicializados
+            if (!window.voiceFormCommands) {
+                window.voiceFormCommands = new VoiceFormCommands();
+                console.log('Sistema de comandos de voz inicializado después del registro');
+            }
+        });
     }
 });

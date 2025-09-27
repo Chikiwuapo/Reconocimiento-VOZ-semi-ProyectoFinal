@@ -29,4 +29,5 @@ urlpatterns = [
     path('api/recognize_command/', views.recognize_command, name='recognize_command'),
     path('api/voice_status/', views.voice_status, name='voice_status'),
     path('api/voice_profile/<int:profile_id>/', views.delete_voice_profile, name='delete_voice_profile'),
+    path('api/check_registered_users/', views.check_registered_users, name='check_registered_users'),
 ]

@@ -33,6 +33,23 @@ class RegisterManager {
         
         // Listeners específicos del registro
         this.addRegistrationListeners();
+        
+        // Inicializar el sistema de registro de voz
+        this.initVoiceRegistration();
+    }
+
+    initVoiceRegistration() {
+        // La funcionalidad de registro de voz se maneja en voice_register.js
+        if (typeof VoiceRegistration !== 'undefined') {
+            window.voiceRegistration = new VoiceRegistration();
+            
+            // Obtener el pending token del elemento de datos en el HTML
+            const pendingTokenElement = document.querySelector('[data-pending-token]');
+            if (pendingTokenElement) {
+                const pendingToken = pendingTokenElement.getAttribute('data-pending-token');
+                window.voiceRegistration.setPendingToken(pendingToken);
+            }
+        }
     }
 
     animatePageLoad() {

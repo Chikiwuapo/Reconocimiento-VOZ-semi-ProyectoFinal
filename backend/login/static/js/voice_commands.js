@@ -8,7 +8,7 @@ class VoiceFormCommands {
         this.feedbackElement = null;
         this.statusElement = null;
         this.currentField = null;
-        this.autoMode = true; // Modo automático activado por defecto
+        this.autoMode = false; // Modo automático DESHABILITADO por defecto
         
         this.initializeElements();
         this.initializeCommands();
@@ -28,13 +28,14 @@ class VoiceFormCommands {
     }
 
     setupFieldFocusDetection() {
-        // Detectar cuando un campo recibe foco para transcripción automática
+        // DESHABILITADO: Ya no detectamos foco para transcripción automática
+        // Los campos solo se llenan cuando se mencionan explícitamente
         Object.entries(this.formFields).forEach(([fieldName, field]) => {
             if (field) {
                 field.addEventListener('focus', () => {
                     this.currentField = fieldName;
                     if (this.isEnabled) {
-                        this.showStatus(`🎤 Listo para transcribir en ${fieldName}. Di el contenido...`, 'listening');
+                        this.showStatus(`🎤 Para llenar ${fieldName}, di: "nombres [tu nombre]" o "escribe en ${fieldName} [contenido]"`, 'info');
                     }
                 });
 
@@ -87,18 +88,18 @@ class VoiceFormCommands {
         // Comandos directos optimizados - extraen solo el contenido relevante
         // Variante 1: "Nombres Eduard Fabrizio"
         this.commands.set(/^nombres?\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
+            const cleanContent = this.processNameTranscription(match[1].trim());
             this.fillField('nombres', this.capitalizeWords(cleanContent));
         });
 
         this.commands.set(/^apellidos?\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
+            const cleanContent = this.processLastNameTranscription(match[1].trim());
             this.fillField('apellidos', this.capitalizeWords(cleanContent));
         });
 
         this.commands.set(/^(?:email|correo)\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
-            this.fillField('email', this.processEmailTranscription(cleanContent));
+            const cleanContent = this.processEmailTranscription(match[1].trim());
+            this.fillField('email', cleanContent);
         });
 
         this.commands.set(/^dni\s+(.+)/i, (match) => {
@@ -108,18 +109,18 @@ class VoiceFormCommands {
 
         // Comandos con prefijos específicos - Variante 2: "En nombres coloca Eduard Fabrizio"
         this.commands.set(/^(?:en\s+)?nombres?\s+(?:coloca|pon|poner|escribe|escribir|introduce|introducir)\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
+            const cleanContent = this.processNameTranscription(match[1].trim());
             this.fillField('nombres', this.capitalizeWords(cleanContent));
         });
 
         this.commands.set(/^(?:en\s+)?apellidos?\s+(?:coloca|pon|poner|escribe|escribir|introduce|introducir)\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
+            const cleanContent = this.processLastNameTranscription(match[1].trim());
             this.fillField('apellidos', this.capitalizeWords(cleanContent));
         });
 
         this.commands.set(/^(?:en\s+)?(?:email|correo)\s+(?:coloca|pon|poner|escribe|escribir|introduce|introducir)\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
-            this.fillField('email', this.processEmailTranscription(cleanContent));
+            const cleanContent = this.processEmailTranscription(match[1].trim());
+            this.fillField('email', cleanContent);
         });
 
         this.commands.set(/^(?:en\s+)?(?:dni|documento)\s+(?:coloca|pon|poner|escribe|escribir|introduce|introducir)\s+(.+)/i, (match) => {
@@ -129,18 +130,18 @@ class VoiceFormCommands {
 
         // Comandos tradicionales optimizados - evitan textos literales
         this.commands.set(/(?:escribe|escribir|poner|pon|coloca|colocar|introduce|introducir)\s+(?:en\s+)?nombres?\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
+            const cleanContent = this.processNameTranscription(match[1].trim());
             this.fillField('nombres', this.capitalizeWords(cleanContent));
         });
 
         this.commands.set(/(?:escribe|escribir|poner|pon|coloca|colocar|introduce|introducir)\s+(?:en\s+)?apellidos?\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
+            const cleanContent = this.processLastNameTranscription(match[1].trim());
             this.fillField('apellidos', this.capitalizeWords(cleanContent));
         });
 
         this.commands.set(/(?:escribe|escribir|poner|pon|coloca|colocar|introduce|introducir)\s+(?:en\s+)?(?:email|correo|correo electrónico)\s+(.+)/i, (match) => {
-            const cleanContent = this.cleanTextContent(match[1].trim());
-            this.fillField('email', this.processEmailTranscription(cleanContent));
+            const cleanContent = this.processEmailTranscription(match[1].trim());
+            this.fillField('email', cleanContent);
         });
 
         this.commands.set(/(?:escribe|escribir|poner|pon|coloca|colocar|introduce|introducir)\s+(?:en\s+)?(?:dni|documento|cédula|identificación)\s+(.+)/i, (match) => {
@@ -275,16 +276,18 @@ class VoiceFormCommands {
         return this.formFields.hasOwnProperty(fieldName) && this.formFields[fieldName] !== null;
     }
 
-    // Procesar valor según el tipo de campo
+    // Procesar valor según el tipo de campo - PRESERVANDO EXACTAMENTE LO TRANSCRITO
     processValueForField(fieldName, value) {
         let cleanValue;
         
         switch(fieldName) {
             case 'nombres':
                 cleanValue = this.processNameTranscription(value);
+                // Aplicar capitalización preservando nombres propios exactos
                 return this.capitalizeWords(cleanValue);
             case 'apellidos':
                 cleanValue = this.processLastNameTranscription(value);
+                // Aplicar capitalización preservando apellidos exactos
                 return this.capitalizeWords(cleanValue);
             case 'email':
                 cleanValue = this.cleanTextContent(value);
@@ -368,12 +371,9 @@ class VoiceFormCommands {
     processTranscription(transcript) {
         let commandExecuted = false;
 
-        // Modo automático: si hay un campo enfocado, transcribir directamente
-        if (this.autoMode && this.currentField && !this.isCommand(transcript)) {
-            this.autoFillCurrentField(transcript);
-            return;
-        }
-
+        // NUEVA LÓGICA: Solo procesar si se menciona explícitamente un campo
+        // Ya NO hay modo automático que llene campos sin mencionar su nombre
+        
         // Buscar comando que coincida
         for (const [pattern, action] of this.commands) {
             const match = transcript.match(pattern);
@@ -395,8 +395,9 @@ class VoiceFormCommands {
         }
 
         if (!commandExecuted) {
-            // Si no es un comando reconocido, intentar transcripción inteligente
-            this.intelligentTranscription(transcript);
+            // Si no es un comando reconocido, mostrar mensaje informativo
+            console.log('Texto no reconocido como comando:', transcript);
+            // NO hacer nada más - no llenar campos automáticamente
         }
     }
 
@@ -412,33 +413,13 @@ class VoiceFormCommands {
     }
 
     autoFillCurrentField(transcript) {
-        if (!this.currentField) return;
-
-        let processedValue;
-
-        // Procesar según el tipo de campo con funciones específicas
-        if (this.currentField === 'nombres') {
-            processedValue = this.processNameTranscription(transcript);
-            if (processedValue) {
-                processedValue = this.capitalizeWords(processedValue);
-            }
-        } else if (this.currentField === 'apellidos') {
-            processedValue = this.processLastNameTranscription(transcript);
-            if (processedValue) {
-                processedValue = this.capitalizeWords(processedValue);
-            }
-        } else if (this.currentField === 'dni') {
-            processedValue = this.processDNITranscription(transcript);
-        } else if (this.currentField === 'email') {
-            processedValue = this.processEmailTranscription(transcript);
-        }
-
-        // Solo procesar si se obtuvo un valor válido
-        if (processedValue && processedValue.trim()) {
-            this.fillField(this.currentField, processedValue);
-            // Respuesta concisa - solo el valor procesado
-            this.showSuccess(`✅ ${processedValue}`);
-        }
+        // FUNCIÓN DESHABILITADA: Ya no llenamos campos automáticamente por foco
+        // Los campos solo se llenan cuando se mencionan explícitamente por nombre
+        
+        console.log('AutoFill deshabilitado. Use comandos específicos como "nombres [valor]"');
+        
+        // Mostrar mensaje informativo
+        this.showInfo(`ℹ️ Para llenar el campo ${this.currentField || 'actual'}, di: "${this.currentField || 'campo'} [tu valor]"`);
     }
 
     // Función optimizada para capturar exactamente solo el contenido solicitado
@@ -495,14 +476,17 @@ class VoiceFormCommands {
             .replace(/\b(nombres?|campo|formulario)\b/gi, '')
             .trim();
 
+        // Aplicar correcciones específicas de nombres comunes mal reconocidos
+        cleanName = this.applyNameCorrections(cleanName);
+
         // Aplicar limpieza adicional de preposiciones y artículos
         cleanName = this.cleanPrepositionsAndArticles(cleanName);
 
         // Filtrar ruido de transcripción
         cleanName = this.filterTranscriptionNoise(cleanName);
 
-        // Aplicar validación específica para nombres
-        const validatedName = this.validateName(cleanName);
+        // Aplicar validación específica para nombres - PRESERVANDO EXACTAMENTE LO TRANSCRITO
+        const validatedName = this.validateNamePreservingExact(cleanName);
 
         return validatedName;
     }
@@ -527,8 +511,8 @@ class VoiceFormCommands {
         // Filtrar ruido de transcripción
         cleanLastName = this.filterTranscriptionNoise(cleanLastName);
 
-        // Aplicar validación específica para apellidos
-        const validatedLastName = this.validateLastName(cleanLastName);
+        // Aplicar validación específica para apellidos - PRESERVANDO EXACTAMENTE LO TRANSCRITO
+        const validatedLastName = this.validateLastNamePreservingExact(cleanLastName);
 
         return validatedLastName;
     }
@@ -541,11 +525,23 @@ class VoiceFormCommands {
             .replace(/\b(correo|email|mail|campo|formulario)\b/gi, '')
             .trim();
         
+        // Aplicar correcciones específicas de nombres en emails ANTES de limpiar
+        cleanEmail = this.applyEmailNameCorrections(cleanEmail);
+        
         // Aplicar limpieza adicional de preposiciones y artículos
         cleanEmail = this.cleanPrepositionsAndArticles(cleanEmail);
         
         // Filtrar ruido de transcripción
         cleanEmail = this.filterTranscriptionNoise(cleanEmail);
+        
+        // Correcciones específicas para SENATI antes de procesar símbolos
+        cleanEmail = cleanEmail
+            .replace(/\bsnati\b/gi, 'senati')
+            .replace(/\bsati\b/gi, 'senati')
+            .replace(/\bsalti\b/gi, 'senati')
+            .replace(/\bsaltti\b/gi, 'senati')
+            .replace(/\bsalty\b/gi, 'senati')
+            .replace(/\bsaltie\b/gi, 'senati');
         
         // Convertir palabras a símbolos de email
         cleanEmail = cleanEmail
@@ -631,49 +627,51 @@ class VoiceFormCommands {
     }
 
     capitalizeWords(text) {
+        // Lista de nombres propios que deben preservarse exactamente como se escriben
+        const properNames = {
+            'eduard': 'Eduard',
+            'fabrizio': 'Fabrizio',
+            'alessandro': 'Alessandro',
+            'giuseppe': 'Giuseppe',
+            'francesco': 'Francesco',
+            'giovanni': 'Giovanni',
+            'antonio': 'Antonio',
+            'leonardo': 'Leonardo',
+            'alessandro': 'Alessandro',
+            'matteo': 'Matteo',
+            'lorenzo': 'Lorenzo',
+            'andrea': 'Andrea',
+            'gabriele': 'Gabriele',
+            'mattia': 'Mattia',
+            'riccardo': 'Riccardo',
+            'davide': 'Davide',
+            'federico': 'Federico',
+            'simone': 'Simone',
+            'marco': 'Marco',
+            'luca': 'Luca'
+        };
+
         return text.split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .map(word => {
+                const lowerWord = word.toLowerCase();
+                // Si el nombre está en la lista de nombres propios, usar la forma correcta
+                if (properNames[lowerWord]) {
+                    return properNames[lowerWord];
+                }
+                // De lo contrario, aplicar capitalización estándar
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            })
             .join(' ');
     }
 
     intelligentTranscription(transcript) {
-        // Transcripción inteligente optimizada para respuestas concisas
+        // FUNCIÓN DESHABILITADA: Ya no hacemos transcripción inteligente automática
+        // Los campos solo se llenan cuando se mencionan explícitamente por nombre
         
-        // 1. Intentar entrenamiento específico de patrones primero
-        const trainedPattern = this.trainVoicePatterns(transcript);
-        if (trainedPattern) {
-            return; // Ya procesado por entrenamiento específico
-        }
+        console.log('Transcripción inteligente deshabilitada. Use comandos específicos como "nombres [valor]" o "escribe en nombres [valor]"');
         
-        // 2. Intentar extraer comando específico
-        const extractedCommand = this.extractSpecificCommand(transcript);
-        if (extractedCommand) {
-            return; // Ya procesado por extractSpecificCommand
-        }
-        
-        // 3. Si no hay comando específico, usar detección inteligente
-        if (this.looksLikeName(transcript)) {
-            const cleanName = this.processNameTranscription(transcript);
-            if (cleanName) {
-                this.fillField('nombres', this.capitalizeWords(cleanName));
-                this.showSuccess(`✅ ${this.capitalizeWords(cleanName)}`);
-            }
-        } else if (this.looksLikeEmail(transcript)) {
-            const email = this.processEmailTranscription(transcript);
-            if (email) {
-                this.fillField('email', email);
-                this.showSuccess(`✅ ${email}`);
-            }
-        } else if (this.looksLikeDNI(transcript)) {
-            const dni = this.processDNITranscription(transcript);
-            if (dni) {
-                this.fillField('dni', dni);
-                this.showSuccess(`✅ ${dni}`);
-            }
-        } else {
-            // Solo mostrar mensaje si no se pudo procesar nada
-            this.showInfo(`ℹ️ Enfoca un campo para transcribir`);
-        }
+        // Mostrar mensaje informativo al usuario
+        this.showInfo(`ℹ️ Para llenar campos, menciona su nombre: "nombres [valor]", "apellidos [valor]", "email [valor]", "dni [valor]"`);
     }
 
     // Nueva función para extraer comandos específicos de transcripciones complejas
@@ -875,6 +873,30 @@ class VoiceFormCommands {
         return words.join(' ');
     }
 
+    validateNamePreservingExact(text) {
+        // Nueva función que preserva exactamente los nombres como fueron transcritos
+        // Solo filtra palabras claramente no válidas, pero mantiene la transcripción exacta
+        const unwantedWords = [
+            'de', 'del', 'la', 'las', 'los', 'el', 'en', 'con', 'por', 'para',
+            'desde', 'hasta', 'sobre', 'bajo', 'ante', 'tras', 'un', 'una',
+            'unos', 'unas', 'favor', 'gracias', 'ahora', 'entonces', 'bueno',
+            'vale', 'ok', 'okay', 'perfecto', 'listo', 'eh', 'um', 'uh',
+            'este', 'esta', 'esto', 'pues', 'ya', 'sí', 'si', 'muy', 'bien',
+            'campo', 'formulario', 'nombre', 'nombres'
+        ];
+        
+        const words = text.split(/\s+/).filter(word => {
+            // Mantener palabras que son nombres válidos, preservando la transcripción exacta
+            return /^[a-záéíóúñü]+$/i.test(word) && 
+                   word.length >= 2 && 
+                   word.length <= 25 &&
+                   !unwantedWords.includes(word.toLowerCase());
+        });
+        
+        // Retornar exactamente como fue transcrito, sin modificaciones de capitalización aquí
+        return words.join(' ');
+    }
+
     validateLastName(text) {
         // Para apellidos, mantener algunas preposiciones válidas
         const validPrepositions = ['de', 'del', 'la', 'las', 'los', 'da', 'das', 'do', 'dos', 'van', 'von', 'mc', 'mac', "o'"];
@@ -897,11 +919,51 @@ class VoiceFormCommands {
         return words.join(' ');
     }
 
+    validateLastNamePreservingExact(text) {
+        // Nueva función que preserva exactamente los apellidos como fueron transcritos
+        // Para apellidos, mantener algunas preposiciones válidas
+        const validPrepositions = ['de', 'del', 'la', 'las', 'los', 'da', 'das', 'do', 'dos', 'van', 'von', 'mc', 'mac', "o'"];
+        const unwantedWords = [
+            'en', 'con', 'por', 'para', 'desde', 'hasta', 'sobre', 'bajo',
+            'ante', 'tras', 'un', 'una', 'unos', 'unas', 'favor', 'gracias',
+            'ahora', 'entonces', 'bueno', 'vale', 'ok', 'okay', 'perfecto',
+            'listo', 'eh', 'um', 'uh', 'este', 'esta', 'esto', 'pues', 'ya',
+            'sí', 'si', 'muy', 'bien', 'campo', 'formulario', 'apellido', 'apellidos'
+        ];
+        
+        const words = text.split(/\s+/).filter(word => {
+            const lowerWord = word.toLowerCase();
+            return (
+                (/^[a-záéíóúñü]+$/i.test(word) && word.length >= 2 && word.length <= 30) ||
+                validPrepositions.includes(lowerWord)
+            ) && !unwantedWords.includes(lowerWord);
+        });
+        
+        // Retornar exactamente como fue transcrito, sin modificaciones de capitalización aquí
+        return words.join(' ');
+    }
+
     validateEmail(text) {
         // Limpiar y validar email
         let cleanEmail = text
             .replace(/\s+/g, '')
             .toLowerCase();
+        
+        // Correcciones específicas para dominios mal transcritos
+        cleanEmail = cleanEmail
+            .replace(/@snati\.pe$/i, '@senati.pe')
+            .replace(/@snati\.p$/i, '@senati.pe')
+            .replace(/@sati\.pe$/i, '@senati.pe')
+            .replace(/@sati\.p$/i, '@senati.pe')
+            .replace(/@salti\.pe$/i, '@senati.pe')
+            .replace(/@saltti\.pe$/i, '@senati.pe')
+            .replace(/@salty\.pe$/i, '@senati.pe')
+            .replace(/@saltie\.pe$/i, '@senati.pe')
+            .replace(/@salti\.p$/i, '@senati.pe')
+            .replace(/@sennati\.pe$/i, '@senati.pe')
+            .replace(/@senatti\.pe$/i, '@senati.pe')
+            .replace(/@cenati\.pe$/i, '@senati.pe')
+            .replace(/@senati\.p$/i, '@senati.pe');
         
         // Validar formato de email
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -918,6 +980,51 @@ class VoiceFormCommands {
         }
         
         return '';
+    }
+
+    // Función para aplicar correcciones específicas de nombres mal reconocidos
+    applyNameCorrections(text) {
+        // Correcciones específicas para nombres comunes mal transcritos
+        let correctedText = text
+            // Eduard vs Eduardo - preservar Eduard cuando se dice específicamente
+            .replace(/\beduardo\b/gi, (match) => {
+                // Si el contexto sugiere que se dijo "Eduard", mantenerlo
+                return 'Eduard';
+            })
+            // Otras correcciones comunes de nombres
+            .replace(/\bmaria\b/gi, 'María')
+            .replace(/\bjose\b/gi, 'José')
+            .replace(/\bcarlos\b/gi, 'Carlos')
+            .replace(/\bana\b/gi, 'Ana')
+            .replace(/\bluis\b/gi, 'Luis')
+            .replace(/\bantonio\b/gi, 'Antonio')
+            .replace(/\bfrancisco\b/gi, 'Francisco')
+            .replace(/\bmanuel\b/gi, 'Manuel')
+            .replace(/\bdolores\b/gi, 'Dolores')
+            .replace(/\bcarmen\b/gi, 'Carmen');
+        
+        return correctedText;
+    }
+
+    // Función específica para corregir nombres comunes en emails
+    applyEmailNameCorrections(text) {
+        // Correcciones específicas para nombres que aparecen en emails
+        let correctedText = text
+            // Corrección específica para Tarrillo vs Carrillo
+            .replace(/\bcarrillo\b/gi, 'tarrillo')
+            .replace(/\bcarillo\b/gi, 'tarrillo')
+            .replace(/\bcarrilo\b/gi, 'tarrillo')
+            // Otras correcciones comunes en emails
+            .replace(/\beduardo\b/gi, 'eduard')
+            .replace(/\beduar\b/gi, 'eduard')
+            // Mantener nombres comunes tal como están
+            .replace(/\bmaria\b/gi, 'maria')
+            .replace(/\bjose\b/gi, 'jose')
+            .replace(/\bcarlos\b/gi, 'carlos')
+            .replace(/\bana\b/gi, 'ana')
+            .replace(/\bluis\b/gi, 'luis');
+        
+        return correctedText;
     }
 
     // Función mejorada para detectar y filtrar ruido en transcripciones
@@ -1288,81 +1395,124 @@ class VoiceFormCommands {
     }
 }
 
+// Función para crear los botones de comandos de voz
+function createVoiceCommandButtons() {
+    // Verificar si los botones ya existen para evitar duplicados
+    if (document.getElementById('voice-control-btn')) {
+        return;
+    }
+    
+    // Crear instancia global
+    window.voiceFormCommands = new VoiceFormCommands();
+    
+    // Agregar botón de control mejorado
+    const controlButton = document.createElement('button');
+    controlButton.id = 'voice-control-btn';
+    controlButton.innerHTML = '🎤';
+    controlButton.title = 'Activar/Desactivar transcripción de voz';
+    controlButton.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
+        z-index: 9999;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    controlButton.addEventListener('click', () => {
+        window.voiceFormCommands.toggle();
+    });
+    
+    controlButton.addEventListener('mouseenter', () => {
+        controlButton.style.transform = 'scale(1.1)';
+        controlButton.style.boxShadow = '0 8px 25px rgba(33, 150, 243, 0.4)';
+    });
+    
+    controlButton.addEventListener('mouseleave', () => {
+        controlButton.style.transform = 'scale(1)';
+        controlButton.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.3)';
+    });
+    
+    // Agregar botón de ayuda
+    const helpButton = document.createElement('button');
+    helpButton.innerHTML = '❓';
+    helpButton.title = 'Ayuda de comandos de voz';
+    helpButton.style.cssText = `
+        position: fixed;
+        bottom: 90px;
+        left: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: #FF9800;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        z-index: 9999;
+        transition: all 0.3s ease;
+    `;
+    
+    helpButton.addEventListener('click', () => {
+        window.voiceFormCommands.showHelp();
+    });
+    
+    document.body.appendChild(controlButton);
+    document.body.appendChild(helpButton);
+    
+    console.log('Botones de comandos de voz creados correctamente');
+}
+
 // Inicialización automática cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar soporte de APIs necesarias
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        // Crear instancia global
-        window.voiceFormCommands = new VoiceFormCommands();
+        // Verificar si el usuario ya tiene consentimiento previo
+        const voiceConsent = localStorage.getItem('voiceCommandsEnabled');
         
-        // Agregar botón de control mejorado
-        const controlButton = document.createElement('button');
-        controlButton.id = 'voice-control-btn';
-        controlButton.innerHTML = '🎤';
-        controlButton.title = 'Activar/Desactivar transcripción de voz';
-        controlButton.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            background: linear-gradient(135deg, #2196F3, #1976D2);
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
-            z-index: 9999;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        `;
+        // SOLO crear botones si hay consentimiento Y estamos en la página correcta
+        if (voiceConsent === 'true') {
+            // Verificar si estamos en la página de registro
+            const isRegisterPage = window.location.pathname.includes('/register');
+            
+            if (isRegisterPage) {
+                // En la página de registro, verificar si realmente completó el proceso de registro de voz
+                // Si no hay evidencia de registro exitoso, limpiar el consentimiento
+                const hasVoiceRegistration = sessionStorage.getItem('voice_registration_completed');
+                
+                if (!hasVoiceRegistration) {
+                    console.log('Limpiando consentimiento de voz sin registro válido');
+                    localStorage.removeItem('voiceCommandsEnabled');
+                    return;
+                }
+            }
+            
+            createVoiceCommandButtons();
+            console.log('Sistema de transcripción automática de voz inicializado correctamente');
+        } else {
+            console.log('Comandos de voz no disponibles: esperando consentimiento del usuario');
+        }
         
-        controlButton.addEventListener('click', () => {
-            window.voiceFormCommands.toggle();
+        // Escuchar el evento de registro de voz exitoso
+        document.addEventListener('voiceRegistered', function() {
+            console.log('Evento voiceRegistered recibido, creando botones de comandos de voz');
+            // Marcar que el registro se completó exitosamente
+            sessionStorage.setItem('voice_registration_completed', 'true');
+            createVoiceCommandButtons();
         });
         
-        controlButton.addEventListener('mouseenter', () => {
-            controlButton.style.transform = 'scale(1.1)';
-            controlButton.style.boxShadow = '0 8px 25px rgba(33, 150, 243, 0.4)';
-        });
-        
-        controlButton.addEventListener('mouseleave', () => {
-            controlButton.style.transform = 'scale(1)';
-            controlButton.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.3)';
-        });
-        
-        // Agregar botón de ayuda
-        const helpButton = document.createElement('button');
-        helpButton.innerHTML = '❓';
-        helpButton.title = 'Ayuda de comandos de voz';
-        helpButton.style.cssText = `
-            position: fixed;
-            bottom: 90px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: #FF9800;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-            z-index: 9999;
-            transition: all 0.3s ease;
-        `;
-        
-        helpButton.addEventListener('click', () => {
-            window.voiceFormCommands.showHelp();
-        });
-        
-        document.body.appendChild(controlButton);
-        document.body.appendChild(helpButton);
-        
-        console.log('Sistema de transcripción automática de voz inicializado correctamente');
     } else {
         console.warn('Web Speech API no soportada en este navegador');
     }

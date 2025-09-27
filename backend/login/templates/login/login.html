@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Facial - AriasDigitalSoft</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'login/css/login.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -33,6 +33,7 @@
                 <div class="actions">
                     <input type="email" id="email" class="input" placeholder="Tu email" />
                     <button id="btnLogin" class="btn primary" disabled>Iniciar sesión (facial)</button>
+                    <button id="btnActivateVoice" class="btn secondary" style="display: none;">Activar comandos de voz</button>
                     <a class="btn ghost" href="/register/">Crear cuenta</a>
                 </div>
             </div>
@@ -59,6 +60,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
     <script src="/static/js/facemesh.js"></script>
+    <script src="/static/js/voice_login.js"></script>
+    <script src="{% static 'js/voice_activation.js' %}"></script>
     <script>
         // Configuración de modo login
         window.FaceApp.init({

@@ -188,6 +188,17 @@ class VoiceRegistration {
     startCountdown() {
         let timeLeft = this.RECORD_SECONDS;
         
+        // Agregar clase de grabación activa al modal
+        if (this.voiceRecordingModal) {
+            this.voiceRecordingModal.classList.add('recording-active');
+        }
+        
+        // Agregar animación pulsante al botón de registro de voz
+        const voiceBtn = document.getElementById('btnVoiceRegister');
+        if (voiceBtn) {
+            voiceBtn.classList.add('recording');
+        }
+        
         this.countdownTimer = setInterval(() => {
             timeLeft--;
             
@@ -195,10 +206,26 @@ class VoiceRegistration {
                 this.countdownElement.textContent = timeLeft;
             }
             
-            // Actualizar barra de progreso
+            // Actualizar barra de progreso con animación suave
             const progress = ((this.RECORD_SECONDS - timeLeft) / this.RECORD_SECONDS) * 100;
             if (this.progressFill) {
                 this.progressFill.style.width = `${progress}%`;
+                
+                // Cambiar color de la barra según el progreso
+                if (progress > 80) {
+                    this.progressFill.style.background = '#ef4444'; // Rojo al final
+                } else if (progress > 50) {
+                    this.progressFill.style.background = '#f59e0b'; // Amarillo en la mitad
+                } else {
+                    this.progressFill.style.background = 'var(--accent)'; // Color normal
+                }
+            }
+            
+            // Efecto de parpadeo en los últimos 3 segundos
+            if (timeLeft <= 3 && timeLeft > 0) {
+                if (this.recordingText) {
+                    this.recordingText.style.animation = 'blink 0.5s infinite';
+                }
             }
             
             if (timeLeft <= 0) {
@@ -211,6 +238,21 @@ class VoiceRegistration {
         if (this.isRecording && this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
             this.mediaRecorder.stop();
             this.isRecording = false;
+        }
+
+        // Remover clases de animación
+        if (this.voiceRecordingModal) {
+            this.voiceRecordingModal.classList.remove('recording-active');
+        }
+        
+        const voiceBtn = document.getElementById('btnVoiceRegister');
+        if (voiceBtn) {
+            voiceBtn.classList.remove('recording');
+        }
+        
+        // Remover animación de parpadeo
+        if (this.recordingText) {
+            this.recordingText.style.animation = '';
         }
 
         // Limpiar timers
@@ -256,7 +298,9 @@ class VoiceRegistration {
             formData.append('audio', audioBlob, fileName);
             
             // Agregar pending token si existe
-            if (window.PENDING_TOKEN) {
+            if (this.pendingToken) {
+                formData.append('pending_token', this.pendingToken);
+            } else if (window.PENDING_TOKEN) {
                 formData.append('pending_token', window.PENDING_TOKEN);
             }
 
@@ -274,6 +318,8 @@ class VoiceRegistration {
 
             if (data.success) {
                 this.showSuccess('Voz registrada correctamente');
+                // Marcar que el registro se completó exitosamente
+                sessionStorage.setItem('voice_registration_completed', 'true');
                 // Actualizar UI para permitir comandos de voz
                 this.enableVoiceCommands();
                 // Disparar evento para habilitar comandos de voz

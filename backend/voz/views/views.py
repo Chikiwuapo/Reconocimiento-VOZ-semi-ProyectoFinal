@@ -7,12 +7,13 @@ from django.views import View
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.utils import timezone
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login as auth_login
 import json
 import uuid
 import os
 from ..models import Comando, Usuario, PendingRegistration, VoiceProfile
 from ..services.voz_service import voz_service
+from login.views.views import get_redirect_url_by_domain, is_admin_user
 
 def index(request):
     """
@@ -143,6 +144,38 @@ class ComandoAPIView(View):
             }, status=500)
 
 
+@require_http_methods(["GET"])
+def check_registered_users(request):
+    """
+    Endpoint para verificar si existen usuarios registrados con perfiles de voz activos.
+    Usado por login.html para determinar si mostrar el botón de activar comandos de voz.
+    """
+    try:
+        # Verificar si hay usuarios registrados en el sistema principal
+        from login.models.models import Usuario as UsuarioLogin
+        registered_users_count = UsuarioLogin.objects.count()
+        
+        # Verificar si hay perfiles de voz activos con consentimiento
+        active_voice_profiles = VoiceProfile.objects.filter(
+            is_active=True,
+            consent_given=True
+        ).count()
+        
+        return JsonResponse({
+            'success': True,
+            'has_registered_users': registered_users_count > 0,
+            'has_voice_profiles': active_voice_profiles > 0,
+            'registered_users_count': registered_users_count,
+            'voice_profiles_count': active_voice_profiles
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error interno: {str(e)}'
+        }, status=500)
+
+
 # ============================================================================
 # NUEVAS APIS PARA REGISTRO Y RECONOCIMIENTO DE VOZ
 # ============================================================================
@@ -260,6 +293,10 @@ def register_audio(request):
         
         # Guardar el perfil de voz (esto guardará todos los campos, incluyendo el consentimiento)
         voice_profile.save()
+        
+        # Marcar el registro pendiente como completado después del registro exitoso de voz
+        pending.is_completed = True
+        pending.save()
         
         # Actualizar token en sesión para uso futuro
         request.session['pending_token'] = str(pending.token)
@@ -574,14 +611,46 @@ def login_usuario(request):
                 'message': 'La frase de voz es requerida'
             })
         
-        # Buscar usuario por frase de voz
+        # Buscar usuario por frase de voz en el modelo de voz
         try:
-            usuario = Usuario.objects.get(frase_voz=frase_voz)
-            return JsonResponse({
+            usuario_voz = Usuario.objects.get(frase_voz=frase_voz)
+            
+            # Buscar el usuario correspondiente en el modelo de login usando el username
+            from login.models.models import Usuario as UsuarioLogin
+            try:
+                # Intentar buscar por email (asumiendo que username podría ser email)
+                usuario_login = UsuarioLogin.objects.get(email=usuario_voz.username)
+            except UsuarioLogin.DoesNotExist:
+                # Si no se encuentra por email, buscar por nombres o apellidos
+                usuario_login = UsuarioLogin.objects.filter(
+                    nombres__icontains=usuario_voz.username
+                ).first()
+                
+                if not usuario_login:
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': 'Usuario no encontrado en el sistema principal'
+                    })
+            
+            # Autenticar al usuario en la sesión
+            auth_login(request, usuario_login, backend='django.contrib.auth.backends.ModelBackend')
+            
+            # Determinar redirección basada en el dominio del email
+            redirect_url = get_redirect_url_by_domain(usuario_login.email)
+            response_data = {
                 'status': 'ok',
                 'message': 'Login exitoso',
-                'usuario': usuario.username
-            })
+                'usuario': usuario_voz.username,
+                'redirect': redirect_url
+            }
+            
+            # Agregar información adicional para administradores
+            if is_admin_user(usuario_login.email):
+                response_data['is_admin'] = True
+                response_data['username'] = usuario_login.nombres
+            
+            return JsonResponse(response_data)
+            
         except Usuario.DoesNotExist:
             return JsonResponse({
                 'status': 'error',

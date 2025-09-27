@@ -32,21 +32,31 @@
 
         // Usar las utilidades oficiales de MediaPipe para dibujar malla completa (tessellation) en blanco
         if (window.drawConnectors && window.FACEMESH_TESSELATION) {
-            drawConnectors(ctx, landmarks, FACEMESH_TESSELATION, { color: WHITE, lineWidth: 0.7 });
-            // Puntos visibles ligeramente
+            // Configuración mejorada para una máscara más natural y menos "chupada"
+            drawConnectors(ctx, landmarks, FACEMESH_TESSELATION, { 
+                color: WHITE, 
+                lineWidth: 0.5  // Reducido de 0.7 para líneas más sutiles
+            });
+            
+            // Puntos visibles con tamaño ajustado para mejor proporción
             if (window.drawLandmarks) {
-                drawLandmarks(ctx, landmarks, { color: WHITE, radius: 0.7 });
+                drawLandmarks(ctx, landmarks, { 
+                    color: WHITE, 
+                    radius: 0.5  // Reducido de 0.7 para puntos menos prominentes
+                });
             }
             return;
         }
 
-        // Fallback manual si las utilidades no cargan
-        ctx.lineWidth = 1.0;
+        // Fallback manual mejorado si las utilidades no cargan
+        ctx.lineWidth = 0.8;  // Reducido de 1.0 para líneas más naturales
         ctx.strokeStyle = WHITE;
         ctx.fillStyle = WHITE;
+        
+        // Dibujar puntos con tamaño más natural
         for (const lm of landmarks) {
             ctx.beginPath();
-            ctx.arc(lm.x * canvas.width, lm.y * canvas.height, 1.0, 0, Math.PI * 2);
+            ctx.arc(lm.x * canvas.width, lm.y * canvas.height, 0.8, 0, Math.PI * 2);  // Reducido de 1.0
             ctx.fill();
         }
     }
@@ -99,6 +109,18 @@
 
         let faceReady = false;
         let lastBox = null;
+        
+        // Función para emitir eventos de cambio de estado facial
+        function updateFaceReadyState(newState) {
+            if (faceReady !== newState) {
+                faceReady = newState;
+                // Emitir evento personalizado para que los sistemas de voz puedan reaccionar
+                const event = new CustomEvent('faceStatusChanged', {
+                    detail: { ready: faceReady }
+                });
+                document.dispatchEvent(event);
+            }
+        }
 
         async function initCamera() {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
@@ -137,11 +159,11 @@
                 lastBox = { xMin, yMin, xMax, yMax };
                 const pos = computePositionFromBox(lastBox, canvas.width, canvas.height);
                 // estado de distancia simple
-                if (pos.scale < 0.25) { updateStatus('Muy lejos'); faceReady = false; }
-                else { updateStatus('Rostro listo'); faceReady = true; }
+                if (pos.scale < 0.25) { updateStatus('Muy lejos'); updateFaceReadyState(false); }
+                else { updateStatus('Rostro listo'); updateFaceReadyState(true); }
             } else {
                 updateStatus('Buscando rostro...');
-                faceReady = false;
+                updateFaceReadyState(false);
                 lastBox = null;
             }
             enableButton(faceReady);
@@ -153,20 +175,43 @@
 
         // Persistencia (frontend-only): email y formulario de registro
         if (emailEl) {
-            // Cargar email guardado
-            try { const saved = sessionStorage.getItem('login_email'); if (saved) emailEl.value = saved; } catch { }
+            // Verificar si se debe limpiar el email antes de restaurarlo
+            const urlParams = new URLSearchParams(window.location.search);
+            const clearEmail = urlParams.get('clear_email');
+            const shouldClearEmail = localStorage.getItem('clear_email_on_load');
+            
+            if (clearEmail === 'true' || shouldClearEmail === 'true') {
+                // Limpiar el sessionStorage y no restaurar el email
+                try { 
+                    sessionStorage.removeItem('login_email'); 
+                    localStorage.removeItem('clear_email_on_load');
+                } catch { }
+            } else {
+                // Cargar email guardado solo si no se debe limpiar
+                try { const saved = sessionStorage.getItem('login_email'); if (saved) emailEl.value = saved; } catch { }
+            }
+            
+            // Siempre agregar el listener para guardar cambios futuros
             emailEl.addEventListener('input', () => { try { sessionStorage.setItem('login_email', emailEl.value || ''); } catch { } });
         }
-        // Persistir campos de registro si existen
+        // Limpiar campos de registro completamente - NO persistir datos
         try {
             const regFields = ['nombres', 'apellidos', 'email', 'dni'];
-            regFields.forEach(name => {
-                const el = document.querySelector(`[name="${name}"]`);
-                if (!el) return;
-                const saved = sessionStorage.getItem('reg_' + name);
-                if (saved && !el.value) el.value = saved;
-                el.addEventListener('input', () => { sessionStorage.setItem('reg_' + name, el.value || ''); });
-            });
+            const isRegisterPage = window.location.pathname.includes('/register');
+            
+            if (isRegisterPage) {
+                regFields.forEach(name => {
+                    const el = document.querySelector(`[name="${name}"]`);
+                    if (!el) return;
+                    
+                    // Siempre limpiar sessionStorage y campo al cargar
+                    sessionStorage.removeItem('reg_' + name);
+                    el.value = '';
+                    
+                    // NO agregar listener para guardar - los campos no deben persistir
+                });
+            }
+            
         } catch { }
 
         if (button) {
@@ -189,8 +234,7 @@
                     if (onCapture) onCapture({ imageB64: frames[0], position: positions[0], samples: { frames, positions } });
                     updateStatus('Listo');
                     setLoading(button, false);
-                    // Guardar flag de intento de registro (para persistencia post-error)
-                    try { sessionStorage.setItem('reg_last_attempt', String(Date.now())); } catch { }
+                    // NO guardar flag de intento de registro - no persistir datos
                 } else if (mode === 'login') {
                     if (!emailEl || !emailEl.value) { showToast('Ingresa tu email', 'error'); return; }
                     setLoading(button, true, 'Verificando...');
@@ -215,3 +259,144 @@
 
     window.FaceApp = { init: setup };
 })();
+
+// Función para limpiar campos del formulario de registro al cargar la página
+function clearRegistrationFieldsOnLoad() {
+    // Solo ejecutar en la página de registro
+    if (!window.location.pathname.includes('/register')) {
+        console.log('No es página de registro - saltando limpieza');
+        return;
+    }
+    
+    try {
+        console.log('🧹 Iniciando limpieza completa de datos de registro...');
+        
+        // 1. Limpiar campos del formulario
+        const regFields = ['nombres', 'apellidos', 'email', 'dni'];
+        regFields.forEach(name => {
+            // Limpiar sessionStorage
+            sessionStorage.removeItem('reg_' + name);
+            
+            // Limpiar localStorage también por si acaso
+            localStorage.removeItem('reg_' + name);
+            
+            // Limpiar campo visual si existe
+            const el = document.querySelector(`[name="${name}"]`);
+            if (el) {
+                el.value = '';
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+        
+        // 2. Limpiar datos relacionados con el registro
+        const keysToRemove = [
+            'reg_last_attempt',
+            'reg_form_data',
+            'reg_validation_errors',
+            'reg_step',
+            'reg_progress',
+            'face_samples',
+            'voice_samples',
+            'registration_session',
+            'temp_user_data'
+        ];
+        
+        keysToRemove.forEach(key => {
+            sessionStorage.removeItem(key);
+            localStorage.removeItem(key);
+        });
+        
+        // 3. Limpiar cualquier dato que empiece con 'reg_' o 'registration_'
+        // SessionStorage
+        Object.keys(sessionStorage).forEach(key => {
+            if (key.startsWith('reg_') || key.startsWith('registration_')) {
+                sessionStorage.removeItem(key);
+            }
+        });
+        
+        // LocalStorage
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('reg_') || key.startsWith('registration_')) {
+                localStorage.removeItem(key);
+            }
+        });
+        
+        // 4. Resetear cualquier estado visual del formulario
+        const form = document.querySelector('form');
+        if (form) {
+            form.reset();
+        }
+        
+        // 5. Limpiar mensajes de error o éxito
+        const errorMessages = document.querySelectorAll('.error-message, .success-message, .alert');
+        errorMessages.forEach(msg => {
+            msg.remove();
+        });
+        
+        console.log('✅ Limpieza completa de datos de registro completada');
+        console.log('📝 Campos limpiados:', regFields);
+        console.log('🗑️ Datos adicionales eliminados:', keysToRemove);
+        
+    } catch (error) {
+        console.error('❌ Error al limpiar campos de registro:', error);
+    }
+}
+
+// Función para detectar si es una recarga real de página
+function isRealPageReload() {
+    try {
+        // Método 1: Usar performance.navigation (más confiable para navegadores antiguos)
+        if (performance.navigation && performance.navigation.type === 1) {
+            console.log('Recarga detectada por performance.navigation');
+            return true;
+        }
+        
+        // Método 2: Usar performance.getEntriesByType (navegadores modernos)
+        const navigationEntries = performance.getEntriesByType('navigation');
+        if (navigationEntries.length > 0) {
+            const navEntry = navigationEntries[0];
+            if (navEntry.type === 'reload') {
+                console.log('Recarga detectada por navigation entries');
+                return true;
+            }
+        }
+        
+        // Método 3: Detectar usando el referrer y sessionStorage
+        // Si no hay referrer y no existe el indicador de sesión, es una carga inicial o recarga
+        const sessionKey = 'page_session_active';
+        const isSessionActive = sessionStorage.getItem(sessionKey);
+        
+        if (!isSessionActive) {
+            // Primera carga o recarga (sessionStorage se limpia en recarga)
+            sessionStorage.setItem(sessionKey, 'true');
+            console.log('Recarga detectada por sessionStorage');
+            return true;
+        }
+        
+        // Método 4: Verificar si el documento fue recargado usando document.referrer
+        if (document.referrer === window.location.href) {
+            console.log('Recarga detectada por referrer');
+            return true;
+        }
+        
+        console.log('No es recarga - cambio de pestaña o navegación normal');
+        return false;
+    } catch (error) {
+        console.warn('Error detectando tipo de carga de página:', error);
+        // En caso de error, asumir que es recarga para limpiar por seguridad
+        return true;
+    }
+}
+
+// Ejecutar limpieza automática cuando se carga la página de registro
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 DOM cargado - ejecutando limpieza de campos de registro');
+    // Ejecutar la función de limpieza inmediatamente
+    clearRegistrationFieldsOnLoad();
+});
+
+// También ejecutar en el evento load para asegurar que se ejecute
+window.addEventListener('load', () => {
+    console.log('🔄 Página completamente cargada - ejecutando limpieza adicional');
+    clearRegistrationFieldsOnLoad();
+});

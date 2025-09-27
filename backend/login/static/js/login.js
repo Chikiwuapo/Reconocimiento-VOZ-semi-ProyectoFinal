@@ -26,6 +26,41 @@ class LoginManager {
         
         // Efectos de parallax
         this.initParallaxEffects();
+        
+        // Verificar si se debe limpiar el campo de email después del logout
+        this.checkAndClearEmailField();
+    }
+
+    checkAndClearEmailField() {
+        // Verificar si hay un parámetro en la URL que indique que se debe limpiar el campo
+        const urlParams = new URLSearchParams(window.location.search);
+        const clearEmail = urlParams.get('clear_email');
+        
+        // También verificar si hay un flag en localStorage
+        const shouldClearEmail = localStorage.getItem('clear_email_on_load');
+        
+        if (clearEmail === 'true' || shouldClearEmail === 'true') {
+            const emailField = document.getElementById('email');
+            if (emailField) {
+                emailField.value = '';
+                
+                // CRÍTICO: También limpiar el sessionStorage que conserva el email
+                try {
+                    sessionStorage.removeItem('login_email');
+                } catch (e) {
+                    console.log('No se pudo limpiar sessionStorage:', e);
+                }
+                
+                // Limpiar el flag de localStorage
+                localStorage.removeItem('clear_email_on_load');
+                
+                // Limpiar el parámetro de la URL sin recargar la página
+                if (clearEmail === 'true') {
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            }
+        }
     }
 
     animatePageLoad() {
