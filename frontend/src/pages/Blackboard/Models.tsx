@@ -215,12 +215,18 @@ export default function Models() {
     // Notificación
     window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
 
-    // Ya no incrementamos aquí; el conteo se realiza al entrar a entrenar (una vez por modelo)
-
-    // Si el modelo es de operaciones aritméticas, navegar a la vista dedicada
-    if (model.id === 'aritmeticas') {
-      navigate('/arithmetic?tab=train')
+    // Redirección automática a la vista de capturar según el tipo de modelo
+    if (model.id === 'vocales') {
+      navigate('/vocales/capture')
+    } else if (model.id === 'abecedario') {
+      navigate('/abecedario/capture')
+    } else if (model.id === 'palabras') {
+      navigate('/palabras/capture')
+    } else {
+      navigate('/arithmetic/capture')
     }
+
+    // Ya no incrementamos aquí; el conteo se realiza al entrar a entrenar (una vez por modelo)
   }
 
   const handleConfirmModel = () => {
@@ -399,22 +405,22 @@ export default function Models() {
 
           {/* Tarjeta grande para crear modelo - ANCHO COMPLETO */}
           <div className="mb-8 md:mb-10 w-full">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 w-full">
+            <div className="rounded-2xl p-8 w-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1" style={{ backgroundColor: '#00FFFF', color: '#0b2c3a' }}>
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h2 className="text-3xl font-bold mb-4">🎤 Crea tu Modelo Personalizado</h2>
-                  <p className="text-xl text-blue-100 mb-6 max-w-3xl">
+                  <p className="text-xl opacity-80 mb-6 max-w-3xl">
                     Entrena un modelo de reconocimiento de voz único con tu propia voz. 
                     Obtén mayor precisión y personalización para tus necesidades específicas.
                   </p>
                   <div className="flex flex-wrap gap-4 mb-6">
-                    <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
+                    <span className="bg-white/40 text-[#0b2c3a] px-4 py-2 rounded-full text-sm font-medium">
                       ✨ Alta Precisión
                     </span>
-                    <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
+                    <span className="bg-white/40 text-[#0b2c3a] px-4 py-2 rounded-full text-sm font-medium">
                       🚀 Entrenamiento Rápido
                     </span>
-                    <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
+                    <span className="bg-white/40 text-[#0b2c3a] px-4 py-2 rounded-full text-sm font-medium">
                       🎯 Personalizado
                     </span>
                   </div>
@@ -648,19 +654,63 @@ export default function Models() {
                                 {model.isActive ? 'Usar' : 'Inactivo'}
                               </button>
                               <button 
-                                onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic?tab=test') }}
+                                onClick={() => {
+                                  updateModel(model.id, { status: 'Completado' as any, isActive: true })
+                                  const orig = (model.type || '').toLowerCase()
+                                  if (orig.includes('vocal')) navigate('/vocales/capture')
+                                  else if (orig.includes('letra') || orig.includes('abecedario')) navigate('/abecedario/capture')
+                                  else if (orig.includes('palabra')) navigate('/palabras/capture')
+                                  else navigate('/arithmetic/capture')
+                                }}
                                 className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-blue-900/50 text-blue-300 hover:bg-blue-900/70' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                               >
-                                Mira tu modelo
+                                Comenzar
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const orig = (model.type || '').toLowerCase()
+                                  let path = '/arithmetic/practice'
+                                  if (orig.includes('vocal')) path = '/arithmetic/practice/vocales'
+                                  else if (orig.includes('letra') || orig.includes('abecedario')) path = '/arithmetic/practice/abecedario'
+                                  else if (orig.includes('númer') || orig.includes('numero') || orig.includes('numeros')) path = '/arithmetic/practice/numeros'
+                                  else if (orig.includes('aritm') || orig.includes('operacion') || orig.includes('operación') || orig.includes('operaciones') || orig.includes('matem')) path = '/arithmetic/practice/operaciones'
+                                  else if (orig.includes('palabra')) path = '/arithmetic/practice/palabras'
+                                  navigate(path)
+                                }}
+                                className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-100 hover:bg-gray-700' : 'bg-alt text-header hover:opacity-90'}`}
+                              >
+                                Ir a practicar
                               </button>
                             </>
                           ) : (
                             <>
                               <button 
-                                onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic?tab=test') }}
+                                onClick={() => {
+                                  updateModel(model.id, { status: 'Completado' as any, isActive: true })
+                                  const orig = (model.type || '').toLowerCase()
+                                  if (orig.includes('vocal')) navigate('/vocales/capture')
+                                  else if (orig.includes('letra') || orig.includes('abecedario')) navigate('/abecedario/capture')
+                                  else if (orig.includes('palabra')) navigate('/palabras/capture')
+                                  else navigate('/arithmetic/capture')
+                                }}
                                 className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-blue-900/50 text-blue-300 hover:bg-blue-900/70' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                               >
-                                Mira tu modelo
+                                Comenzar
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const orig = (model.type || '').toLowerCase()
+                                  let path = '/arithmetic/practice'
+                                  if (orig.includes('vocal')) path = '/arithmetic/practice/vocales'
+                                  else if (orig.includes('letra') || orig.includes('abecedario')) path = '/arithmetic/practice/abecedario'
+                                  else if (orig.includes('númer') || orig.includes('numero') || orig.includes('numeros')) path = '/arithmetic/practice/numeros'
+                                  else if (orig.includes('aritm') || orig.includes('operacion') || orig.includes('operación') || orig.includes('operaciones') || orig.includes('matem')) path = '/arithmetic/practice/operaciones'
+                                  else if (orig.includes('palabra')) path = '/arithmetic/practice/palabras'
+                                  navigate(path)
+                                }}
+                                className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-gray-800 text-gray-100 hover:bg-gray-700' : 'bg-alt text-header hover:opacity-90'}`}
+                              >
+                                Ir a practicar
                               </button>
                             </>
                           )}
@@ -680,15 +730,15 @@ export default function Models() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className={`rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
             {/* Header del modal */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
+            <div className="p-6 rounded-t-2xl" style={{ backgroundColor: '#00FFFF', color: '#0b2c3a' }}>
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">🎯 Selecciona el Tipo de Modelo</h2>
-                  <p className="text-blue-100">Elige qué tipo de modelo de voz quieres entrenar</p>
+                  <p className="opacity-80">Elige qué tipo de modelo de voz quieres entrenar</p>
                 </div>
                 <button 
                   onClick={() => setShowModelSelection(false)}
-                  className="text-white/80 hover:text-white text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                  className="text-[#0b2c3a] hover:text-[#06202b] text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/30 transition-colors"
                 >
                   ×
                 </button>

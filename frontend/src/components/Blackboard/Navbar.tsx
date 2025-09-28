@@ -1,22 +1,47 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import ProfileModal from './ProfileModal'
 import { useUserStore } from '../../auth/userStore'
 
-const navItems = [
-  { to: '/dashboard', label: 'Inicio' },
-  { to: '/models', label: 'Modelos' },
-]
-
 export default function Navbar({ notifications = 0, isDarkMode = false, toggleDarkMode }: { notifications?: number, isDarkMode?: boolean, toggleDarkMode?: () => void }) {
   const { user } = useUserStore()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [notifCount, setNotifCount] = useState(notifications)
   const [lastMessage, setLastMessage] = useState<string>('')
   const hasNotifications = useMemo(() => notifCount > 0, [notifCount])
   const [openProfile, setOpenProfile] = useState(false)
   const [openCenter, setOpenCenter] = useState(false)
   const [openMobile, setOpenMobile] = useState(false)
+  const [openLogout, setOpenLogout] = useState(false)
   const [items, setItems] = useState<{ id: string; message: string; ts: number }[]>([])
+
+  // Determinar rutas dinámicamente basado en la ubicación actual
+  const navItems = useMemo(() => {
+    const currentPath = location.pathname
+    
+    // Determinar las rutas de captura y entrenamiento basadas en el contexto actual
+    let captureRoute = '/arithmetic/capture'
+    let trainRoute = '/arithmetic/train'
+    
+    if (currentPath.includes('/vocales/')) {
+      captureRoute = '/vocales/capture'
+      trainRoute = '/vocales/train'
+    } else if (currentPath.includes('/abecedario/')) {
+      captureRoute = '/abecedario/capture'
+      trainRoute = '/abecedario/train'
+    } else if (currentPath.includes('/palabras/')) {
+      captureRoute = '/palabras/capture'
+      trainRoute = '/palabras/train'
+    }
+    
+    return [
+      { to: '/blackboard', label: 'Inicio' },
+      { to: '/models', label: 'Modelos' },
+      { to: captureRoute, label: 'Capturar' },
+      { to: trainRoute, label: 'Entrenar' },
+    ]
+  }, [location.pathname])
 
   const STORAGE_KEY = 'appNotifications'
 
@@ -45,8 +70,8 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
   return (
     <>
     <header className={`${isDarkMode ? 'bg-[#0A0A0A]/95 border-b border-gray-900' : 'bg-white/80 border-b border-slate-100'} backdrop-blur sticky top-0 z-40`}>
-      <div className="container-page flex items-center justify-between py-3">
-        <Link to="/dashboard" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
+      <div className="container-page flex items-center justify-between py-2">
+        <Link to="/blackboard" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
           <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary ${isDarkMode ? 'bg-gray-800' : 'bg-primary/10'}`}>
             {/* Abstract ML icon */}
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
@@ -147,7 +172,7 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
                 ? 'text-gray-300 hover:text-white border border-gray-600 hover:bg-gray-800' 
                 : 'text-slate-600 hover:text-header border border-slate-200 hover:bg-slate-50'
               }`}
-            onClick={() => alert('Cerrar sesión')}
+            onClick={() => setOpenLogout(true)}
             title="Cerrar sesión"
             aria-label="Cerrar sesión"
           >
@@ -171,7 +196,9 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
                   className={({ isActive }) => `block px-3 py-2 rounded-md text-sm transition ${isDarkMode ? (isActive ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800') : (isActive ? 'text-header bg-slate-100' : 'text-slate-700 hover:text-header hover:bg-slate-50')}`}
                   onClick={() => setOpenMobile(false)}
                 >
-                  {item.label}
+                  <span className="inline-flex items-center">
+                    {item.label}
+                  </span>
                 </NavLink>
               </li>
             ))}
@@ -190,7 +217,7 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
               <button
                 type="button"
                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition ${isDarkMode ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-slate-700 hover:text-header hover:bg-slate-50'}`}
-                onClick={() => { setOpenMobile(false); alert('Cerrar sesión') }}
+                onClick={() => { setOpenMobile(false); setOpenLogout(true) }}
               >
                 Cerrar sesión
               </button>
@@ -244,6 +271,19 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
         window.dispatchEvent(new CustomEvent('app:notify', { detail: 'Perfil actualizado' }))
         setOpenProfile(false)
       }} />
+    )}
+    {openLogout && (
+      <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/40" onClick={() => setOpenLogout(false)} />
+        <div className={`relative w-full max-w-sm rounded-xl shadow-2xl p-6 ${isDarkMode ? 'bg-gray-900 border border-gray-800' : 'bg-white'}`}>
+          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-header'}`}>¿Cerrar sesión?</h3>
+          <p className={`${isDarkMode ? 'text-gray-400' : 'text-slate-600'} text-sm mt-1`}>Se cerrará tu sesión actual y volverás al inicio.</p>
+          <div className="mt-5 flex items-center justify-end gap-2">
+            <button className="btn" onClick={() => setOpenLogout(false)}>Cancelar</button>
+            <button className="btn-accent-rose" onClick={() => { setOpenLogout(false); navigate('/') }}>Confirmar</button>
+          </div>
+        </div>
+      </div>
     )}
   </>
   )

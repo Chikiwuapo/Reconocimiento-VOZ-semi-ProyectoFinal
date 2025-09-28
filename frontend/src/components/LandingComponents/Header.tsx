@@ -225,14 +225,14 @@ const Header = ({ isDarkMode = false, toggleDarkMode }: HeaderProps) => {
             )}
             
             <Link
-              to="/dashboard"
+              to="/auth"
               className={`px-5 py-2 rounded-md font-medium transition-all ${
                 isDarkMode 
                   ? 'bg-gradient-to-r from-[#3A7BD5] to-[#6A11CB] text-white hover:opacity-90' 
                   : 'bg-[#62B6CB] text-white hover:bg-[#1B4965]'
               }`}
             >
-              Ir al Blackboard
+              Iniciar sesión
             </Link>
           </div>
         </div>

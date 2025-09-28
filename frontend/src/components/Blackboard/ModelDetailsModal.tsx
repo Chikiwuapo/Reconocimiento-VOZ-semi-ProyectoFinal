@@ -4,11 +4,10 @@ type Props = {
   imageUrl: string
   features: string[]
   onClose: () => void
-  onTest?: () => void
   isDarkMode?: boolean
 }
 
-export default function ModelDetailsModal({ title, description, imageUrl, features, onClose, onTest, isDarkMode = false }: Props) {
+export default function ModelDetailsModal({ title, description, imageUrl, features, onClose, isDarkMode = false }: Props) {
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 animate-fade-in" onClick={onClose} />
@@ -32,7 +31,6 @@ export default function ModelDetailsModal({ title, description, imageUrl, featur
           </div>
           <div className="mt-6 flex items-center justify-end gap-2">
             <button className="btn" onClick={onClose}>Cerrar</button>
-            <button className="btn-accent-cyan" onClick={onTest}>Probar</button>
           </div>
         </div>
       </div>
