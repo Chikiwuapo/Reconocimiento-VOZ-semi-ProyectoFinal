@@ -13,8 +13,8 @@ export default function CameraPanel({ videoRef, canvasRef, isDarkMode = false, c
   return (
     <div className={`rounded-2xl overflow-hidden border ${isDarkMode ? 'bg-[#0F0F0F] border-gray-800' : 'bg-white border-slate-200'} shadow-soft`}> 
       <div className="relative w-full aspect-video">
-        <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" autoPlay playsInline muted />
-        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+        <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover z-0" autoPlay playsInline muted />
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-10 pointer-events-none" />
         {!cameraActive && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className={`px-4 py-2 rounded-lg text-sm ${isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-slate-100 text-slate-700'}`}>Cámara inactiva</div>

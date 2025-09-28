@@ -215,6 +215,17 @@ export default function Models() {
     // Notificación
     window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
 
+    // Redirección automática a la vista de capturar según el tipo de modelo
+    if (model.id === 'vocales') {
+      navigate('/vocales/capture')
+    } else if (model.id === 'abecedario') {
+      navigate('/abecedario/capture')
+    } else if (model.id === 'palabras') {
+      navigate('/palabras/capture')
+    } else {
+      navigate('/arithmetic/capture')
+    }
+
     // Ya no incrementamos aquí; el conteo se realiza al entrar a entrenar (una vez por modelo)
   }
 
@@ -643,7 +654,14 @@ export default function Models() {
                                 {model.isActive ? 'Usar' : 'Inactivo'}
                               </button>
                               <button 
-                                onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic/capture') }}
+                                onClick={() => {
+                                  updateModel(model.id, { status: 'Completado' as any, isActive: true })
+                                  const orig = (model.type || '').toLowerCase()
+                                  if (orig.includes('vocal')) navigate('/vocales/capture')
+                                  else if (orig.includes('letra') || orig.includes('abecedario')) navigate('/abecedario/capture')
+                                  else if (orig.includes('palabra')) navigate('/palabras/capture')
+                                  else navigate('/arithmetic/capture')
+                                }}
                                 className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-blue-900/50 text-blue-300 hover:bg-blue-900/70' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                               >
                                 Comenzar
@@ -667,7 +685,14 @@ export default function Models() {
                           ) : (
                             <>
                               <button 
-                                onClick={() => { updateModel(model.id, { status: 'Completado' as any, isActive: true }); navigate('/arithmetic/capture') }}
+                                onClick={() => {
+                                  updateModel(model.id, { status: 'Completado' as any, isActive: true })
+                                  const orig = (model.type || '').toLowerCase()
+                                  if (orig.includes('vocal')) navigate('/vocales/capture')
+                                  else if (orig.includes('letra') || orig.includes('abecedario')) navigate('/abecedario/capture')
+                                  else if (orig.includes('palabra')) navigate('/palabras/capture')
+                                  else navigate('/arithmetic/capture')
+                                }}
                                 className={`w-full py-2 px-3 rounded-lg text-xs font-medium transition-colors shadow-md ${isDarkMode ? 'bg-blue-900/50 text-blue-300 hover:bg-blue-900/70' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}`}
                               >
                                 Comenzar

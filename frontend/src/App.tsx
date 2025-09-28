@@ -6,11 +6,16 @@ import Models from './pages/Blackboard/Models'
 import CaptureSamples from './pages/Blackboard/Arithmetic/CaptureSamples'
 import TrainModel from './pages/Blackboard/Arithmetic/TrainModel'
 import PracticeOperations from './pages/Blackboard/Arithmetic/practice/PracticeOperations'
-import PracticeVocales from './pages/Blackboard/Arithmetic/practice/PracticeVocales'
-import PracticeAbecedario from './pages/Blackboard/Arithmetic/practice/PracticeAbecedario'
+import PracticeVocales from './pages/Blackboard/Vocales/practice/PracticeVocales'
+import PracticeAbecedario from './pages/Blackboard/Abecedario/practice/PracticeAbecedario'
 import PracticeNumeros from './pages/Blackboard/Arithmetic/practice/PracticeNumeros'
-import PracticePalabras from './pages/Blackboard/Arithmetic/practice/PracticePalabras'
-import CoursePage from './pages/Courses/CoursePage'
+import PracticePalabras from './pages/Blackboard/Palabras/practice/PracticePalabras'
+import CaptureSamplesVocales from './pages/Blackboard/Vocales/CaptureSamples'
+import TrainModelVocales from './pages/Blackboard/Vocales/TrainModel'
+import CaptureSamplesAbecedario from './pages/Blackboard/Abecedario/CaptureSamples'
+import TrainModelAbecedario from './pages/Blackboard/Abecedario/TrainModel'
+import CaptureSamplesPalabras from './pages/Blackboard/Palabras/CaptureSamples'
+import TrainModelPalabras from './pages/Blackboard/Palabras/TrainModel'
 import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
 
@@ -63,7 +68,13 @@ function App() {
           <Route path="/arithmetic/practice/abecedario" element={<PracticeAbecedario />} />
           <Route path="/arithmetic/practice/numeros" element={<PracticeNumeros />} />
           <Route path="/arithmetic/practice/palabras" element={<PracticePalabras />} />
-          <Route path="/courses/:slug" element={<CoursePage />} />
+          {/* Rutas dedicadas por categoría */}
+          <Route path="/vocales/capture" element={<CaptureSamplesVocales />} />
+          <Route path="/vocales/train" element={<TrainModelVocales />} />
+          <Route path="/abecedario/capture" element={<CaptureSamplesAbecedario />} />
+          <Route path="/abecedario/train" element={<TrainModelAbecedario />} />
+          <Route path="/palabras/capture" element={<CaptureSamplesPalabras />} />
+          <Route path="/palabras/train" element={<TrainModelPalabras />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

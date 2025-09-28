@@ -1,18 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import ProfileModal from './ProfileModal'
 import { useUserStore } from '../../auth/userStore'
-
-const navItems = [
-  { to: '/blackboard', label: 'Inicio' },
-  { to: '/models', label: 'Modelos' },
-  { to: '/arithmetic/capture', label: 'Capturar' },
-  { to: '/arithmetic/train', label: 'Entrenar' },
-]
 
 export default function Navbar({ notifications = 0, isDarkMode = false, toggleDarkMode }: { notifications?: number, isDarkMode?: boolean, toggleDarkMode?: () => void }) {
   const { user } = useUserStore()
   const navigate = useNavigate()
+  const location = useLocation()
   const [notifCount, setNotifCount] = useState(notifications)
   const [lastMessage, setLastMessage] = useState<string>('')
   const hasNotifications = useMemo(() => notifCount > 0, [notifCount])
@@ -21,6 +15,33 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
   const [openMobile, setOpenMobile] = useState(false)
   const [openLogout, setOpenLogout] = useState(false)
   const [items, setItems] = useState<{ id: string; message: string; ts: number }[]>([])
+
+  // Determinar rutas dinámicamente basado en la ubicación actual
+  const navItems = useMemo(() => {
+    const currentPath = location.pathname
+    
+    // Determinar las rutas de captura y entrenamiento basadas en el contexto actual
+    let captureRoute = '/arithmetic/capture'
+    let trainRoute = '/arithmetic/train'
+    
+    if (currentPath.includes('/vocales/')) {
+      captureRoute = '/vocales/capture'
+      trainRoute = '/vocales/train'
+    } else if (currentPath.includes('/abecedario/')) {
+      captureRoute = '/abecedario/capture'
+      trainRoute = '/abecedario/train'
+    } else if (currentPath.includes('/palabras/')) {
+      captureRoute = '/palabras/capture'
+      trainRoute = '/palabras/train'
+    }
+    
+    return [
+      { to: '/blackboard', label: 'Inicio' },
+      { to: '/models', label: 'Modelos' },
+      { to: captureRoute, label: 'Capturar' },
+      { to: trainRoute, label: 'Entrenar' },
+    ]
+  }, [location.pathname])
 
   const STORAGE_KEY = 'appNotifications'
 
