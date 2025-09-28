@@ -29,6 +29,7 @@ urlpatterns = [
     
     # Web endpoints for each app
     path("operaciones/", include("operaciones.urls")),
+    path('voz/', include('voz.urls.urls')),
     path("vocales/", include("vocales.urls")),
     path("abecedario/", include("abecedario.urls")),
     path("palabras/", include("palabras.urls")),

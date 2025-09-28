@@ -1,0 +1,631 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro Facial - AriasDigitalSoft</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Toast y estados de carga: solo frontend, no afecta lógica */
+        #toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: #2e4a6e;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+            z-index: 9999
+        }
+
+        #toast.hidden {
+            display: none
+        }
+
+        #toast.success {
+            background: #2e7d32
+        }
+
+        #toast.error {
+            background: #c62828
+        }
+
+        #toast.info {
+            background: #1565c0
+        }
+
+        .btn.loading {
+            position: relative;
+            pointer-events: none;
+            opacity: .8
+        }
+
+        .btn.loading::after {
+            content: "";
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            margin-top: -7px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin .8s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* Estilos para el botón de registro de voz */
+        .btn-voice-register {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: #ffffff;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            height: 44px;
+            font-family: var(--font-family, 'Inter', sans-serif);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            min-width: fit-content;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-voice-register:hover {
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-voice-register:focus {
+            outline: 2px solid rgba(139, 92, 246, 0.5);
+            outline-offset: 2px;
+        }
+
+        .btn-voice-register:disabled {
+            background: linear-gradient(135deg, #6b7280, #9ca3af);
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
+        }
+
+        .btn-voice-register.recording {
+            background: #a855f7;
+            animation: pulse 1.5s infinite;
+        }
+
+        .btn-voice-register .microphone-icon {
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        .btn-voice-register.recording .microphone-icon {
+            animation: soundWave 0.8s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(168, 85, 247, 0);
+            }
+        }
+
+        @keyframes soundWave {
+            0% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Responsive design para móviles */
+        @media (max-width: 768px) {
+            .btn-voice-register {
+                margin-left: 10px;
+                padding: 8px;
+                font-size: 13px;
+            }
+            
+            .actions {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body class="page" {% if pending_token %}data-pending-token="{{ pending_token }}"{% endif %}>
+    <!-- Elementos decorativos de fondo -->
+    <div class="background-elements">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-media">
+                <form id="registerForm" class="form" method="POST">
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        <label class="label">Nombres
+                            <input name="nombres" class="input" required />
+                        </label>
+                        <label class="label">Apellidos
+                            <input name="apellidos" class="input" required />
+                        </label>
+                        <label class="label">Email
+                            <input name="email" type="email" class="input" required />
+                        </label>
+                        <label class="label">DNI
+                            <input name="dni" class="input" required />
+                        </label>
+                    </div>
+
+                    <!-- Compatibilidad simple -->
+                    <input type="hidden" name="facial_frame" id="facial_frame" />
+                    <input type="hidden" name="position_data" id="position_data" />
+                    <!-- Nueva captura múltiple (preferida): JSON con {frames:[...], positions:[...]} -->
+                    <input type="hidden" name="samples" id="samples" />
+                </form>
+
+                <div class="video-wrap">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="overlay"></canvas>
+                    <div id="videoStatus" class="video-status">Posiciona tu rostro en el recuadro</div>
+                </div>
+
+                <div class="actions">
+                    <button id="btnCapture" class="btn primary" disabled>Registrar rostro (captura 5 muestras)</button>
+                    <a class="btn ghost" href="/login/">Volver a login</a>
+                    <button id="btnVoiceRegister" class="btn-voice-register" aria-label="Registro por voz">
+                        <span class="microphone-icon">🎤</span>
+                        <span>Registro de voz</span>
+                    </button>
+                </div>
+            </div>
+            <aside class="card-aside">
+                <h2>Crear cuenta facial</h2>
+                <div class="tips">
+                    <h3>Recomendaciones</h3>
+                    <ul>
+                        <li>Iluminación frontal y rostro dentro del cuadro</li>
+                        <li>Espera a ver "Rostro listo" antes de capturar</li>
+                        <li>La malla se adapta a tu rostro y se dibuja en blanco</li>
+                    </ul>
+                </div>
+                {% if messages %}
+                <div class="messages">
+                    {% for m in messages %}
+                    <div class="msg">{{ m }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+
+    <!-- Toast para mensajes amigables -->
+    <div id="toast" class="hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+    <script src="{% static 'js/facemesh.js' %}"></script>
+    <script src="{% static 'js/voice_register.js' %}"></script>
+    <script src="{% static 'js/voice_commands.js' %}"></script>
+    <script src="{% static 'js/form_persistence.js' %}"></script>
+    <script>
+        window.FaceApp.init({
+            mode: 'register',
+            selectors: {
+                video: '#video', canvas: '#overlay', status: '#videoStatus', button: '#btnCapture'
+            },
+            onCapture: ({ imageB64, position, samples }) => {
+                document.querySelector('#facial_frame').value = imageB64;
+                document.querySelector('#position_data').value = JSON.stringify(position);
+                if (samples) {
+                    document.querySelector('#samples').value = JSON.stringify(samples);
+                }
+                
+                // Limpiar datos de persistencia antes de enviar el formulario
+                if (window.formPersistence) {
+                    window.formPersistence.clearSavedData();
+                }
+                
+                document.querySelector('#registerForm').submit();
+            }
+        });
+
+        // Convertir mensajes del backend en toasts amigables (sin cambiar backend)
+        (function () {
+            const toast = document.querySelector('#toast');
+            function showToast(msg, type = 'info') {
+                if (!toast) { console.log(`[${type}]`, msg); return; }
+                toast.textContent = msg;
+                toast.classList.remove('hidden', 'error', 'success', 'info');
+                toast.classList.add(type);
+                if (type !== 'error') {
+                    clearTimeout(window.__toastTimer);
+                    window.__toastTimer = setTimeout(() => toast.classList.add('hidden'), 4000);
+                }
+            }
+            const msgs = Array.from(document.querySelectorAll('.messages .msg')).map(el => el.textContent.trim());
+            if (msgs.length) {
+                // Mapear mensajes técnicos a lenguaje simple
+                const map = {
+                    'No se pudo extraer información facial válida. Intenta nuevamente con buena iluminación.': 'No pudimos ver bien tu rostro. Revisa la iluminación y encuadre y vuelve a intentar.'
+                };
+                msgs.forEach(m => showToast(map[m] || m, 'error'));
+            }
+        })();
+
+        // El sistema de registro de voz se inicializa automáticamente en register.js
+    </script>
+
+    <!-- Modal de confirmación de registro de voz -->
+    <div id="voiceModal" class="voice-modal" style="display: none;">
+        <div class="voice-modal-overlay"></div>
+        <div class="voice-modal-content">
+            <div class="voice-modal-header">
+                <h3>Confirmar registro de voz</h3>
+                <button class="voice-modal-close" aria-label="Cerrar modal">&times;</button>
+            </div>
+            <div class="voice-modal-body">
+                <p>¿Deseas que grabemos y guardemos tu voz para usar comandos por voz en este sistema? Solo grabaremos si aceptas y podrás eliminar esta muestra más tarde desde tu perfil.</p>
+                <div class="voice-modal-privacy">
+                    <small>Al aceptar, consientes el procesamiento de tu voz según nuestra <a href="#" target="_blank">política de privacidad</a>.</small>
+                </div>
+            </div>
+            <div class="voice-modal-footer">
+                <button id="voice-cancel" class="btn ghost">Cancelar</button>
+                <button id="voice-accept" class="btn primary">Aceptar y grabar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de grabación de voz -->
+    <div id="voiceRecordingModal" class="voice-modal" style="display: none;">
+        <div class="voice-modal-overlay"></div>
+        <div class="voice-modal-content">
+            <div class="voice-modal-header">
+                <h3>Grabando voz</h3>
+            </div>
+            <div class="voice-modal-body">
+                <div class="recording-status">
+                    <div class="recording-indicator">
+                        <div class="pulse-animation"></div>
+                        <span class="microphone-icon">🎤</span>
+                    </div>
+                    <p id="recordingText">Grabando… Mantén la voz clara. Quedan <span id="countdown">6</span>s.</p>
+                    <div class="recording-progress">
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="voice-modal-footer">
+                <button id="voice-stop" class="btn ghost">Detener grabación</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Estilos para los modales de voz */
+        .voice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
+        .voice-modal-content {
+            position: relative;
+            background: var(--card);
+            border-radius: 18px;
+            box-shadow: 0 20px 40px var(--shadow);
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease-out;
+            border: 1px solid #40628f;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .voice-modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #40628f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .voice-modal-header h3 {
+            margin: 0;
+            color: var(--text);
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .voice-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .voice-modal-close:hover {
+            background: var(--aside);
+            color: var(--text);
+        }
+
+        .voice-modal-body {
+            padding: 16px 24px;
+        }
+
+        .voice-modal-body p {
+            margin: 0 0 16px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .voice-modal-privacy {
+            background: var(--bg2);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .voice-modal-privacy small {
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+
+        .voice-modal-privacy a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .voice-modal-privacy a:hover {
+            text-decoration: underline;
+        }
+
+        .voice-modal-footer {
+            padding: 16px 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* Estilos para el modal de grabación */
+        .recording-status {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .recording-indicator {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .pulse-animation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Animación mejorada para el modal activo */
+        .voice-modal.recording-active .pulse-animation {
+            animation: recordingPulse 0.8s ease-in-out infinite;
+        }
+
+        .voice-modal.recording-active .recording-indicator .microphone-icon {
+            animation: microphoneBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes recordingPulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+                border-color: var(--accent);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.7;
+                border-color: #ef4444;
+            }
+        }
+
+        @keyframes microphoneBounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0.5;
+            }
+        }
+
+        .recording-indicator .microphone-icon {
+            font-size: 32px;
+            display: block;
+            padding: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            line-height: 20px;
+            text-align: center;
+            color: var(--bg);
+            transition: all 0.3s ease;
+        }
+
+        .recording-progress {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg2);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #40628f;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            width: 0%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo en la barra de progreso */
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Animación para el botón de registro de voz */
+        #btnVoiceRegister.recording {
+            animation: buttonPulse 1s ease-in-out infinite;
+            background: linear-gradient(45deg, var(--accent), #ef4444);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        @keyframes buttonPulse {
+             0%, 100% {
+                 transform: scale(1);
+                 box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+             }
+             50% {
+                 transform: scale(1.05);
+                 box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+             }
+         }
+
+         #countdown {
+             font-weight: bold;
+             color: var(--accent);
+             font-size: 1.2em;
+             text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+         }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .voice-modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .voice-modal-header,
+            .voice-modal-body,
+            .voice-modal-footer {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+        }
+    </style>
+</body>
+
+</html>

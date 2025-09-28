@@ -30,7 +30,12 @@ except Exception:
 
 
 def index(request):
-    return redirect('login')
+    return redirect('bienvenido')
+
+
+def bienvenido_view(request):
+    """Vista para la pantalla de bienvenida de AriasDigitalSoft"""
+    return render(request, 'login/bienvenido.html')
 
 
 def login_view(request):
@@ -38,6 +43,13 @@ def login_view(request):
 
 
 def register_view(request):
+    # Importar modelos de voz para pending registration
+    from voz.models.models import PendingRegistration
+    from voz.views.views import get_or_create_pending_registration
+    
+    # Crear o obtener pending registration para esta sesión
+    pending_registration = get_or_create_pending_registration(request)
+    
     if request.method == 'POST':
         log = logging.getLogger('facial')
         nombres = request.POST.get('nombres')
@@ -129,7 +141,9 @@ def register_view(request):
             log.exception(f'register_view: excepción {e}')
             messages.error(request, f'Error al registrar: {e}')
 
-    return render(request, 'login/register.html')
+    return render(request, 'login/register.html', {
+        'pending_token': pending_registration.token
+    })
 
 
 @require_POST
@@ -195,7 +209,17 @@ def api_login(request):
             auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             user.failed_attempts = 0
             user.save(update_fields=['failed_attempts'])
-            return JsonResponse({'ok': True, 'redirect': '/mantenimiento/'})
+            
+            # Determinar redirección basada en el dominio del email
+            redirect_url = get_redirect_url_by_domain(user.email)
+            response_data = {'ok': True, 'redirect': redirect_url}
+            
+            # Agregar información adicional para administradores
+            if is_admin_user(user.email):
+                response_data['is_admin'] = True
+                response_data['username'] = user.nombres
+            
+            return JsonResponse(response_data)
         else:
             # Mensajes específicos
             msg = 'Acceso denegado. Credenciales no coinciden'
@@ -293,7 +317,11 @@ def mantenimiento_view(request):
 
 def logout_view(request):
     auth_logout(request)
-    return redirect('login')
+    # Crear respuesta de redirección con parámetro para limpiar el campo de email
+    response = redirect('login')
+    # Agregar parámetro a la URL para indicar que se debe limpiar el campo
+    response['Location'] = '/login/?clear_email=true'
+    return response
 
 
 def db_check(request):
@@ -340,7 +368,19 @@ def api_validate_user(request):
 
         stored_dni = re.sub(r"\D+", "", str(user.dni or '').strip())
         if stored_dni == dni:
-            return JsonResponse({'ok': True})
+            # Autenticar al usuario en la sesión
+            auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            
+            # Determinar redirección basada en el dominio del email
+            redirect_url = get_redirect_url_by_domain(user.email)
+            response_data = {'ok': True, 'redirect': redirect_url}
+            
+            # Agregar información adicional para administradores
+            if is_admin_user(user.email):
+                response_data['is_admin'] = True
+                response_data['username'] = user.nombres
+            
+            return JsonResponse(response_data)
         return JsonResponse({'ok': False, 'error': 'DNI no coincide'}, status=401)
     except Exception as e:
         logging.getLogger('facial').exception(f'api_validate_user: excepción {e}')
@@ -480,6 +520,68 @@ def _compare_to_collection(user: Usuario, live_emb) -> bool:
         return False
     except Exception:
         return False
+
+
+def estadistica_view(request):
+    """
+    Vista para el panel administrativo de estadísticas.
+    Solo accesible para usuarios administradores (@senati.pe).
+    """
+    # Verificar que el usuario esté autenticado
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    # Verificar que sea un usuario administrador
+    if not is_admin_user(request.user.email):
+        return redirect('mantenimiento')
+    
+    # Obtener todos los usuarios administradores (con dominio @senati.pe)
+    admin_users = Usuario.objects.filter(email__iendswith='@senati.pe').order_by('nombres', 'apellidos')
+    
+    context = {
+        'user': request.user,
+        'username': request.user.nombres or 'Administrador',
+        'admin_users': admin_users
+    }
+    
+    return render(request, 'login/estadistica.html', context)
+
+
+def get_redirect_url_by_domain(email):
+    """
+    Determina la URL de redirección basada en el dominio del email.
+    
+    Args:
+        email (str): Email del usuario
+        
+    Returns:
+        str: URL de redirección ('/estadistica/' para @senati.pe, '/mantenimiento/' para otros)
+    """
+    if not email:
+        return '/mantenimiento/'
+    
+    email_lower = email.lower().strip()
+    if email_lower.endswith('@senati.pe'):
+        return '/estadistica/'
+    else:
+        return '/mantenimiento/'
+
+
+def is_admin_user(email):
+    """
+    Verifica si un usuario es administrador basado en su dominio de email.
+    
+    Args:
+        email (str): Email del usuario
+        
+    Returns:
+        bool: True si es administrador (@senati.pe), False en caso contrario
+    """
+    if not email:
+        return False
+    
+    email_lower = email.lower().strip()
+    return email_lower.endswith('@senati.pe')
 
 
 def _validate_position_collection(user: Usuario, live_pos) -> bool:

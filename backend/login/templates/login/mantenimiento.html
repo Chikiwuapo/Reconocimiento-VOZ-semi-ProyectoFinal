@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mantenimiento - AriasDigitalSoft</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/mantenimiento.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="page">
+    <!-- Elementos decorativos de fondo -->
+    <div class="background-elements">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo">🔧</div>
+        </div>
+
+        <div class="user-welcome">
+            <h1>¡Bienvenido, {{ user.email }}!</h1>
+            <p>Tu sesión está activa</p>
+        </div>
+        
+        <div class="user-info">
+            <h2>Información del Usuario</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Fecha de registro:</span>
+                    <span class="info-value">{{ user.date_joined|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Último acceso:</span>
+                    <span class="info-value">{{ user.last_login|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="maintenance-card">
+            <div class="maintenance-icon">🚧</div>
+            <h2>Sistema en Mantenimiento</h2>
+            <p>Estamos trabajando para mejorar tu experiencia. Vuelve pronto.</p>
+            <a href="/logout/" class="btn primary logout-btn">Cerrar Sesión</a>
+        </div>
+    </div>
+</body>
+</html>

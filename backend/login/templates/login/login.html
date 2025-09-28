@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Facial - AriasDigitalSoft</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="page">
+    <!-- Elementos decorativos de fondo -->
+    <div class="background-elements">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-media">
+                <div class="video-wrap">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="overlay"></canvas>
+                    <div id="videoStatus" class="video-status">Posiciona tu rostro en el recuadro</div>
+                </div>
+
+                <div class="actions">
+                    <input type="email" id="email" class="input" placeholder="Tu email" />
+                    <button id="btnLogin" class="btn primary" disabled>Iniciar sesión (facial)</button>
+                    <button id="btnActivateVoice" class="btn secondary" style="display: none;">Activar comandos de voz</button>
+                    <a class="btn ghost" href="/register/">Crear cuenta</a>
+                </div>
+            </div>
+            <aside class="card-aside">
+                <h2>Login Facial</h2>
+                <div class="tips">
+                    <h3>¿Cómo iniciar sesión con tu rostro?</h3>
+                    <ul>
+                        <li>Asegúrate de tener buena iluminación frontal</li>
+                        <li>Coloca tu rostro dentro del recuadro y mira al frente</li>
+                        <li>Quédate quieto hasta ver "Rostro listo"</li>
+                        <li>Si aparece "muy lejos", acércate un poco</li>
+                        <li>Cuando esté listo, pulsa "Iniciar sesión (facial)"</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Toast para mensajes amigables -->
+    <div id="toast" class="hidden" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+    <script src="/static/js/facemesh.js"></script>
+    <script src="/static/js/voice_login.js"></script>
+    <script src="{% static 'js/voice_activation.js' %}"></script>
+    <script>
+        // Configuración de modo login
+        window.FaceApp.init({
+            mode: 'login',
+            selectors: { video: '#video', canvas: '#overlay', status: '#videoStatus', button: '#btnLogin', email: '#email' },
+            endpoints: { login: '/api/login/' }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido - AriasDigitalSoft</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bienvenido.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Splash Screen (Pantalla de carga inicial) -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="logo-container">
+                <img src="{% static 'login/images/network-logo.svg' %}" alt="AriasDigitalSoft Network Logo" class="splash-logo">
+            </div>
+            <h1 class="company-name">AriasDigitalSoft</h1>
+            <div class="loading-animation">
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de Bienvenida Principal -->
+    <div id="welcome-screen" class="welcome-screen hidden">
+        <div class="welcome-content">
+            <!-- Logo principal -->
+            <div class="main-logo-container">
+                <img src="{% static 'login/images/network-logo.svg' %}" alt="AriasDigitalSoft Network Logo" class="main-logo">
+            </div>
+
+            <!-- Texto de bienvenida -->
+            <div class="welcome-text">
+                <h1 class="welcome-title">¡Bienvenido a AriasDigitalSoft!</h1>
+                <p class="welcome-subtitle">Convierte datos en soluciones inteligentes sin necesidad de ser experto</p>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <a href="{% url 'register' %}" class="btn btn-primary">
+                    <span class="btn-text">Crear una cuenta</span>
+                    <div class="btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4V20M20 12H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </a>
+                
+                <a href="{% url 'login' %}" class="btn btn-secondary">
+                    <span class="btn-text">Iniciar sesión</span>
+                    <div class="btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H15M10 17L15 12L10 7M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="footer-info">
+                <p class="version-info">Versión 1.0 - Sistema de Reconocimiento de Voz</p>
+            </div>
+        </div>
+
+        <!-- Elementos decorativos de fondo -->
+        <div class="background-elements">
+            <div class="floating-element element-1"></div>
+            <div class="floating-element element-2"></div>
+            <div class="floating-element element-3"></div>
+            <div class="floating-element element-4"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/bienvenido.js' %}"></script>
+</body>
+</html>

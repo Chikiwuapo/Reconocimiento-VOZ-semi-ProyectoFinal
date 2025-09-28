@@ -1,0 +1,39 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc" role="img">
+  <title id="title">A - Aries Digital Soft (Dark Theme Colors)</title>
+  <desc id="desc">Letra A geométrica con degradado y resplandor usando la paleta del tema oscuro</desc>
+
+  <defs>
+    <!-- Degradado principal: azul → morado → rojo -->
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A7BD5"/>
+      <stop offset="50%" stop-color="#6A11CB"/>
+      <stop offset="100%" stop-color="#F53844"/>
+    </linearGradient>
+
+    <!-- Resplandor exterior -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fondo sutil para vista previa (puedes quitarlo si lo incrustas sobre otro fondo) -->
+  <rect width="512" height="512" rx="32" fill="#0D0D0D"/>
+
+  <!-- Letra A construida con líneas y barra transversal -->
+  <!-- Piernas de la A -->
+  <path d="M128 400 L256 96 L384 400" stroke="url(#grad)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <!-- Barra transversal -->
+  <path d="M176 300 L336 300" stroke="url(#grad)" stroke-width="26" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Contorno interior fino para detalle -->
+  <path d="M138 396 L256 116 L374 396" stroke="#FFFFFF10" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M184 300 L328 300" stroke="#FFFFFF18" stroke-width="4" stroke-linecap="round"/>
+</svg>
+
+
