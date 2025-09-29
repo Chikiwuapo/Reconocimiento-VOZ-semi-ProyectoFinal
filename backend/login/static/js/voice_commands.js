@@ -300,30 +300,92 @@ class VoiceFormCommands {
     }
 
     setupSpeechRecognition() {
-        // Verificar soporte del navegador
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        // Detectar navegador y capacidades
+        this.browserInfo = this.detectBrowser();
+        
+        // Verificar soporte del navegador con fallbacks mejorados
+        if (!this.isSpeechRecognitionSupported()) {
             console.warn('Web Speech API no soportada en este navegador');
-            this.showError('Tu navegador no soporta reconocimiento de voz');
+            this.showError('Tu navegador no soporta reconocimiento de voz. Prueba con Chrome, Edge o Safari.');
             return;
         }
 
-        // Crear instancia de reconocimiento
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        this.recognition = new SpeechRecognition();
+        try {
+            // Crear instancia de reconocimiento con manejo de errores
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            this.recognition = new SpeechRecognition();
 
-        // Configuración optimizada para transcripción y rendimiento
-        this.recognition.continuous = true;
-        this.recognition.interimResults = false; // Mantener false para mejor rendimiento
-        this.recognition.lang = 'es-ES';
-        this.recognition.maxAlternatives = 3; // OPTIMIZACIÓN: Reducir de 5 a 3 para mejor rendimiento
-        
-        // OPTIMIZACIÓN: Configuración adicional para mejor calidad y rendimiento
-        if ('webkitSpeechRecognition' in window) {
-            // Configuraciones específicas para Chrome/WebKit
-            this.recognition.serviceURI = null; // Usar servicio local cuando sea posible
+            // Configuración optimizada según el navegador
+            this.configureSpeechRecognition();
+
+            // Configurar eventos con manejo robusto de errores
+            this.setupSpeechEvents();
+
+        } catch (error) {
+            console.error('Error al inicializar reconocimiento de voz:', error);
+            this.showError('Error al inicializar el reconocimiento de voz. Recarga la página e intenta nuevamente.');
         }
+    }
 
-        // Eventos
+    detectBrowser() {
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isChrome = /chrome/.test(userAgent) && !/edge|edg/.test(userAgent);
+        const isEdge = /edge|edg/.test(userAgent);
+        const isSafari = /safari/.test(userAgent) && !/chrome/.test(userAgent);
+        const isFirefox = /firefox/.test(userAgent);
+        const isBrave = navigator.brave && typeof navigator.brave.isBrave === 'function';
+
+        return {
+            isChrome,
+            isEdge,
+            isSafari,
+            isFirefox,
+            isBrave: isBrave || false,
+            userAgent
+        };
+    }
+
+    isSpeechRecognitionSupported() {
+        // Verificación mejorada de soporte
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            // Verificación adicional para navegadores que reportan soporte pero no funcionan
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const testRecognition = new SpeechRecognition();
+                return true;
+            } catch (e) {
+                console.warn('SpeechRecognition reportado pero no funcional:', e);
+                return false;
+            }
+        }
+        return false;
+    }
+
+    configureSpeechRecognition() {
+        // Configuración base
+        this.recognition.continuous = true;
+        this.recognition.interimResults = false;
+        this.recognition.lang = 'es-ES';
+
+        // Configuración específica por navegador
+        if (this.browserInfo.isChrome || this.browserInfo.isBrave) {
+            // Chrome y Brave - configuración optimizada
+            this.recognition.maxAlternatives = 3;
+            // Evitar configurar serviceURI que puede causar errores de red
+        } else if (this.browserInfo.isEdge) {
+            // Microsoft Edge - configuración conservadora
+            this.recognition.maxAlternatives = 1;
+        } else if (this.browserInfo.isSafari) {
+            // Safari - configuración mínima
+            this.recognition.maxAlternatives = 1;
+            this.recognition.continuous = false; // Safari funciona mejor sin continuous
+        } else {
+            // Otros navegadores - configuración segura
+            this.recognition.maxAlternatives = 1;
+        }
+    }
+
+    setupSpeechEvents() {
         this.recognition.onstart = () => {
             this.isListening = true;
             if (this.currentField) {
@@ -336,42 +398,85 @@ class VoiceFormCommands {
         this.recognition.onend = () => {
             this.isListening = false;
             
-            // Reiniciar automáticamente si está habilitado
+            // Reiniciar automáticamente si está habilitado (con delay específico por navegador)
             if (this.isEnabled) {
+                const restartDelay = this.browserInfo.isSafari ? 2000 : 1000;
                 setTimeout(() => {
-                    if (this.isEnabled) {
+                    if (this.isEnabled && !this.isListening) {
                         this.startListening();
                     }
-                }, 1000);
+                }, restartDelay);
             } else {
                 this.hideStatus();
             }
         };
 
         this.recognition.onerror = (event) => {
-            console.error('Error en reconocimiento de voz:', event.error);
-            
-            if (event.error === 'not-allowed') {
-                this.showError('❌ Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.');
-                this.isEnabled = false;
-            } else if (event.error === 'no-speech') {
-                // Error común, no mostrar al usuario
-                console.log('No se detectó habla');
-            } else {
-                this.showError(`❌ Error de reconocimiento: ${event.error}`);
-            }
+            console.error('Error en reconocimiento de voz:', event.error, event);
+            this.handleSpeechError(event);
         };
 
         this.recognition.onresult = (event) => {
-            const lastResult = event.results[event.results.length - 1];
-            
-            if (lastResult.isFinal) {
-                const transcript = lastResult[0].transcript.toLowerCase().trim();
-                console.log('Transcripción detectada:', transcript);
+            try {
+                const lastResult = event.results[event.results.length - 1];
                 
-                this.processTranscription(transcript);
+                if (lastResult && lastResult.isFinal) {
+                    const transcript = lastResult[0].transcript.toLowerCase().trim();
+                    console.log('Transcripción detectada:', transcript);
+                    
+                    this.processTranscription(transcript);
+                }
+            } catch (error) {
+                console.error('Error procesando resultado de voz:', error);
             }
         };
+    }
+
+    handleSpeechError(event) {
+        const errorType = event.error;
+        
+        switch (errorType) {
+            case 'not-allowed':
+                this.showError('❌ Permiso de micrófono denegado. Por favor, permite el acceso al micrófono.');
+                this.isEnabled = false;
+                break;
+                
+            case 'no-speech':
+                // Error común, no mostrar al usuario
+                console.log('No se detectó habla');
+                break;
+                
+            case 'network':
+                console.warn('Error de red en reconocimiento de voz');
+                this.showError('⚠️ Problema de conexión. Verifica tu internet e intenta nuevamente.');
+                // Intentar reiniciar después de un delay
+                if (this.isEnabled) {
+                    setTimeout(() => {
+                        if (this.isEnabled && !this.isListening) {
+                            this.startListening();
+                        }
+                    }, 3000);
+                }
+                break;
+                
+            case 'service-not-allowed':
+                this.showError('❌ Servicio de reconocimiento no disponible. Intenta con otro navegador.');
+                this.isEnabled = false;
+                break;
+                
+            case 'bad-grammar':
+                console.warn('Error de gramática en reconocimiento');
+                break;
+                
+            case 'language-not-supported':
+                this.showError('❌ Idioma no soportado. Cambia el idioma del navegador a español.');
+                break;
+                
+            default:
+                console.warn(`Error de reconocimiento no manejado: ${errorType}`);
+                this.showError(`⚠️ Error de reconocimiento: ${errorType}. Intenta nuevamente.`);
+                break;
+        }
     }
 
     processTranscription(transcript) {
@@ -1307,10 +1412,32 @@ class VoiceFormCommands {
         localStorage.setItem('voiceCommandsEnabled', 'true');
         
         try {
+            // Verificar permisos antes de iniciar
+            if (navigator.permissions) {
+                navigator.permissions.query({ name: 'microphone' }).then((result) => {
+                    if (result.state === 'denied') {
+                        this.showError('❌ Permiso de micrófono denegado. Permite el acceso en la configuración del navegador.');
+                        return;
+                    }
+                });
+            }
+
             this.recognition.start();
         } catch (error) {
             console.error('Error iniciando reconocimiento:', error);
-            this.showError('❌ Error iniciando reconocimiento de voz');
+            
+            // Manejo específico de errores comunes
+            if (error.name === 'InvalidStateError') {
+                console.log('Reconocimiento ya en progreso, reiniciando...');
+                this.stopListening();
+                setTimeout(() => {
+                    if (this.isEnabled) {
+                        this.startListening();
+                    }
+                }, 500);
+            } else {
+                this.showError('❌ Error iniciando reconocimiento de voz. Intenta nuevamente.');
+            }
         }
     }
 

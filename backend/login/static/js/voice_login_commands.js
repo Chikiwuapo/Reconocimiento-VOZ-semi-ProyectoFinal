@@ -126,26 +126,28 @@ class VoiceLoginCommands {
     }
 
     setupSpeechRecognition() {
+        // Verificar soporte del navegador - OPTIMIZADO
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
             console.warn('VoiceLoginCommands: Reconocimiento de voz no soportado');
             this.showError('❌ Reconocimiento de voz no soportado en este navegador');
             return;
         }
 
+        // Inicializar reconocimiento con configuración optimizada
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         this.recognition = new SpeechRecognition();
         
-        // Configuración optimizada para respuesta inmediata
+        // Configuración optimizada para mejor rendimiento
         this.recognition.continuous = true;
-        this.recognition.interimResults = false; // Optimizado para respuesta rápida
+        this.recognition.interimResults = false; // Desactivar resultados intermedios para mejor rendimiento
         this.recognition.lang = 'es-ES';
-        this.recognition.maxAlternatives = 3; // Optimizado para mejor precisión
+        this.recognition.maxAlternatives = 1; // Reducir alternativas para mejor rendimiento
         
         // Eventos optimizados
         this.recognition.onstart = () => {
             console.log('VoiceLoginCommands: Reconocimiento iniciado');
             this.isListening = true;
-            this.showStatus('🎤 Escuchando comandos...', 'listening');
+            this.showStatus('🎤 Escuchando comandos de voz...', 'listening');
         };
         
         this.recognition.onresult = (event) => {
@@ -153,7 +155,9 @@ class VoiceLoginCommands {
             if (result.isFinal) {
                 const transcript = result[0].transcript.trim();
                 console.log('VoiceLoginCommands: Transcripción final:', transcript);
-                this.processCommand(transcript.toLowerCase());
+                if (transcript) {
+                    this.processCommand(transcript.toLowerCase());
+                }
             }
         };
         
@@ -163,16 +167,20 @@ class VoiceLoginCommands {
             // Manejo optimizado de errores
             switch (event.error) {
                 case 'no-speech':
-                    this.showStatus('🎤 No se detectó voz. Intente de nuevo.', 'info');
+                    this.showStatus('🔇 No se detectó voz. Intenta hablar más claro.', 'warning');
                     break;
                 case 'audio-capture':
-                    this.showError('❌ Error de micrófono. Verifique permisos.');
+                    this.showError('❌ Error de micrófono. Verifica los permisos.');
                     break;
                 case 'not-allowed':
                     this.showError('❌ Permisos de micrófono denegados.');
                     break;
+                case 'network':
+                    this.showStatus('🌐 Error de red. Reintentando...', 'warning');
+                    setTimeout(() => this.startListening(), 1000);
+                    break;
                 default:
-                    this.showError('❌ Error de reconocimiento de voz.');
+                    this.showError(`❌ Error: ${event.error}`);
             }
             
             this.isListening = false;
@@ -182,13 +190,13 @@ class VoiceLoginCommands {
             console.log('VoiceLoginCommands: Reconocimiento terminado');
             this.isListening = false;
             
-            // Reinicio automático optimizado (50ms para respuesta inmediata)
+            // Reinicio automático optimizado con menor delay
             if (this.isEnabled) {
                 setTimeout(() => {
                     if (this.isEnabled) {
                         this.startListening();
                     }
-                }, 50);
+                }, 100); // Reducido de 50ms a 100ms para mejor estabilidad
             }
         };
     }
@@ -288,154 +296,52 @@ class VoiceLoginCommands {
     }
     
     processEmailTranscription(text) {
-        // Función avanzada para procesar y corregir emails hablados
+        // Función optimizada para procesar emails hablados - MEJORADA PARA RENDIMIENTO
         let processedEmail = text.toLowerCase().trim();
         
-        // 1. Eliminar palabras de comando y ruido
+        // 1. Limpieza rápida inicial - Una sola pasada
         processedEmail = processedEmail
             .replace(/^(email|correo|escribe|escribir|coloca|colocar|en|el|la|mi|es|dice|digo|ingresa|ingrese|poner|pon)\s*/gi, '')
-            .replace(/\s*(email|correo|escribe|escribir|coloca|colocar|en|el|la|mi|es|dice|digo|ingresa|ingrese|poner|pon)\s*/gi, ' ')
-            .trim();
+            .replace(/\s+/g, '') // Eliminar espacios múltiples
+            .replace(/punto/g, '.')
+            .replace(/arroba/g, '@');
         
-        // 2. Eliminar espacios múltiples y normalizar
-        processedEmail = processedEmail.replace(/\s+/g, '');
-        
-        // 3. Correcciones automáticas de pronunciación común
-        const corrections = {
-            // Correcciones de dominios comunes
-            'gmail': 'gmail',
-            'gmai': 'gmail',
-            'gmeil': 'gmail',
-            'jmail': 'gmail',
-            'gemail': 'gmail',
-            'hotmail': 'hotmail',
-            'hotmeil': 'hotmail',
-            'otmail': 'hotmail',
-            'outlook': 'outlook',
-            'outluk': 'outlook',
-            'outlok': 'outlook',
-            'yahoo': 'yahoo',
-            'yaju': 'yahoo',
-            'yaho': 'yahoo',
-            'senati': 'senati',
-            'sennati': 'senati',
-            'cenati': 'senati',
-            'senatti': 'senati',
-            'snati': 'senati',
-            'sati': 'senati',
-            'salti': 'senati',
-            'saltti': 'senati',
-            'salty': 'senati',
-            'saltie': 'senati',
-            
-            // Correcciones de caracteres especiales hablados
-            'punto': '.',
-            'arroba': '@',
-            'guión': '-',
-            'guion': '-',
-            'barra': '/',
-            'más': '+',
-            'underscore': '_',
-            'bajo': '_',
-            'rayabaja': '_',
-            
-            // Correcciones de números hablados
-            'cero': '0',
-            'uno': '1',
-            'dos': '2',
-            'tres': '3',
-            'cuatro': '4',
-            'cinco': '5',
-            'seis': '6',
-            'siete': '7',
-            'ocho': '8',
-            'nueve': '9',
-            
-            // Correcciones de extensiones comunes
-            'pe': 'pe',
-            'com': 'com',
-            'org': 'org',
-            'net': 'net',
-            'edu': 'edu',
-            'gov': 'gov'
+        // 2. Correcciones críticas optimizadas - Solo las más comunes
+        const quickCorrections = {
+            // Solo dominios más frecuentes
+            'gmai': 'gmail', 'gmeil': 'gmail', 'jmail': 'gmail',
+            'hotmeil': 'hotmail', 'otmail': 'hotmail',
+            'outluk': 'outlook', 'outlok': 'outlook',
+            'sennati': 'senati', 'cenati': 'senati', 'snati': 'senati',
+            // Números más comunes
+            'cero': '0', 'uno': '1', 'dos': '2', 'tres': '3', 'cuatro': '4',
+            'cinco': '5', 'seis': '6', 'siete': '7', 'ocho': '8', 'nueve': '9'
         };
         
-        // Aplicar correcciones
-        for (const [wrong, correct] of Object.entries(corrections)) {
-            const regex = new RegExp(wrong, 'gi');
-            processedEmail = processedEmail.replace(regex, correct);
+        // Aplicar correcciones en una sola pasada
+        for (const [wrong, correct] of Object.entries(quickCorrections)) {
+            if (processedEmail.includes(wrong)) {
+                processedEmail = processedEmail.replace(new RegExp(wrong, 'g'), correct);
+            }
         }
         
-        // 4. Correcciones específicas para casos como "Tarrillo" -> "tarrillo"
-        // Detectar y corregir errores comunes de transcripción
-        processedEmail = processedEmail
-            .replace(/([a-z])([A-Z])/g, '$1$2') // Mantener capitalización interna
-            .toLowerCase() // Convertir todo a minúsculas
-            .replace(/([a-z])(\d)/g, '$1$2') // Mantener números pegados a letras
-            .replace(/(\d)([a-z])/g, '$1$2'); // Mantener letras pegadas a números
+        // 3. Correcciones específicas críticas - Solo las esenciales
+        if (processedEmail.includes('carrillo')) processedEmail = processedEmail.replace(/carrillo/g, 'tarrillo');
+        if (processedEmail.includes('carillo')) processedEmail = processedEmail.replace(/carillo/g, 'tarrillo');
         
-        // 5. Correcciones específicas de patrones de error comunes
-        const patternCorrections = [
-            // Corregir "carrillo" -> "tarrillo" (error de transcripción común)
-            [/^carrillo/i, 'tarrillo'],
-            [/^carillo/i, 'tarrillo'],
-            [/^tarillo/i, 'tarrillo'],
-            
-            // Corregir números mal transcritos
-            [/999(\d)/g, '9999$1'], // "999" -> "9999" cuando hay más dígitos
-            [/(\d)99(\d)/g, '$19999$2'], // Insertar 9s faltantes
-            
-            // Corregir dominios mal transcritos - SENATI
-            [/@sennati\.p$/i, '@senati.pe'],
-            [/@senatti\.pe$/i, '@senati.pe'],
-            [/@cenati\.pe$/i, '@senati.pe'],
-            [/@senati\.p$/i, '@senati.pe'],
-            [/@snati\.pe$/i, '@senati.pe'],
-            [/@snati\.p$/i, '@senati.pe'],
-            [/@sati\.pe$/i, '@senati.pe'],
-            [/@sati\.p$/i, '@senati.pe'],
-            [/@salti\.pe$/i, '@senati.pe'],
-            [/@saltti\.pe$/i, '@senati.pe'],
-            [/@salty\.pe$/i, '@senati.pe'],
-            [/@saltie\.pe$/i, '@senati.pe'],
-            [/@salti\.p$/i, '@senati.pe'],
-            
-            // Corregir otros dominios mal transcritos
-            [/@gmail\.co$/i, '@gmail.com'],
-            [/@hotmail\.co$/i, '@hotmail.com'],
-            [/@outlook\.co$/i, '@outlook.com']
-        ];
-        
-        for (const [pattern, replacement] of patternCorrections) {
-            processedEmail = processedEmail.replace(pattern, replacement);
+        // 4. Reparaciones de dominio rápidas
+        if (processedEmail.includes('@senati') && !processedEmail.includes('.pe')) {
+            processedEmail = processedEmail.replace(/@senati$/, '@senati.pe');
+        }
+        if (processedEmail.includes('@gmail') && !processedEmail.includes('.com')) {
+            processedEmail = processedEmail.replace(/@gmail$/, '@gmail.com');
+        }
+        if (processedEmail.includes('@hotmail') && !processedEmail.includes('.com')) {
+            processedEmail = processedEmail.replace(/@hotmail$/, '@hotmail.com');
         }
         
-        // 6. Validación y limpieza final
-        // Asegurar que tenga @ y .
-        if (!processedEmail.includes('@') && processedEmail.includes('arroba')) {
-            processedEmail = processedEmail.replace('arroba', '@');
-        }
-        
-        if (!processedEmail.includes('.') && processedEmail.includes('punto')) {
-            processedEmail = processedEmail.replace('punto', '.');
-        }
-        
-        // 7. Validación de formato final
+        // 5. Validación final rápida
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
-        // Si no es válido, intentar reparaciones automáticas
-        if (!emailRegex.test(processedEmail)) {
-            // Intentar agregar .pe si falta extensión
-            if (processedEmail.includes('@senati') && !processedEmail.includes('.')) {
-                processedEmail += '.pe';
-            }
-            // Intentar agregar .com si falta extensión para gmail/hotmail/outlook
-            else if ((processedEmail.includes('@gmail') || processedEmail.includes('@hotmail') || processedEmail.includes('@outlook')) && !processedEmail.includes('.')) {
-                processedEmail += '.com';
-            }
-        }
-        
-        // Retornar el email procesado si es válido, o el texto original si no se pudo corregir
         return emailRegex.test(processedEmail) ? processedEmail : text;
     }
 
@@ -472,82 +378,54 @@ class VoiceLoginCommands {
     }
     
     cleanEmailInput(email) {
-        // Función para limpiar palabras adicionales e incoherencias
+        // Función optimizada para limpiar emails - MEJORADA PARA RENDIMIENTO
+        if (!email) return '';
+        
         let cleaned = email.toLowerCase().trim();
         
-        // Eliminar palabras de comando residuales
-        const commandWords = [
-            'email', 'correo', 'escribe', 'escribir', 'coloca', 'colocar',
-            'ingresa', 'ingrese', 'poner', 'pon', 'dice', 'digo', 'es',
-            'mi', 'el', 'la', 'en', 'para', 'por', 'con', 'sin', 'sobre',
-            'campo', 'casilla', 'formulario', 'login', 'sesión', 'cuenta'
-        ];
-        
-        // Crear patrón para eliminar palabras de comando
-        const commandPattern = new RegExp(`\\b(${commandWords.join('|')})\\b`, 'gi');
-        cleaned = cleaned.replace(commandPattern, '').trim();
-        
-        // Eliminar caracteres no válidos para emails (excepto los permitidos)
-        cleaned = cleaned.replace(/[^a-z0-9@._-]/g, '');
-        
-        // Eliminar múltiples puntos consecutivos
-        cleaned = cleaned.replace(/\.{2,}/g, '.');
-        
-        // Eliminar múltiples @ consecutivos
-        cleaned = cleaned.replace(/@{2,}/g, '@');
-        
-        // Eliminar múltiples guiones consecutivos
-        cleaned = cleaned.replace(/-{2,}/g, '-');
-        
-        // Eliminar puntos al inicio o final
-        cleaned = cleaned.replace(/^\.+|\.+$/g, '');
-        
-        // Eliminar @ al inicio o final
-        cleaned = cleaned.replace(/^@+|@+$/g, '');
+        // Limpieza rápida en una sola pasada
+        cleaned = cleaned
+            .replace(/\b(email|correo|escribe|escribir|coloca|colocar|ingresa|ingrese|poner|pon|dice|digo|es|mi|el|la|en|campo|casilla)\b/gi, '')
+            .replace(/[^a-z0-9@._-]/g, '') // Solo caracteres válidos
+            .replace(/\.{2,}/g, '.') // Múltiples puntos
+            .replace(/@{2,}/g, '@') // Múltiples @
+            .replace(/-{2,}/g, '-') // Múltiples guiones
+            .replace(/^[.@-]+|[.@-]+$/g, ''); // Limpiar inicio/final
         
         return cleaned;
     }
     
     validateAndFormatEmail(email) {
-        // Función para validación final y formateo correcto
+        // Función optimizada para validación - MEJORADA PARA RENDIMIENTO
         if (!email) return '';
         
         let formatted = email.toLowerCase().trim();
-        
-        // Verificar estructura básica de email
         const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
         
-        if (!emailRegex.test(formatted)) {
-            // Intentar reparaciones automáticas finales
-            
-            // Si no tiene @, buscar patrones comunes
-            if (!formatted.includes('@')) {
-                // Buscar patrones como "usuario.dominio.extension"
-                const parts = formatted.split('.');
-                if (parts.length >= 3) {
-                    // Asumir que el último punto debería ser @
-                    const lastDotIndex = formatted.lastIndexOf('.', formatted.lastIndexOf('.') - 1);
-                    if (lastDotIndex > 0) {
-                        formatted = formatted.substring(0, lastDotIndex) + '@' + formatted.substring(lastDotIndex + 1);
-                    }
-                }
-            }
-            
-            // Si tiene múltiples @, mantener solo el primero
-            const atIndex = formatted.indexOf('@');
-            if (atIndex > 0) {
-                const beforeAt = formatted.substring(0, atIndex);
-                const afterAt = formatted.substring(atIndex + 1).replace(/@/g, '');
-                formatted = beforeAt + '@' + afterAt;
-            }
-            
-            // Verificar nuevamente después de las reparaciones
-            if (!emailRegex.test(formatted)) {
-                return ''; // Retornar vacío si no se puede reparar
+        // Validación rápida inicial
+        if (emailRegex.test(formatted)) {
+            return formatted;
+        }
+        
+        // Solo reparaciones críticas si falla la validación inicial
+        if (!formatted.includes('@')) {
+            // Buscar patrón usuario.dominio.extension y convertir último punto a @
+            const lastDotIndex = formatted.lastIndexOf('.');
+            const secondLastDotIndex = formatted.lastIndexOf('.', lastDotIndex - 1);
+            if (secondLastDotIndex > 0) {
+                formatted = formatted.substring(0, secondLastDotIndex) + '@' + formatted.substring(secondLastDotIndex + 1);
             }
         }
         
-        return formatted;
+        // Si tiene múltiples @, mantener solo el primero
+        const atIndex = formatted.indexOf('@');
+        if (atIndex > 0 && formatted.indexOf('@', atIndex + 1) > 0) {
+            const beforeAt = formatted.substring(0, atIndex);
+            const afterAt = formatted.substring(atIndex + 1).replace(/@/g, '');
+            formatted = beforeAt + '@' + afterAt;
+        }
+        
+        return emailRegex.test(formatted) ? formatted : '';
     }
 
     isValidEmail(email) {
