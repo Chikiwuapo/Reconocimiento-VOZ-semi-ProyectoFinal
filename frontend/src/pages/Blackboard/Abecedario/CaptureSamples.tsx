@@ -17,15 +17,15 @@ export default function CaptureSamplesAbecedario() {
     recording,
     toggleRecording,
     samplesCaptured,
-    samplesTarget,
+    // samplesTarget, // Unused variable
     saveGesture,
     clearRecording,
     leftDetected,
     rightDetected,
-    confidence,
+    // confidence, // Unused variable
     letraVinculada,
     setLetraVinculada,
-    error,
+    // error, // Unused variable
   } = useAbecedario()
 
   const [dbCount, setDbCount] = useState<number>(0)
@@ -154,11 +154,4 @@ export default function CaptureSamplesAbecedario() {
   )
 }
 
-function Stat({ title, value, isDarkMode }: { title: string; value: string; isDarkMode: boolean }) {
-  return (
-    <div className={`rounded-xl p-3 border ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-slate-50 border-slate-200'}`}>
-      <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>{title}</div>
-      <div className={`text-lg font-semibold ${isDarkMode ? 'text-gray-100' : 'text-slate-900'}`}>{value}</div>
-    </div>
-  )
-}
+// Removed unused Stat function

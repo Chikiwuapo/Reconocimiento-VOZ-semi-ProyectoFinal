@@ -29,9 +29,7 @@ export default function StepRegisterFace({
   const [showConsentModal, setShowConsentModal] = useState(false)
   const [showRecordingModal, setShowRecordingModal] = useState(false)
   const [showActiveModal, setShowActiveModal] = useState(false)
-  const [isRecording, setIsRecording] = useState(false)
-  const [recordingCountdown, setRecordingCountdown] = useState(6)
-  const [recordingProgress, setRecordingProgress] = useState(0)
+  // Removed unused state variables: isRecording, recordingCountdown, recordingProgress
 
   // Hook para comandos de voz
   const voiceCommands = useVoiceCommands({
@@ -218,9 +216,9 @@ export default function StepRegisterFace({
         isOpen={showRecordingModal}
         onClose={handleRecordingClose}
         onStartRecording={handleStartRecording}
-        isRecording={isRecording}
-        countdown={recordingCountdown}
-        progress={recordingProgress}
+        isRecording={false}
+        countdown={6}
+        progress={0}
       />
 
       <VoiceActiveModal

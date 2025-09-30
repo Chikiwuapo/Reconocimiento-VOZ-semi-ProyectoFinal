@@ -99,7 +99,7 @@ const CustomReportsChart: React.FC<CustomReportsChartProps> = ({ data, isDarkMod
                 fontSize: '12px',
                 color: isDarkMode ? '#E5E7EB' : '#374151'
               }}
-              formatter={(value, entry) => (
+              formatter={(value) => (
                 <span style={{ color: isDarkMode ? '#E5E7EB' : '#374151' }}>
                   {value}
                 </span>
