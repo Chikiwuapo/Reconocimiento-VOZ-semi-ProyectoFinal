@@ -12,6 +12,7 @@ import {
   Brush
 } from 'recharts'
 import { Maximize2, Download } from 'lucide-react'
+import { useTheme } from '../../../App'
 
 export interface SessionPoint {
   date: string
@@ -25,7 +26,8 @@ interface SessionHistoryChartProps {
 }
 
 const SessionHistoryChart: React.FC<SessionHistoryChartProps> = ({ data, className = '' }) => {
-  const [selectedMetric, setSelectedMetric] = useState<'sessions' | 'users' | 'both'>('both')
+  const { isDarkMode } = useTheme()
+  const [selectedMetric, setSelectedMetric] = useState<'both' | 'sessions' | 'users'>('both')
   const [isExpanded, setIsExpanded] = useState(true)
   const [animationKey, setAnimationKey] = useState(0)
   const [selectedRange, setSelectedRange] = useState<{start:number,end:number}|null>(null)
@@ -75,21 +77,21 @@ const SessionHistoryChart: React.FC<SessionHistoryChartProps> = ({ data, classNa
   }
 
   return (
-    <div className={`bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 ${className}`}>
+    <div className={`${isDarkMode ? 'bg-gray-800/50' : 'bg-gray-100/80'} backdrop-blur-sm rounded-xl border ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <button
             onClick={() => { setSelectedMetric('both'); setAnimationKey(k => k + 1) }}
-            className={`px-3 py-1.5 text-sm rounded-lg border border-gray-700 transition-colors ${selectedMetric==='both' ? 'bg-blue-600 text-white' : 'bg-gray-700/40 hover:bg-gray-700 text-gray-200'}`}
+            className={`px-3 py-1.5 text-sm rounded-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} transition-colors ${selectedMetric==='both' ? 'bg-blue-600 text-white' : isDarkMode ? 'bg-gray-700/40 hover:bg-gray-700 text-gray-200' : 'bg-gray-200/60 hover:bg-gray-300 text-gray-700'}`}
           >Ambos</button>
           <button
             onClick={() => { setSelectedMetric('sessions'); setAnimationKey(k => k + 1) }}
-            className={`px-3 py-1.5 text-sm rounded-lg border border-gray-700 transition-colors ${selectedMetric==='sessions' ? 'bg-blue-600 text-white' : 'bg-gray-700/40 hover:bg-gray-700 text-gray-200'}`}
+            className={`px-3 py-1.5 text-sm rounded-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} transition-colors ${selectedMetric==='sessions' ? 'bg-blue-600 text-white' : isDarkMode ? 'bg-gray-700/40 hover:bg-gray-700 text-gray-200' : 'bg-gray-200/60 hover:bg-gray-300 text-gray-700'}`}
           >Sesiones</button>
           <button
             onClick={() => { setSelectedMetric('users'); setAnimationKey(k => k + 1) }}
-            className={`px-3 py-1.5 text-sm rounded-lg border border-gray-700 transition-colors ${selectedMetric==='users' ? 'bg-blue-600 text-white' : 'bg-gray-700/40 hover:bg-gray-700 text-gray-200'}`}
+            className={`px-3 py-1.5 text-sm rounded-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-300'} transition-colors ${selectedMetric==='users' ? 'bg-blue-600 text-white' : isDarkMode ? 'bg-gray-700/40 hover:bg-gray-700 text-gray-200' : 'bg-gray-200/60 hover:bg-gray-300 text-gray-700'}`}
           >Usuarios</button>
         </div>
         <div className="flex items-center gap-2">
@@ -97,17 +99,17 @@ const SessionHistoryChart: React.FC<SessionHistoryChartProps> = ({ data, classNa
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors"
+            className={`p-2 rounded-lg ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700 text-gray-300' : 'bg-gray-200/50 hover:bg-gray-200 text-gray-600'} transition-colors`}
           >
-            <Maximize2 className="w-4 h-4 text-gray-300" />
+            <Maximize2 className="w-4 h-4" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleExport}
-            className="p-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors"
+            className={`p-2 rounded-lg ${isDarkMode ? 'bg-gray-700/50 hover:bg-gray-700 text-gray-300' : 'bg-gray-200/50 hover:bg-gray-200 text-gray-600'} transition-colors`}
           >
-            <Download className="w-4 h-4 text-gray-300" />
+            <Download className="w-4 h-4" />
           </motion.button>
         </div>
       </div>
@@ -132,9 +134,9 @@ const SessionHistoryChart: React.FC<SessionHistoryChartProps> = ({ data, classNa
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="date" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} angle={-35} textAnchor="end" height={60} />
-              <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-              <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid #374151', color: '#E5E7EB' }} />
+              <XAxis dataKey="date" stroke={isDarkMode ? '#FFFFFF' : '#000000'} tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }} angle={-35} textAnchor="end" height={60} />
+              <YAxis stroke={isDarkMode ? '#FFFFFF' : '#000000'} tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }} />
+              <Tooltip contentStyle={{ background: isDarkMode ? '#1F2937' : '#FFFFFF', border: isDarkMode ? '1px solid #374151' : '1px solid #E5E7EB', color: isDarkMode ? '#E5E7EB' : '#1F2937' }} />
               <Legend />
               {(selectedMetric === 'sessions' || selectedMetric === 'both') && (
                 <Area type="monotone" dataKey="sessions" name="Sesiones" stroke="#3B82F6" fill="url(#sessionsGradient)" strokeWidth={2} />

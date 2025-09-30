@@ -4,10 +4,12 @@ import Layout from '../../components/Blackboard/Layout'
 import type { ModelType, TrainingSession, ModelStats } from '../../types'
 import { useUserStore } from '../../auth/userStore'
 import { useTheme } from '../../App'
+import { useModelContext } from '../../contexts/ModelContext'
 
 export default function Models() {
   const navigate = useNavigate()
   const { isDarkMode } = useTheme()
+  const { setSelectedModel } = useModelContext()
   
   // Estados principales
   const [trainingProgress, setTrainingProgress] = useState(0)
@@ -15,7 +17,7 @@ export default function Models() {
   const [showModelSelection, setShowModelSelection] = useState(false)
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
   const [showClearConfirm, setShowClearConfirm] = useState(false)
-  const [selectedModel, setSelectedModel] = useState<ModelType | null>(null)
+  const [selectedModelLocal, setSelectedModelLocal] = useState<ModelType | null>(null)
   const { user, addModel, updateModel, removeModel, setModels } = useUserStore()
   const createdModels = user.models as unknown as ModelType[]
   const [trainingSessions, setTrainingSessions] = useState<TrainingSession[]>([])
@@ -212,28 +214,50 @@ export default function Models() {
     // Cerrar el modal
     setShowModelSelection(false)
 
-    // Notificación
-    window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
-
-    // Redirección automática a la vista de capturar según el tipo de modelo
+    // Establecer el modelo seleccionado en el contexto
     if (model.id === 'vocales') {
+      setSelectedModel({
+        id: 'vocales',
+        name: 'Vocales',
+        type: 'vocales',
+        basePath: '/vocales'
+      })
       navigate('/vocales/capture')
     } else if (model.id === 'abecedario') {
+      setSelectedModel({
+        id: 'abecedario',
+        name: 'Abecedario',
+        type: 'abecedario',
+        basePath: '/abecedario'
+      })
       navigate('/abecedario/capture')
     } else if (model.id === 'palabras') {
+      setSelectedModel({
+        id: 'palabras',
+        name: 'Palabras',
+        type: 'palabras',
+        basePath: '/palabras'
+      })
       navigate('/palabras/capture')
     } else {
+      setSelectedModel({
+        id: 'arithmetic',
+        name: 'Aritmética',
+        type: 'arithmetic',
+        basePath: '/arithmetic'
+      })
       navigate('/arithmetic/capture')
     }
 
-    // Ya no incrementamos aquí; el conteo se realiza al entrar a entrenar (una vez por modelo)
+    // Notificación
+    window.dispatchEvent(new CustomEvent('app:notify', { detail: `Modelo creado: ${model.name}` }))
   }
 
   const handleConfirmModel = () => {
-    if (selectedModel) {
+    if (selectedModelLocal) {
       const newModel: ModelType = {
-        ...selectedModel,
-        id: `${selectedModel.id}_${Date.now()}`,
+        ...selectedModelLocal,
+        id: `${selectedModelLocal.id}_${Date.now()}`,
         status: 'Entrenando',
         accuracy: 0,
         createdAt: new Date(),
@@ -257,7 +281,7 @@ export default function Models() {
         difficulty: newModel.difficulty,
       })
       setShowConfirmationModal(false)
-      setSelectedModel(null)
+      setSelectedModelLocal(null)
       startTraining(newModel)
     }
   }
@@ -835,14 +859,14 @@ export default function Models() {
       )}
 
       {/* Modal de confirmación */}
-      {showConfirmationModal && selectedModel && (
+      {showConfirmationModal && selectedModelLocal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className={`rounded-2xl max-w-md w-full shadow-2xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
             {/* Header del modal */}
-            <div className={`bg-gradient-to-r ${selectedModel.bgColor} text-white p-6 rounded-t-2xl`}>
+            <div className={`bg-gradient-to-r ${selectedModelLocal.bgColor} text-white p-6 rounded-t-2xl`}>
               <div className="text-center">
                 <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">{selectedModel.icon}</span>
+                  <span className="text-2xl">{selectedModelLocal.icon}</span>
                 </div>
                 <h2 className="text-xl font-bold">Confirmar Creación</h2>
               </div>
@@ -852,11 +876,11 @@ export default function Models() {
             <div className="p-6">
               <div className="text-center mb-6">
                 <h3 className={`text-lg font-semibold mb-2 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
-                  ¿Crear {selectedModel.name}?
+                  ¿Crear {selectedModelLocal.name}?
                 </h3>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Estás a punto de crear un modelo de entrenamiento para {selectedModel.type.toLowerCase()}. 
-                  Este proceso tomará aproximadamente {selectedModel.duration}.
+                  Estás a punto de crear un modelo de entrenamiento para {selectedModelLocal.type.toLowerCase()}. 
+                  Este proceso tomará aproximadamente {selectedModelLocal.duration}.
                 </p>
               </div>
 
@@ -865,15 +889,15 @@ export default function Models() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Tipo:</span>
-                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModel.type}</span>
+                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModelLocal.type}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Duración estimada:</span>
-                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModel.duration}</span>
+                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModelLocal.duration}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className={isDarkMode ? 'text-gray-400' : 'text-gray-500'}>Nivel de dificultad:</span>
-                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModel.difficulty}</span>
+                    <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>{selectedModelLocal.difficulty}</span>
                   </div>
                 </div>
               </div>
@@ -882,7 +906,7 @@ export default function Models() {
                 <button 
                   onClick={() => {
                     setShowConfirmationModal(false)
-                    setSelectedModel(null)
+                    setSelectedModelLocal(null)
                   }}
                   className={`flex-1 px-4 py-2 rounded-lg transition-colors font-medium ${isDarkMode ? 'text-gray-300 bg-gray-700 hover:bg-gray-600' : 'text-gray-700 bg-gray-200 hover:bg-gray-300'}`}
                 >
@@ -890,7 +914,7 @@ export default function Models() {
                 </button>
                 <button 
                   onClick={handleConfirmModel}
-                  className={`flex-1 px-4 py-2 bg-gradient-to-r ${selectedModel.bgColor} text-white rounded-lg hover:opacity-90 transition-all font-medium`}
+                  className={`flex-1 px-4 py-2 bg-gradient-to-r ${selectedModelLocal.bgColor} text-white rounded-lg hover:opacity-90 transition-all font-medium`}
                 >
                   Crear Modelo
                 </button>

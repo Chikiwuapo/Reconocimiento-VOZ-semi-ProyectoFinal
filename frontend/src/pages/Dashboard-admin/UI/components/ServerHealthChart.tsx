@@ -153,17 +153,19 @@ const ServerHealthChart: React.FC<ServerHealthChartProps> = ({ data, isDarkMode 
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
             <XAxis 
               dataKey="name" 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
               angle={-45}
               textAnchor="end"
               height={80}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <YAxis 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
               domain={[90, 100]}
               tickFormatter={(value) => `${value}%`}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <Tooltip 
               contentStyle={{ 

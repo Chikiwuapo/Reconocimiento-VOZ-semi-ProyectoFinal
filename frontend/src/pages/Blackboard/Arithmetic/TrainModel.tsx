@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import Layout from '../../../components/Blackboard/Layout'
 import { useTheme } from '../../../App'
-import { useLocation } from 'react-router-dom'
-
-type ModelKey = 'vocales' | 'abecedario' | 'numeros' | 'operaciones'
+import { getTrainedGesturesAPI } from './services/arithmeticService'
 
 function ConfirmModal({ open, onClose, title, message, isDarkMode }: { open: boolean; onClose: () => void; title: string; message: string; isDarkMode: boolean }) {
   if (!open) return null
@@ -23,136 +21,425 @@ function ConfirmModal({ open, onClose, title, message, isDarkMode }: { open: boo
 
 export default function TrainModel() {
   const { isDarkMode } = useTheme()
-  const location = useLocation()
-  const [selected, setSelected] = useState<ModelKey>('abecedario')
-  const [epochs, setEpochs] = useState(10)
+  const [epochs, setEpochs] = useState(20)
   const [batch, setBatch] = useState(8)
   const [learningRate, setLearningRate] = useState(0.001)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [barData, setBarData] = useState<{ label: string; value: number }[]>([])
+  const [distData, setDistData] = useState<{ label: string; count: number }[]>([])
   const [regData, setRegData] = useState<{ x: number; y: number }[]>([])
+  const [isTraining, setIsTraining] = useState(false)
+  const [currentEpoch, setCurrentEpoch] = useState(0)
+  const intervalRef = useRef<number | null>(null)
 
-  // Read ?model to preselect card
-  useEffect(() => {
-    const params = new URLSearchParams(location.search)
-    const model = (params.get('model') || '').toLowerCase()
-    if (model === 'vocales' || model === 'abecedario' || model === 'numeros' || model === 'operaciones') {
-      setSelected(model as ModelKey)
+  // Cargar estadísticas de distribución desde backend
+  const loadDistribution = async () => {
+    try {
+      const res = await getTrainedGesturesAPI()
+      const gestos: any[] = res?.gestos || res || []
+      
+      // Separar números y operaciones
+      const numbers: Record<string, number> = {}
+      const operations: Record<string, number> = {}
+      
+      gestos.forEach(g => {
+        const linkedNumber = g?.numero_vinculado
+        const linkedOperation = g?.operacion_vinculada
+        const sampleCount = (g?.numero_muestras || 0) || (Array.isArray(g?.landmarks) ? g.landmarks.length : 1)
+        
+        if (linkedNumber !== null && linkedNumber !== undefined) {
+          numbers[linkedNumber.toString()] = (numbers[linkedNumber.toString()] || 0) + sampleCount
+        }
+        
+        if (linkedOperation) {
+          // Convertir nombres de operaciones a símbolos
+          const opSymbol = linkedOperation === 'suma' ? '+' : 
+                          linkedOperation === 'resta' ? '-' : 
+                          linkedOperation === 'multiplicacion' ? '×' : 
+                          linkedOperation === 'division' ? '÷' : linkedOperation
+          operations[opSymbol] = (operations[opSymbol] || 0) + sampleCount
+        }
+      })
+      
+      // Combinar números y operaciones, ordenar por cantidad
+      const allEntries = [
+        ...Object.entries(numbers).map(([label, count]) => ({ label, count })),
+        ...Object.entries(operations).map(([label, count]) => ({ label, count }))
+      ]
+      
+      const sortedEntries = allEntries.sort((a, b) => b.count - a.count).slice(0, 12)
+      setDistData(sortedEntries)
+    } catch (error) {
+      console.error('Error loading distribution:', error)
+      setDistData([])
     }
-  }, [location.search])
-
-  // Cargar conteos (simulado por ahora; puede integrarse a backend real)
-  useEffect(() => {
-    const loadCounts = async () => {
-      try {
-        const res = await fetch('/operaciones/gestos_entrenados')
-        if (!res.ok) throw new Error('err')
-        const data = await res.json()
-        const gestos = Array.isArray(data?.gestos) ? data.gestos : []
-        const counts: Record<string, number> = {}
-        gestos.forEach((g: any) => { counts[g?.label || 'otro'] = (counts[g?.label || 'otro'] || 0) + 1 })
-        const arr = Object.entries(counts).map(([label, value]) => ({ label, value }))
-        setBarData(arr.sort((a, b) => b.value - a.value).slice(0, 12))
-      } catch {
-        setBarData([])
-      }
-    }
-    loadCounts()
-  }, [selected])
-
-  const models: { key: ModelKey; title: string; desc: string; emoji: string; color: string }[] = [
-    { key: 'vocales', title: 'Vocales', desc: 'A, E, I, O, U', emoji: '🗣️', color: 'from-emerald-400 to-emerald-600' },
-    { key: 'abecedario', title: 'Abecedario', desc: 'A - Z', emoji: '🔤', color: 'from-blue-400 to-blue-600' },
-    { key: 'numeros', title: 'Números', desc: '1 - 50', emoji: '🔢', color: 'from-purple-400 to-purple-600' },
-    { key: 'operaciones', title: 'Operaciones', desc: 'Básicas', emoji: '➕', color: 'from-orange-400 to-orange-600' },
-  ]
-
-  const onTrain = () => {
-    // Simular datos de regresión dependiendo de parámetros
-    const N = 20
-    const pts = Array.from({ length: N }, (_, i) => {
-      const x = i + 1
-      const noise = (Math.random() - 0.5) * (0.1 + (1 / (epochs + 1)))
-      const base = 0.6 + Math.min(0.35, Math.log10(epochs + batch) / 5)
-      const y = Math.max(0.5, Math.min(0.99, base + noise))
-      return { x, y: parseFloat(y.toFixed(3)) }
-    })
-    setRegData(pts)
-    setShowConfirm(true)
   }
 
-  const Card = ({ m }: { m: typeof models[number] }) => (
-    <button onClick={() => setSelected(m.key)} className={`rounded-xl overflow-hidden border shadow transition transform hover:-translate-y-1 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-slate-200'} ${selected === m.key ? 'ring-2 ring-indigo-500' : ''}`}>
-      <div className={`h-16 bg-gradient-to-r ${m.color} relative`}>
-        <div className="absolute top-2 left-2 w-5 h-5 bg-white/30 rounded-full" />
-        <div className="absolute top-2 right-2 w-10 h-1.5 bg-white/40 rounded-full" />
-      </div>
-      <div className="p-4">
-        <div className="flex items-center justify-between">
-          <div className="text-2xl">{m.emoji}</div>
-          <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Registros</div>
+  useEffect(() => {
+    loadDistribution()
+    const onData = (e: Event) => {
+      const ce = e as CustomEvent<any>
+      const d = ce?.detail || {}
+      if (d?.domain === 'operaciones' || d?.domain === 'arithmetic') loadDistribution()
+    }
+    const onFocus = () => { loadDistribution() }
+    window.addEventListener('app:dataChanged', onData as EventListener)
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onFocus)
+    return () => {
+      window.removeEventListener('app:dataChanged', onData as EventListener)
+      window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onFocus)
+    }
+  }, [])
+
+  const onTrain = () => {
+    if (isTraining) return
+    
+    setIsTraining(true)
+    setCurrentEpoch(0)
+    setRegData([])
+    
+    const N = Math.max(10, Math.min(50, epochs))
+    let epochCount = 0
+    
+    // Simular entrenamiento en tiempo real
+    intervalRef.current = setInterval(() => {
+      epochCount++
+      setCurrentEpoch(epochCount)
+      
+      // Generar punto de precisión realista
+      const noise = (Math.random() - 0.5) * (0.1 + (1 / (epochs + 1)))
+      const base = 0.6 + Math.min(0.35, Math.log10(epochs + batch) / 5)
+      const progressFactor = Math.min(1, epochCount / N)
+      const y = Math.max(0.5, Math.min(0.99, base + noise + (progressFactor * 0.2)))
+      
+      const newPoint = { x: epochCount, y: parseFloat(y.toFixed(3)) }
+      
+      setRegData(prev => [...prev, newPoint])
+      
+      if (epochCount >= N) {
+        setIsTraining(false)
+        setShowConfirm(true)
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+          intervalRef.current = null
+        }
+      }
+    }, 200) // Actualizar cada 200ms para efecto en tiempo real
+  }
+
+  // Limpiar intervalo al desmontar
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [])
+
+  const BarChart = ({ data }: { data: { label: string; count: number }[] }) => {
+    const max = useMemo(() => Math.max(1, ...data.map(d => d.count)), [data])
+    const labels = data.map(d => d.label)
+    const counts = data.map(d => d.count)
+    // dimensiones del gráfico (más grandes para legibilidad)
+    const W = 600
+    const H = 300
+    const padL = 50
+    const padR = 24
+    const padT = 24
+    const padB = 42
+    const innerW = W - padL - padR
+    const innerH = H - padT - padB
+    const n = Math.max(1, counts.length)
+    const barGap = 16
+    const barW = Math.max(24, (innerW - barGap * (n - 1)) / n)
+
+    return (
+      <div className={`rounded-xl p-4 border ${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-slate-200'} shadow`}>
+        <div className={`text-sm font-semibold ${isDarkMode ? 'text-gray-200' : 'text-header'}`}>Distribución de datos (Top 12)</div>
+        <div className="mt-3 h-80 relative">
+          {data.length === 0 ? (
+            <div className={`absolute inset-0 flex items-center justify-center ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Sin datos disponibles</div>
+          ) : (
+            <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-full">
+              {/* grid horizontal */}
+              {Array.from({ length: 5 }).map((_, i) => {
+                const y = padT + (innerH / 5) * i
+                return <line key={i} x1={padL} y1={y} x2={W - padR} y2={y} stroke={isDarkMode ? '#1f2937' : '#eef2f7'} strokeWidth="1" />
+              })}
+              {/* ejes */}
+              <line x1={padL} y1={H - padB} x2={W - padR} y2={H - padB} stroke={isDarkMode ? '#334155' : '#cbd5e1'} strokeWidth="2" />
+              <line x1={padL} y1={padT} x2={padL} y2={H - padB} stroke={isDarkMode ? '#334155' : '#cbd5e1'} strokeWidth="2" />
+              {/* barras */}
+              {counts.map((c, i) => {
+                const h = max === 0 ? 0 : (c / max) * innerH
+                const x = padL + i * (barW + barGap)
+                const y = H - padB - h
+                return (
+                  <g key={i}>
+                    <rect x={x} y={y} width={barW} height={h} rx={6} fill="#6366f1" />
+                    {/* etiqueta */}
+                    <text x={x + barW / 2} y={H - padB + 20} fontSize="12" textAnchor="middle" fill={isDarkMode ? '#cbd5e1' : '#475569'}>{labels[i]}</text>
+                    {/* valor */}
+                    <text x={x + barW / 2} y={y - 8} fontSize="12" textAnchor="middle" fill={isDarkMode ? '#cbd5e1' : '#475569'}>{c}</text>
+                  </g>
+                )
+              })}
+            </svg>
+          )}
         </div>
-        <div className={`mt-1 font-semibold ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>{m.title}</div>
-        <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{m.desc}</div>
       </div>
-    </button>
-  )
+    )
+  }
 
-  const BarChart = ({ data }: { data: { label: string; value: number }[] }) => (
-    <div className={`rounded-xl p-4 border ${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-slate-200'} shadow`}> 
-      <div className={`text-sm font-semibold ${isDarkMode ? 'text-gray-200' : 'text-header'}`}>Distribución de datos (Top 12)</div>
-      <div className="mt-3 grid grid-cols-12 gap-2 items-end h-48">
-        {data.length === 0 ? (
-          <div className={`col-span-12 text-center text-sm ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Sin datos</div>
-        ) : data.map((d, i) => (
-          <div key={i} className="flex flex-col items-center">
-            <div className="w-full flex-1 flex items-end">
-              <div className="w-full bg-indigo-500 rounded-t" style={{ height: `${Math.min(100, d.value)}%` }} />
-            </div>
-            <div className="mt-1 text-[10px] truncate max-w-[60px]" title={d.label}>{d.label}</div>
+  const RegressionChart = ({ data }: { data: { x: number; y: number }[] }) => {
+    // Dimensiones del gráfico
+    const W = 600
+    const H = 300
+    const padL = 60  // Aumentado para acomodar porcentajes
+    const padR = 24
+    const padT = 24
+    const padB = 50  // Aumentado para etiquetas del eje X
+    const innerW = W - padL - padR
+    const innerH = H - padT - padB
+
+    const maxEpochs = Math.max(20, data.length > 0 ? Math.max(...data.map(p => p.x)) : 20)
+    
+    const xAt = (epoch: number) => padL + (innerW * (epoch - 1) / Math.max(1, maxEpochs - 1))
+    const yAt = (val: number) => padT + (innerH * (1 - Math.max(0, Math.min(1, val))))
+    
+    // Ticks del eje Y en porcentajes
+    const yTicks = [0, 0.2, 0.4, 0.6, 0.8, 1.0]
+    
+    // Ticks del eje X (épocas)
+    const xTicks = []
+    for (let i = 1; i <= maxEpochs; i += Math.max(1, Math.floor(maxEpochs / 10))) {
+      xTicks.push(i)
+    }
+    if (xTicks[xTicks.length - 1] !== maxEpochs) {
+      xTicks.push(maxEpochs)
+    }
+
+    // Path para el área bajo la curva y la línea
+    const linePath = data.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xAt(p.x)} ${yAt(p.y)}`).join(' ')
+    const areaPath = data.length > 0 ? 
+      `M ${xAt(data[0].x)} ${padT + innerH} ` +
+      data.map((p) => `L ${xAt(p.x)} ${yAt(p.y)}`).join(' ') +
+      ` L ${xAt(data[data.length - 1].x)} ${padT + innerH} Z` : ''
+
+    return (
+      <div className={`rounded-xl p-4 border ${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-slate-200'} shadow`}>
+        <div className="flex items-center justify-between mb-3">
+          <div className={`text-sm font-semibold ${isDarkMode ? 'text-gray-200' : 'text-header'}`}>
+            Regresión de precisión por época
           </div>
-        ))}
-      </div>
-    </div>
-  )
+          {isTraining && (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+              <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>En tiempo real</span>
+            </div>
+          )}
+        </div>
+        
+        <div className="h-80 relative">
+          <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-full">
+            {/* Grid horizontal */}
+            {yTicks.map((t, i) => {
+              const y = yAt(t)
+              return (
+                <line 
+                  key={`hgrid-${i}`} 
+                  x1={padL} 
+                  y1={y} 
+                  x2={W - padR} 
+                  y2={y} 
+                  stroke={isDarkMode ? '#1f2937' : '#f1f5f9'} 
+                  strokeWidth="1" 
+                  strokeDasharray={t === 0 ? "none" : "2,2"}
+                />
+              )
+            })}
+            
+            {/* Grid vertical */}
+            {xTicks.map((epoch, i) => {
+              const x = xAt(epoch)
+              return (
+                <line 
+                  key={`vgrid-${i}`} 
+                  x1={x} 
+                  y1={padT} 
+                  x2={x} 
+                  y2={H - padB} 
+                  stroke={isDarkMode ? '#1f2937' : '#f1f5f9'} 
+                  strokeWidth="1" 
+                  strokeDasharray="2,2"
+                />
+              )
+            })}
+            
+            {/* Ejes principales */}
+            <line x1={padL} y1={H - padB} x2={W - padR} y2={H - padB} stroke={isDarkMode ? '#334155' : '#cbd5e1'} strokeWidth="2" />
+            <line x1={padL} y1={padT} x2={padL} y2={H - padB} stroke={isDarkMode ? '#334155' : '#cbd5e1'} strokeWidth="2" />
+            
+            {/* Etiquetas de eje Y (porcentajes) */}
+            {yTicks.map((t, i) => (
+              <text 
+                key={`ylabel-${i}`} 
+                x={padL - 12} 
+                y={yAt(t) + 4} 
+                fontSize="11" 
+                textAnchor="end" 
+                fill={isDarkMode ? '#cbd5e1' : '#475569'}
+                fontWeight="500"
+              >
+                {Math.round(t * 100)}%
+              </text>
+            ))}
+            
+            {/* Etiquetas de eje X (épocas) */}
+            {xTicks.map((epoch, i) => (
+              <text 
+                key={`xlabel-${i}`} 
+                x={xAt(epoch)} 
+                y={H - padB + 20} 
+                fontSize="11" 
+                textAnchor="middle" 
+                fill={isDarkMode ? '#cbd5e1' : '#475569'}
+                fontWeight="500"
+              >
+                {epoch}
+              </text>
+            ))}
 
-  const RegressionChart = ({ data }: { data: { x: number; y: number }[] }) => (
-    <div className={`rounded-xl p-4 border ${isDarkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-slate-200'} shadow`}> 
-      <div className={`text-sm font-semibold ${isDarkMode ? 'text-gray-200' : 'text-header'}`}>Regresión de precisión por época</div>
-      <div className="mt-3 h-48 relative">
-        <svg viewBox="0 0 100 100" className="w-full h-full">
-          {/* eje */}
-          <line x1="5" y1="95" x2="95" y2="95" stroke="#94a3b8" strokeWidth="0.5" />
-          <line x1="5" y1="5" x2="5" y2="95" stroke="#94a3b8" strokeWidth="0.5" />
-          {/* línea */}
-          {data.map((p, i) => (
-            i === 0 ? null : (
-              <line key={i} x1={(i-1)*(90/(data.length-1))+5} y1={95 - data[i-1].y*80} x2={i*(90/(data.length-1))+5} y2={95 - p.y*80} stroke="#6366f1" strokeWidth="0.8" />
-            )
-          ))}
-          {/* puntos */}
-          {data.map((p, i) => (
-            <circle key={i} cx={i*(90/(data.length-1))+5} cy={95 - p.y*80} r="1.2" fill="#22c55e" />
-          ))}
-        </svg>
+            {/* Área bajo la curva con gradiente */}
+            {data.length > 0 && (
+              <defs>
+                <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#10b981" stopOpacity="0.05" />
+                </linearGradient>
+              </defs>
+            )}
+            
+            {data.length > 0 && (
+              <path 
+                d={areaPath} 
+                fill="url(#areaGradient)" 
+                className={isTraining ? "animate-pulse" : ""}
+              />
+            )}
+            
+            {/* Línea principal */}
+            {data.length > 0 && (
+              <path 
+                d={linePath} 
+                fill="none" 
+                stroke="#10b981" 
+                strokeWidth="3" 
+                strokeLinejoin="round" 
+                strokeLinecap="round"
+                className={isTraining ? "animate-pulse" : ""}
+                style={{
+                  filter: isTraining ? 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.6))' : 'none'
+                }}
+              />
+            )}
+            
+            {/* Puntos */}
+            {data.map((p, i) => (
+              <g key={`point-${i}`}>
+                <circle 
+                  cx={xAt(p.x)} 
+                  cy={yAt(p.y)} 
+                  r={isTraining && i === data.length - 1 ? 6 : 4} 
+                  fill="#10b981" 
+                  stroke="#ffffff" 
+                  strokeWidth="2"
+                  className={isTraining && i === data.length - 1 ? "animate-pulse" : ""}
+                  style={{
+                    filter: isTraining && i === data.length - 1 ? 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.8))' : 'none'
+                  }}
+                />
+                {/* Tooltip con valor */}
+                {(i === data.length - 1 || i === 0 || i % 5 === 0) && (
+                  <text 
+                    x={xAt(p.x)} 
+                    y={yAt(p.y) - 12} 
+                    fontSize="10" 
+                    textAnchor="middle" 
+                    fill={isDarkMode ? '#cbd5e1' : '#475569'}
+                    fontWeight="600"
+                  >
+                    {(p.y * 100).toFixed(1)}%
+                  </text>
+                )}
+              </g>
+            ))}
+            
+            {/* Título del eje X */}
+            <text 
+              x={padL + innerW / 2} 
+              y={H - 8} 
+              fontSize="12" 
+              textAnchor="middle" 
+              fill={isDarkMode ? '#9ca3af' : '#64748b'}
+              fontWeight="500"
+            >
+              Épocas
+            </text>
+            
+            {/* Título del eje Y */}
+            <text 
+              x={15} 
+              y={padT + innerH / 2} 
+              fontSize="12" 
+              textAnchor="middle" 
+              fill={isDarkMode ? '#9ca3af' : '#64748b'}
+              fontWeight="500"
+              transform={`rotate(-90, 15, ${padT + innerH / 2})`}
+            >
+              Precisión (%)
+            </text>
+          </svg>
+          
+          {/* Mensaje cuando no hay datos */}
+          {data.length === 0 && (
+            <div className={`absolute inset-0 flex items-center justify-center ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>
+              <div className="text-center">
+                <div className="text-4xl mb-2">📊</div>
+                <div className="text-sm">Presiona "Entrenar" para ver el progreso en tiempo real</div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <Layout>
       <div className={`min-h-[85vh] p-6 transition-colors ${isDarkMode ? 'bg-gradient-to-br from-[#0A0A0A] to-[#121212]' : 'bg-gradient-to-br from-gray-50 to-gray-100'}`}>
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
           <div className="mb-4">
-            <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-header'}`}>Entrenar Modelo</h1>
-            <p className={`${isDarkMode ? 'text-gray-300' : 'text-slate-600'} mt-1`}>Selecciona un modelo, configura los parámetros y entrena visualizando las métricas.</p>
-          </div>
+          <h1 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-header'}`}>Entrenar modelo - Operaciones Aritméticas</h1>
+          <p className={`${isDarkMode ? 'text-gray-300' : 'text-slate-600'} mt-1`}>Configura parámetros y visualiza la curva de precisión en tiempo real.</p>
+        </div>
 
-          {/* Cards arriba */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-            {models.map(m => <Card key={m.key} m={m} />)}
+        {/* Tarjeta del modelo seleccionado (solo Operaciones Aritméticas) */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+          <div className={`rounded-2xl p-4 border-2 ${isDarkMode ? 'bg-gray-900 border-orange-500/60' : 'bg-white border-orange-500/60'} shadow-soft`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-orange-600/10 text-orange-600 flex items-center justify-center text-xl">➕</div>
+                <div>
+                  <div className={`text-sm font-semibold ${isDarkMode ? 'text-gray-100' : 'text-header'}`}>Operaciones Aritméticas</div>
+                  <div className={`${isDarkMode ? 'text-gray-400' : 'text-slate-500'} text-xs`}>Números y operaciones básicas</div>
+                </div>
+              </div>
+              <div className={`${isDarkMode ? 'text-gray-400' : 'text-slate-500'} text-xs`}>Registros</div>
+            </div>
           </div>
+        </div>
 
           {/* Panel de control a la izquierda y gráficos a la derecha */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -179,6 +466,11 @@ export default function TrainModel() {
                   <div className={`mt-4 rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
                     <div className={`text-xs font-medium ${isDarkMode ? 'text-gray-400' : 'text-slate-500'} mb-2`}>Resultados</div>
                     <div className="space-y-2 text-xs">
+                      {isTraining && (
+                        <div className={`${isDarkMode ? 'text-gray-200' : 'text-slate-700'}`}>
+                          Época actual: <span className="font-semibold text-blue-600">{currentEpoch}/{epochs}</span>
+                        </div>
+                      )}
                       <div className={`${isDarkMode ? 'text-gray-200' : 'text-slate-700'}`}>
                         Última precisión: <span className="font-semibold text-emerald-600">{(regData[regData.length-1].y * 100).toFixed(1)}%</span>
                       </div>
@@ -192,10 +484,10 @@ export default function TrainModel() {
             </div>
 
             {/* Gráficos a la derecha */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
-              <BarChart data={barData} />
-              <RegressionChart data={regData} />
-            </div>
+              <div className="lg:col-span-2 flex flex-col gap-6">
+                <BarChart data={distData} />
+                <RegressionChart data={regData} />
+              </div>
           </div>
         </div>
       </div>

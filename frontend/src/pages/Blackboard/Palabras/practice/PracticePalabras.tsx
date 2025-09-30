@@ -1,12 +1,14 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Layout from '../../../../components/Blackboard/Layout'
 import { useTheme } from '../../../../App'
 import { usePalabras } from '../hooks/usePalabras'
 import CameraPanel from '../../../../components/Blackboard/Arithmetic/CameraPanel'
 import PracticeStats from '../../../../components/Blackboard/Arithmetic/Practice/PracticeStats'
+import { getCapturedWordsAPI } from '../services/palabrasService'
 
 export default function PracticePalabras() {
   const { isDarkMode } = useTheme()
+  const [availableWords, setAvailableWords] = useState<string[]>([])
   const {
     videoRef,
     canvasRef,
@@ -29,6 +31,36 @@ export default function PracticePalabras() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mpReady])
 
+  // Cargar palabras disponibles desde la base de datos
+  useEffect(() => {
+    const loadAvailableWords = async () => {
+      try {
+        const response = await getCapturedWordsAPI()
+        if (response.success && response.palabras) {
+          const words = response.palabras.map((palabra: any) => palabra.palabra_vinculada)
+          setAvailableWords(words)
+        } else {
+          // Fallback a palabras comunes si no hay respuesta de la API
+          setAvailableWords([
+            'HOLA', 'ADIOS', 'GRACIAS', 'POR_FAVOR', 'SI', 'NO',
+            'AGUA', 'COMIDA', 'CASA', 'FAMILIA', 'AMOR', 'TRABAJO',
+            'ESCUELA', 'AMIGO', 'TIEMPO', 'DINERO', 'SALUD', 'FELIZ'
+          ])
+        }
+      } catch (error) {
+        console.error('Error loading available words:', error)
+        // Fallback a palabras comunes en caso de error
+        setAvailableWords([
+          'HOLA', 'ADIOS', 'GRACIAS', 'POR_FAVOR', 'SI', 'NO',
+          'AGUA', 'COMIDA', 'CASA', 'FAMILIA', 'AMOR', 'TRABAJO',
+          'ESCUELA', 'AMIGO', 'TIEMPO', 'DINERO', 'SALUD', 'FELIZ'
+        ])
+      }
+    }
+
+    loadAvailableWords()
+  }, [])
+
   const handleRecognize = async () => {
     try {
       setError(null)
@@ -38,12 +70,6 @@ export default function PracticePalabras() {
       console.error('Recognition error:', err)
     }
   }
-
-  const commonWords = [
-    'HOLA', 'ADIOS', 'GRACIAS', 'POR_FAVOR', 'SI', 'NO',
-    'AGUA', 'COMIDA', 'CASA', 'FAMILIA', 'AMOR', 'TRABAJO',
-    'ESCUELA', 'AMIGO', 'TIEMPO', 'DINERO', 'SALUD', 'FELIZ'
-  ]
 
   return (
     <Layout>
@@ -111,14 +137,24 @@ export default function PracticePalabras() {
                 <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
                   <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Palabras disponibles</div>
                   <div className="mt-2 grid grid-cols-2 gap-1 max-h-40 overflow-y-auto">
-                    {commonWords.map(word => (
-                      <div key={word} className={`${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-slate-700 border border-slate-200'} rounded-md px-2 py-1 text-center text-xs font-medium`}>
-                        {word.replace('_', ' ')}
+                    {availableWords.length > 0 ? (
+                      availableWords.map(word => (
+                        <div key={word} className={`${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-slate-700 border border-slate-200'} rounded-md px-2 py-1 text-center text-xs font-medium`}>
+                          {word.replace('_', ' ')}
+                        </div>
+                      ))
+                    ) : (
+                      <div className={`col-span-2 text-center ${isDarkMode ? 'text-gray-400' : 'text-slate-500'} text-xs py-4`}>
+                        Cargando palabras disponibles...
                       </div>
-                    ))}
+                    )}
                   </div>
                   <div className={`${isDarkMode ? 'text-gray-400' : 'text-slate-500'} text-xs mt-2`}>
-                    * Y muchas más palabras disponibles
+                    {availableWords.length > 0 ? (
+                      `${availableWords.length} palabra${availableWords.length !== 1 ? 's' : ''} entrenada${availableWords.length !== 1 ? 's' : ''}`
+                    ) : (
+                      'Palabras cargadas desde la base de datos'
+                    )}
                   </div>
                 </div>
 
