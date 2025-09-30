@@ -1,0 +1,30 @@
+[
+  {
+    "session_id": "session_20250929_153754",
+    "timestamp": "2025-09-29T15:37:54.487296",
+    "success": true,
+    "training_duration_seconds": 120.5,
+    "total_samples": 1000,
+    "categories_count": 7,
+    "accuracy": 0.85,
+    "loss": 0.0,
+    "val_accuracy": 0.0,
+    "val_loss": 0,
+    "model_path": "test_model.pkl",
+    "notes": NaN
+  },
+  {
+    "session_id": "session_20250929_153754",
+    "timestamp": "2025-09-29T15:37:54.539306",
+    "success": true,
+    "training_duration_seconds": 0.0021357536315917,
+    "total_samples": 21,
+    "categories_count": 6,
+    "accuracy": 0.75,
+    "loss": 0.5,
+    "val_accuracy": 0.7,
+    "val_loss": 0,
+    "model_path": "ai_agent/models/trained_model",
+    "notes": NaN
+  }
+]

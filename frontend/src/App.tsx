@@ -18,6 +18,7 @@ import CaptureSamplesPalabras from './pages/Blackboard/Palabras/CaptureSamples'
 import TrainModelPalabras from './pages/Blackboard/Palabras/TrainModel'
 import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
+import Dashboard_admin from './pages/Dashboard-admin/UI/Dashboard_admin'
 
 // Contexto global para tema oscuro profundo
 interface ThemeContextType {
@@ -59,6 +60,9 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/splash" element={<SplashScreen />} />
           <Route path="/auth" element={<AuthFlowPage />} />
+          {/* Ruta para usuarios @senati.pe - Dashboard Admin */}
+          <Route path="/estadistica" element={<Dashboard_admin />} />
+          {/* Ruta para usuarios @gmail.com y otros - Blackboard */}
           <Route path="/blackboard" element={<Blackboard />} />
           <Route path="/models" element={<Models />} />
           <Route path="/arithmetic/capture" element={<CaptureSamples />} />

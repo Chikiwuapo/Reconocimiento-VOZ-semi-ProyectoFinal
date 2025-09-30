@@ -1,0 +1,1040 @@
+{
+  "timestamp": "2025-09-29T16:25:36.626564",
+  "model_version": "improved_v2",
+  "validation_summary": {
+    "total_questions": 140,
+    "correct_responses": 140,
+    "accuracy": 1.0,
+    "target_accuracy": 0.7,
+    "target_achieved": true
+  },
+  "category_analysis": {
+    "Inicio": {
+      "total": 15,
+      "correct": 15,
+      "accuracy": 1.0
+    },
+    "Autenticación": {
+      "total": 20,
+      "correct": 20,
+      "accuracy": 1.0
+    },
+    "Panel principal": {
+      "total": 20,
+      "correct": 20,
+      "accuracy": 1.0
+    },
+    "Aritmética y gestos": {
+      "total": 30,
+      "correct": 30,
+      "accuracy": 1.0
+    },
+    "Modelos guardados": {
+      "total": 15,
+      "correct": 15,
+      "accuracy": 1.0
+    },
+    "Cursos": {
+      "total": 20,
+      "correct": 20,
+      "accuracy": 1.0
+    },
+    "Casos ambiguos": {
+      "total": 20,
+      "correct": 20,
+      "accuracy": 1.0
+    }
+  },
+  "validation_results": [
+    {
+      "question": "¿Cuál es la función principal de esta plataforma?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Resúmeme de qué se trata.",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿Qué experiencia me ofrece este sitio?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Quiero ver la presentación inicial.",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Dame una explicación breve del sistema.",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿Por qué se creó esta aplicación?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿Cuál es la portada?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Descríbeme la página principal.",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿Qué objetivos tiene esta plataforma?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿Cómo me ayuda esta app?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Quiero entender de qué va esto.",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿Cuál es la propuesta de valor?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿Qué beneficios obtengo aquí?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "¿En qué consiste todo esto?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Preséntame el proyecto.",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Vis...",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Necesito abrir mi cuenta.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "¿Dónde puedo darme de alta?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Crear usuario nuevo.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Muéstrame cómo registrarme.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "¿Cómo ingreso mis datos de acceso?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Quiero validar mis credenciales.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Ingresar con mi cuenta personal.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Haz login conmigo.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Ayúdame a entrar al sistema.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Acceso de usuario.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "¿Cómo hago para loguearme?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Entrar al portal de usuario.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Validar acceso.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Quiero tener una cuenta aquí.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Ayúdame a abrir sesión.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "¿Dónde pongo mi correo y clave?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "¿Puedo autenticarme con cámara?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Activar inicio de sesión.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Mostrar pantalla de acceso.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Hacer registro de usuario.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para iniciar sesión dirígete a /auth donde encontrarás el formulario de login. Ingresa tu email y contraseña, o usa nuestras opciones de autenticación avanzada si las tienes configuradas.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Muéstrame mi área personal.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Quiero acceder a mi panel de progreso.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Llévame al centro de control.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Ver mi estado actual.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Abrir resumen de mi actividad.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "¿Dónde veo mis logros?",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Enséñame mis resultados.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Mostrar el seguimiento de mi aprendizaje.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Quiero consultar mi progreso global.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Abrir estadísticas generales.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Revisar mis actividades en curso.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Ver mi historial de ejercicios.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Muestra mi tablero con cursos.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Quiero repasar mis métricas.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Dame un resumen de avances.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Ver mi progreso diario.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Quiero saber cuánto he practicado.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Ver seguimiento de mis misiones.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Abrir la sección principal del usuario.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Mostrar actividades recomendadas para mí.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Te dirijo a tu panel personal (/dashboard) donde verás tu progreso completo, cursos activos, estadísticas de aprendizaje y actividades recomendadas personalizadas para ti.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Quiero probar la sección de aritmética.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Empezar a hacer cuentas con gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Abrir práctica con cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "¿Dónde entreno operaciones matemáticas?",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Iniciar reconocimiento de manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Quiero probar mi gesto de número 5.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Practicar cálculo con la cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Hacer pruebas de gesticulación matemática.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Enséñame cómo entrenar señas nuevas.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Reconocer operaciones con los dedos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Poner a prueba el reconocimiento de gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Hacer sumas levantando la mano.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Abrir ejercicios interactivos de gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Practicar matemáticas usando mis manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Probar cámara en operaciones básicas.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Quiero testear el detector de manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Mostrar entrenamiento con cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Validar un nuevo gesto de resta.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Entrar a ejercicios de cámara interactiva.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Hacer práctica visual con operaciones.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Quiero confirmar si detecta bien mis gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Iniciar práctica manual con cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "¿Dónde corrijo un gesto mal grabado?",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Practicar ejercicios sencillos con señas.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Activar modo de reconocimiento de cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Quiero sumar mostrando los dedos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Probar sistema de gestos en operaciones.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Repetir entrenamiento de manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Ver confiabilidad del detector.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Probar sección de entrenamiento visual.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Ve a la sección de aritmética (/arithmetic) donde puedes practicar gestos matemáticos con tu cámara. El sistema reconocerá tus señas de números y operaciones en tiempo real.",
+      "is_correct": true,
+      "response_length": 184
+    },
+    {
+      "question": "Abrir mis configuraciones de gestos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Consultar modelos ya creados.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "¿Dónde están mis registros entrenados?",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Quiero ver mi librería de modelos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Mostrar mi base de gestos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Revisar almacenamiento de entrenamientos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Lista de señas personalizadas.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Ver qué modelos ya grabé.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Abrir catálogo de gestos propios.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Revisar colecciones de entrenamiento.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Ver ejemplos que guardé.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Mostrar mi repertorio de gestos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Quiero administrar mis modelos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Abrir mi carpeta de gestos entrenados.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Consultar historial de entrenamientos guardados.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus modelos guardados están en /models donde puedes ver todos los gestos que has entrenado, su precisión, fecha de creación y estadísticas de uso. Es tu biblioteca personal de gestos.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Abrir contenido de un curso.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Quiero entrar a la misión de geometría.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Ver misiones activas.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Continuar con mis actividades educativas.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Ir al detalle de un curso.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Mostrar curso de números enteros.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Abrir la lección que dejé pendiente.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Seguir practicando en un curso.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Quiero abrir un módulo.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Revisar el contenido de fracciones.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Abrir curso de álgebra básica.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Mostrar mis avances en cursos.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Consultar las misiones que tengo.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Entrar al apartado de lecciones.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Abrir módulo de ejercicios.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Ir al curso disponible más reciente.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Revisar lista de mis cursos.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Seguir en el tema pendiente.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Mostrar misión avanzada.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Quiero abrir mi curso preferido.",
+      "expected_category": "Cursos",
+      "predicted_response": "El curso de aritmética te enseña operaciones básicas usando gestos. Paso 1: Ve a 'Aritmética', Paso 2: Activa tu cámara, Paso 3: Selecciona la operación que quieres practicar.",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Enséñame qué hay para explorar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Recomiéndame un lugar donde empezar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "¿Qué caminos tengo en esta aplicación?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "No sé qué opción elegir.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Ayúdame a navegar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Dame alternativas de secciones.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Estoy confundido, ¿dónde voy?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Sugiéreme algo para probar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "¿Qué actividades están disponibles?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Quiero descubrir funciones nuevas.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "¿Dónde me conviene empezar?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Estoy indeciso.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "¿Qué modos tiene esta app?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Dame un menú de posibilidades.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "¿Qué me recomiendas probar primero?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "¿Cuáles son las rutas disponibles?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "No tengo claro cómo continuar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Indícame opciones básicas.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "¿Qué puedo ver en la plataforma?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Dame sugerencias de secciones.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Te puedo ayudar a decidir qué aprender. ¿Te interesa: 1) Empezar con aritmética básica (/courses), 2) Practicar gestos con la cámara (/arithmetic), 3) Ver tu progreso (/dashboard), o 4) Exp...",
+      "is_correct": true,
+      "response_length": 226
+    }
+  ],
+  "improvements": {
+    "training_data_records": 279,
+    "categories_improved": [
+      "Autenticación",
+      "Modelos guardados",
+      "Cursos",
+      "Casos ambiguos"
+    ],
+    "new_examples_added": 21
+  }
+}

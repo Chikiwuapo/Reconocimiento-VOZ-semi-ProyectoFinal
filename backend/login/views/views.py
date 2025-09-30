@@ -586,16 +586,16 @@ def get_redirect_url_by_domain(email):
         email (str): Email del usuario
         
     Returns:
-        str: URL de redirección ('/estadistica/' para @senati.pe, '/mantenimiento/' para otros)
+        str: URL de redirección ('/estadistica' para @senati.pe, '/blackboard' para otros)
     """
     if not email:
-        return '/mantenimiento/'
+        return '/blackboard'
     
     email_lower = email.lower().strip()
     if email_lower.endswith('@senati.pe'):
-        return '/estadistica/'
+        return '/estadistica'
     else:
-        return '/mantenimiento/'
+        return '/blackboard'
 
 
 def is_admin_user(email):

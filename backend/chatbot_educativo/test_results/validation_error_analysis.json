@@ -1,0 +1,336 @@
+{
+  "timestamp": "2025-09-29T16:21:12.534655",
+  "general_stats": {
+    "total_questions": 140,
+    "correct_responses": 94,
+    "incorrect_responses": 46,
+    "accuracy": 0.6714285714285714
+  },
+  "category_analysis": {
+    "Inicio": {
+      "total": 15,
+      "correct": 15,
+      "incorrect": 0
+    },
+    "Autenticación": {
+      "total": 20,
+      "correct": 12,
+      "incorrect": 8
+    },
+    "Panel principal": {
+      "total": 20,
+      "correct": 16,
+      "incorrect": 4
+    },
+    "Aritmética y gestos": {
+      "total": 30,
+      "correct": 26,
+      "incorrect": 4
+    },
+    "Modelos guardados": {
+      "total": 15,
+      "correct": 8,
+      "incorrect": 7
+    },
+    "Cursos": {
+      "total": 20,
+      "correct": 12,
+      "incorrect": 8
+    },
+    "Casos ambiguos": {
+      "total": 20,
+      "correct": 5,
+      "incorrect": 15
+    }
+  },
+  "problematic_categories": [
+    {
+      "category": "Casos ambiguos",
+      "accuracy": 0.25,
+      "incorrect_count": 15
+    },
+    {
+      "category": "Modelos guardados",
+      "accuracy": 0.5333333333333333,
+      "incorrect_count": 7
+    },
+    {
+      "category": "Autenticación",
+      "accuracy": 0.6,
+      "incorrect_count": 8
+    },
+    {
+      "category": "Cursos",
+      "accuracy": 0.6,
+      "incorrect_count": 8
+    }
+  ],
+  "response_patterns": {
+    "descripcion_general": [
+      "Quiero validar mis credenciales.",
+      "Validar acceso.",
+      "¿Puedo autenticarme con cámara?",
+      "Validar un nuevo gesto de resta.",
+      "¿Dónde corrijo un gesto mal grabado?"
+    ],
+    "cursos_misiones": [
+      "Haz login conmigo.",
+      "Entrar al portal de usuario.",
+      "Entrar a ejercicios de cámara interactiva.",
+      "Quiero ver mi librería de modelos.",
+      "Mostrar mi base de gestos.",
+      "Mostrar mi repertorio de gestos.",
+      "Quiero entrar a la misión de geometría.",
+      "Entrar al apartado de lecciones.",
+      "Dame alternativas de secciones.",
+      "Dame un menú de posibilidades."
+    ],
+    "matematicas_gestos": [
+      "¿Cómo hago para loguearme?",
+      "Hacer registro de usuario.",
+      "Mostrar el seguimiento de mi aprendizaje.",
+      "Abrir la sección principal del usuario.",
+      "Abrir catálogo de gestos propios.",
+      "Quiero administrar mis modelos.",
+      "Abrir mi carpeta de gestos entrenados.",
+      "Continuar con mis actividades educativas.",
+      "Abrir la lección que dejé pendiente.",
+      "Revisar el contenido de fracciones.",
+      "Seguir en el tema pendiente.",
+      "Quiero abrir mi curso preferido.",
+      "Enséñame qué hay para explorar.",
+      "Recomiéndame un lugar donde empezar.",
+      "¿Qué caminos tengo en esta aplicación?",
+      "Estoy confundido, ¿dónde voy?",
+      "¿Qué actividades están disponibles?",
+      "Quiero descubrir funciones nuevas.",
+      "¿Dónde me conviene empezar?",
+      "Estoy indeciso.",
+      "¿Qué me recomiendas probar primero?",
+      "¿Cuáles son las rutas disponibles?",
+      "Dame sugerencias de secciones."
+    ],
+    "otros": [
+      "Mostrar pantalla de acceso.",
+      "Abrir estadísticas generales.",
+      "Ver mi historial de ejercicios.",
+      "Mostrar entrenamiento con cámara.",
+      "Consultar historial de entrenamientos guardados.",
+      "Revisar lista de mis cursos.",
+      "Ayúdame a navegar.",
+      "No tengo claro cómo continuar."
+    ]
+  },
+  "recommendations": [
+    {
+      "category": "Autenticación",
+      "issue": "Baja precisión (60.00%)",
+      "recommendation": "Agregar más ejemplos específicos de login, registro y validación de credenciales",
+      "priority": "Alta"
+    },
+    {
+      "category": "General",
+      "issue": "Respuestas genéricas sobre matemáticas/gestos",
+      "recommendation": "Crear respuestas más específicas por contexto de pregunta",
+      "priority": "Media"
+    }
+  ],
+  "incorrect_examples": {
+    "Autenticación": [
+      {
+        "question": "Quiero validar mis credenciales.",
+        "response": "Para validar tus credenciales, ve a la sección de autenticación donde puedes iniciar sesión con tu c..."
+      },
+      {
+        "question": "Haz login conmigo.",
+        "response": "Te dirijo al inicio de sesión: ve a /auth, ingresa tu email y contraseña en el formulario correspond..."
+      },
+      {
+        "question": "¿Cómo hago para loguearme?",
+        "response": "Sirve para aprender y practicar matemáticas de forma interactiva usando gestos de manos. Es perfecta..."
+      },
+      {
+        "question": "Entrar al portal de usuario.",
+        "response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios r..."
+      },
+      {
+        "question": "Validar acceso.",
+        "response": "Para validar tus credenciales, ve a la sección de autenticación donde puedes iniciar sesión con tu c..."
+      },
+      {
+        "question": "¿Puedo autenticarme con cámara?",
+        "response": "Sí, el sistema incluye reconocimiento facial como opción de autenticación si está habilitado en la c..."
+      },
+      {
+        "question": "Mostrar pantalla de acceso.",
+        "response": "Tus datos de entrenamiento están detallados en /models: número de muestras por gesto, precisión alca..."
+      },
+      {
+        "question": "Hacer registro de usuario.",
+        "response": "Aquí puedes: entrenar gestos de números (0-9), resolver operaciones matemáticas con las manos, tomar..."
+      }
+    ],
+    "Panel principal": [
+      {
+        "question": "Mostrar el seguimiento de mi aprendizaje.",
+        "response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usa..."
+      },
+      {
+        "question": "Abrir estadísticas generales.",
+        "response": "El login se abre en /auth donde encontrarás el formulario de inicio de sesión. Ingresa tu email y co..."
+      },
+      {
+        "question": "Ver mi historial de ejercicios.",
+        "response": "El historial completo está en /models con línea de tiempo de tu aprendizaje: cuándo empezaste cada g..."
+      },
+      {
+        "question": "Abrir la sección principal del usuario.",
+        "response": "La sección de aritmética se abre en /arithmetic donde encontrarás todas las herramientas para aprend..."
+      }
+    ],
+    "Aritmética y gestos": [
+      {
+        "question": "Mostrar entrenamiento con cámara.",
+        "response": "Tus datos de entrenamiento están detallados en /models: número de muestras por gesto, precisión alca..."
+      },
+      {
+        "question": "Validar un nuevo gesto de resta.",
+        "response": "Para entrenar un gesto nuevo en /arithmetic: 1) Ve a la sección de calibración, 2) Selecciona 'Nuevo..."
+      },
+      {
+        "question": "Entrar a ejercicios de cámara interactiva.",
+        "response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios r..."
+      },
+      {
+        "question": "¿Dónde corrijo un gesto mal grabado?",
+        "response": "Para entrenar un gesto nuevo en /arithmetic: 1) Ve a la sección de calibración, 2) Selecciona 'Nuevo..."
+      }
+    ],
+    "Modelos guardados": [
+      {
+        "question": "Quiero ver mi librería de modelos.",
+        "response": "En tu panel de progreso puedes ver todas tus métricas de aprendizaje, cursos en curso, actividades c..."
+      },
+      {
+        "question": "Mostrar mi base de gestos.",
+        "response": "Tu tablero personal está en /dashboard donde tienes una vista completa de tu experiencia: progreso, ..."
+      },
+      {
+        "question": "Abrir catálogo de gestos propios.",
+        "response": "Tu colección personal de gestos se abre en /models donde tienes una galería visual de todos tus gest..."
+      },
+      {
+        "question": "Mostrar mi repertorio de gestos.",
+        "response": "Tu tablero personal está en /dashboard donde tienes una vista completa de tu experiencia: progreso, ..."
+      },
+      {
+        "question": "Quiero administrar mis modelos.",
+        "response": "Tus avances están detallados en /dashboard con gráficos interactivos que muestran tu progreso en cad..."
+      },
+      {
+        "question": "Abrir mi carpeta de gestos entrenados.",
+        "response": "Tu colección personal de gestos se abre en /models donde tienes una galería visual de todos tus gest..."
+      },
+      {
+        "question": "Consultar historial de entrenamientos guardados.",
+        "response": "La lista completa de entrenamientos está en /models organizada cronológicamente, mostrando progreso,..."
+      }
+    ],
+    "Cursos": [
+      {
+        "question": "Quiero entrar a la misión de geometría.",
+        "response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios r..."
+      },
+      {
+        "question": "Continuar con mis actividades educativas.",
+        "response": "Las actividades recomendadas están en tu dashboard (/dashboard), personalizadas según tu progreso: e..."
+      },
+      {
+        "question": "Abrir la lección que dejé pendiente.",
+        "response": "Para abrir la cámara para gestos ve a /arithmetic y activa la función de reconocimiento. Asegúrate d..."
+      },
+      {
+        "question": "Revisar el contenido de fracciones.",
+        "response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usa..."
+      },
+      {
+        "question": "Entrar al apartado de lecciones.",
+        "response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios r..."
+      },
+      {
+        "question": "Revisar lista de mis cursos.",
+        "response": "La lista completa de entrenamientos está en /models organizada cronológicamente, mostrando progreso,..."
+      },
+      {
+        "question": "Seguir en el tema pendiente.",
+        "response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usa..."
+      },
+      {
+        "question": "Quiero abrir mi curso preferido.",
+        "response": "Para revisar tu progreso ve a /dashboard donde encontrarás gráficos detallados, porcentajes de compl..."
+      }
+    ],
+    "Casos ambiguos": [
+      {
+        "question": "Enséñame qué hay para explorar.",
+        "response": "Tienes varias opciones para explorar: puedes practicar gestos con la cámara en Aritmética, ver tu pr..."
+      },
+      {
+        "question": "Recomiéndame un lugar donde empezar.",
+        "response": "Te recomiendo empezar por tu panel principal para ver las actividades disponibles, o si quieres prob..."
+      },
+      {
+        "question": "¿Qué caminos tengo en esta aplicación?",
+        "response": "Se creó para hacer el aprendizaje de matemáticas más interactivo y divertido, combinando tecnología ..."
+      },
+      {
+        "question": "Ayúdame a navegar.",
+        "response": "¡Claro! Te guío paso a paso: 1) Ve a /auth, 2) Haz clic en 'Registrarse', 3) Ingresa tu email, 4) Cr..."
+      },
+      {
+        "question": "Dame alternativas de secciones.",
+        "response": "En /dashboard tienes un resumen completo de tus cursos: cuáles has completado, en cuáles estás traba..."
+      },
+      {
+        "question": "Estoy confundido, ¿dónde voy?",
+        "response": "¡No te preocupes! Te oriento: si eres nuevo, ve al inicio (/). Si ya tienes cuenta, revisa tu dashbo..."
+      },
+      {
+        "question": "¿Qué actividades están disponibles?",
+        "response": "Las actividades disponibles incluyen: entrenar y reconocer gestos con la cámara, seguir cursos de ma..."
+      },
+      {
+        "question": "Quiero descubrir funciones nuevas.",
+        "response": "¡Perfecto! Para empezar: 1) Ve a la página de inicio (/), 2) Regístrate en /auth, 3) Accede a tu pan..."
+      },
+      {
+        "question": "¿Dónde me conviene empezar?",
+        "response": "Te ofrece: aprendizaje visual de matemáticas, reconocimiento de gestos en tiempo real, cursos estruc..."
+      },
+      {
+        "question": "Estoy indeciso.",
+        "response": "¡No te preocupes! Te oriento: si eres nuevo, ve al inicio (/). Si ya tienes cuenta, revisa tu dashbo..."
+      },
+      {
+        "question": "Dame un menú de posibilidades.",
+        "response": "En /dashboard tienes un resumen completo de tus cursos: cuáles has completado, en cuáles estás traba..."
+      },
+      {
+        "question": "¿Qué me recomiendas probar primero?",
+        "response": "En tu dashboard (/dashboard) encontrarás recomendaciones diarias personalizadas: lecciones sugeridas..."
+      },
+      {
+        "question": "¿Cuáles son las rutas disponibles?",
+        "response": "Las secciones principales son: 1) Inicio (/) - presentación general, 2) Cursos (/courses) - aprendiz..."
+      },
+      {
+        "question": "No tengo claro cómo continuar.",
+        "response": "¡Te ayudo! Para acceder: 1) Ve a /auth, 2) Si tienes cuenta, usa 'Iniciar Sesión', 3) Si no tienes c..."
+      },
+      {
+        "question": "Dame sugerencias de secciones.",
+        "response": "Te sugiero estas secciones según tu interés: Panel Principal (para ver todo disponible), Aritmética ..."
+      }
+    ]
+  }
+}

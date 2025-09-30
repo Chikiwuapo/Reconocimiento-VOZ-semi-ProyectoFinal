@@ -1,0 +1,16 @@
+{
+  "total_records": 35,
+  "categories": {
+    "aritmetica_gestos": 6,
+    "navegacion_ayuda": 6,
+    "inicio_presentacion": 5,
+    "cursos": 5,
+    "autenticacion": 5,
+    "panel_dashboard": 4,
+    "modelos_guardados": 4
+  },
+  "total_categories": 7,
+  "creation_date": "2025-09-29T16:16:34.206748",
+  "source": "preguntas_user.md + infoweb.md",
+  "description": "Datos de entrenamiento especializados para respuestas contextuales"
+}

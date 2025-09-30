@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "vocales",
     "abecedario",
     "palabras",
+    "chatbot_educativo",
 ]
 
 MIDDLEWARE = [

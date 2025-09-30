@@ -1,0 +1,505 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Educativo - Plataforma de Matemáticas con IA</title>
+    <!-- Removido: <link rel="stylesheet" href="{% static 'css/style.css' %}"> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chatbot-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chatbot-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .chatbot-header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: #007bff;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
+
+        .message.user .message-avatar {
+            background: #007bff;
+            order: 1;
+        }
+
+        .message.bot .message-avatar {
+            background: #28a745;
+        }
+
+        .quick-actions {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .quick-actions h4 {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .quick-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .quick-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #495057;
+        }
+
+        .quick-btn:hover {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #007bff;
+        }
+
+        .send-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: #0056b3;
+        }
+
+        .send-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 16px;
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 15px;
+            max-width: 70%;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .confidence-indicator {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .chatbot-container {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .quick-buttons {
+                justify-content: center;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <div class="status-indicator" title="Chatbot activo"></div>
+            <h1>🤖 Asistente Educativo IA</h1>
+            <p>Plataforma de Matemáticas con Reconocimiento de Gestos</p>
+            {% if user.is_authenticated %}
+                <div style="position: absolute; top: 20px; left: 20px; font-size: 0.8rem;">
+                    Hola, {{ user.username }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Cargar mensajes existentes -->
+            {% for message in messages %}
+                <div class="message {{ message.message_type }}">
+                    {% if message.message_type == 'bot' %}
+                        <div class="message-avatar">🤖</div>
+                    {% endif %}
+                    <div class="message-content">
+                        {{ message.content }}
+                        {% if message.message_type == 'bot' and message.bot_confidence %}
+                            <div class="confidence-indicator">
+                                Confianza: {{ message.get_confidence_percentage }}%
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if message.message_type == 'user' %}
+                        <div class="message-avatar">👤</div>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <!-- Mensaje de bienvenida por defecto -->
+                <div class="message bot">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        ¡Hola! Soy tu asistente educativo especializado en matemáticas con reconocimiento de gestos. 
+                        Puedo ayudarte con cursos, ejercicios, autenticación, navegación y mucho más. 
+                        ¿En qué puedo asistirte hoy?
+                        <div class="confidence-indicator">Confianza: 100%</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar">🤖</div>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h4>Acciones Rápidas:</h4>
+            <div class="quick-buttons">
+                <button class="quick-btn" onclick="sendQuickMessage('¿Cómo funciona el reconocimiento de gestos?')">🖐️ Gestos</button>
+                <button class="quick-btn" onclick="sendQuickMessage('¿Cómo me registro en la plataforma?')">🔐 Registro</button>
+                <button class="quick-btn" onclick="sendQuickMessage('¿Qué cursos de matemáticas tienen?')">📚 Cursos</button>
+                <button class="quick-btn" onclick="sendQuickMessage('¿Cómo hago operaciones aritméticas?')">🔢 Aritmética</button>
+                <button class="quick-btn" onclick="sendQuickMessage('¿Dónde está el panel principal?')">🏠 Panel</button>
+                <button class="quick-btn" onclick="sendQuickMessage('Necesito ayuda técnica')">🛠️ Soporte</button>
+            </div>
+        </div>
+
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <input type="text" id="chatInput" class="chat-input" 
+                       placeholder="Escribe tu pregunta aquí..." 
+                       onkeypress="handleKeyPress(event)">
+                <button id="sendBtn" class="send-btn" onclick="sendMessage()">
+                    <span>➤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración global
+        const CHAT_CONFIG = {
+            sessionId: '{{ session_id }}',
+            apiUrl: '{% url "chatbot_educativo:chat_api" %}',
+            csrfToken: '{{ csrf_token }}'
+        };
+
+        // Función para enviar mensaje
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Deshabilitar input y botón
+            input.disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+            
+            // Agregar mensaje del usuario al chat
+            addMessageToChat('user', message);
+            
+            // Limpiar input
+            input.value = '';
+            
+            // Mostrar indicador de escritura
+            showTypingIndicator();
+            
+            try {
+                // Enviar mensaje al servidor
+                const response = await fetch(CHAT_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': CHAT_CONFIG.csrfToken
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: CHAT_CONFIG.sessionId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                // Ocultar indicador de escritura
+                hideTypingIndicator();
+                
+                if (response.ok) {
+                    // Agregar respuesta del bot
+                    addMessageToChat('bot', data.response, data.confidence);
+                    
+                    // Manejar redirección si existe
+                    if (data.redirect) {
+                        setTimeout(() => {
+                            if (confirm('¿Te gustaría ir a ' + data.redirect + '?')) {
+                                window.location.href = data.redirect;
+                            }
+                        }, 1000);
+                    }
+                } else {
+                    // Mostrar error
+                    addMessageToChat('bot', data.error || 'Error procesando mensaje');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                hideTypingIndicator();
+                addMessageToChat('bot', 'Error de conexión. Por favor, inténtalo de nuevo.');
+            } finally {
+                // Rehabilitar input y botón
+                input.disabled = false;
+                document.getElementById('sendBtn').disabled = false;
+                input.focus();
+            }
+        }
+
+        // Función para agregar mensaje al chat
+        function addMessageToChat(type, content, confidence = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            let avatarHtml = '';
+            let confidenceHtml = '';
+            
+            if (type === 'bot') {
+                avatarHtml = '<div class="message-avatar">🤖</div>';
+                if (confidence !== null) {
+                    confidenceHtml = `<div class="confidence-indicator">Confianza: ${Math.round(confidence * 100)}%</div>`;
+                }
+            } else {
+                avatarHtml = '<div class="message-avatar">👤</div>';
+            }
+            
+            messageDiv.innerHTML = `
+                ${type === 'bot' ? avatarHtml : ''}
+                <div class="message-content">
+                    ${content}
+                    ${confidenceHtml}
+                </div>
+                ${type === 'user' ? avatarHtml : ''}
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Función para enviar mensaje rápido
+        function sendQuickMessage(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+
+        // Manejar Enter en el input
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Mostrar indicador de escritura
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'flex';
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Ocultar indicador de escritura
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('chatInput').focus();
+            
+            // Scroll al final de los mensajes
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    </script>
+</body>
+</html>

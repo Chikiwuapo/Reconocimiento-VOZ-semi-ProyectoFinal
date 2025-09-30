@@ -1,0 +1,52 @@
+{
+  "trae_api_base": "https://api.trae.ai/v1",
+  "free_agents": {
+    "text_classifier": {
+      "endpoint": "/agents/classify",
+      "max_requests_per_hour": 100,
+      "description": "Clasifica intenciones educativas del usuario"
+    },
+    "response_generator": {
+      "endpoint": "/agents/generate",
+      "max_requests_per_hour": 50,
+      "description": "Genera respuestas educativas personalizadas"
+    },
+    "pattern_analyzer": {
+      "endpoint": "/agents/analyze",
+      "max_requests_per_hour": 75,
+      "description": "Analiza patrones de aprendizaje del usuario"
+    },
+    "training_optimizer": {
+      "endpoint": "/agents/optimize",
+      "max_requests_per_hour": 25,
+      "description": "Optimiza datos de entrenamiento"
+    }
+  },
+  "educational_context": {
+    "domain": "mathematics_education",
+    "language": "spanish",
+    "target_audience": "students",
+    "interaction_style": "friendly_educational",
+    "learning_objectives": [
+      "basic_arithmetic_mastery",
+      "gesture_recognition_skills",
+      "interactive_learning_engagement",
+      "mathematical_confidence_building"
+    ]
+  },
+  "training_settings": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 50,
+    "validation_split": 0.2,
+    "early_stopping_patience": 10,
+    "model_checkpoint_frequency": 5
+  },
+  "response_quality": {
+    "min_confidence_threshold": 0.7,
+    "max_response_length": 500,
+    "educational_tone_required": true,
+    "include_learning_tips": true,
+    "personalization_enabled": true
+  }
+}

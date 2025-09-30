@@ -1,0 +1,1017 @@
+{
+  "timestamp": "2025-09-29T16:21:12.534655",
+  "total_questions": 140,
+  "correct_responses": 94,
+  "accuracy": 0.6714285714285714,
+  "validation_results": [
+    {
+      "question": "¿Cuál es la función principal de esta plataforma?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa que enseña y practica operaciones matemáticas usando gestos de las manos y la cámara del dispositivo. Puedes aprender con cursos, entrenar gestos de manos y resolver ejercicios de forma interactiva. ¿Te gustaría que te lleve a la página principal para conocer más?",
+      "is_correct": true,
+      "response_length": 297
+    },
+    {
+      "question": "Resúmeme de qué se trata.",
+      "expected_category": "Inicio",
+      "predicted_response": "Se trata de una plataforma educativa innovadora donde puedes aprender matemáticas de forma interactiva usando gestos de tus manos. La cámara reconoce tus movimientos para resolver operaciones. Está pensada para estudiantes, docentes y cualquier persona curiosa por la tecnología educativa. ¿Quieres ver la presentación completa?",
+      "is_correct": true,
+      "response_length": 328
+    },
+    {
+      "question": "¿Qué experiencia me ofrece este sitio?",
+      "expected_category": "Inicio",
+      "predicted_response": "Te ofrece una experiencia de aprendizaje única donde combinas matemáticas con tecnología de reconocimiento de gestos. Puedes entrenar señas con tus manos, resolver ejercicios usando la cámara, seguir cursos guiados y ver tu progreso. Todo con un diseño moderno que funciona en móvil y escritorio. ¿Te interesa empezar?",
+      "is_correct": true,
+      "response_length": 318
+    },
+    {
+      "question": "Quiero ver la presentación inicial.",
+      "expected_category": "Inicio",
+      "predicted_response": "La bienvenida completa está en la página de inicio (/) con una presentación visual de cómo funciona la plataforma, sus beneficios únicos y guías paso a paso para nuevos usuarios.",
+      "is_correct": true,
+      "response_length": 178
+    },
+    {
+      "question": "Dame una explicación breve del sistema.",
+      "expected_category": "Inicio",
+      "predicted_response": "Es un sistema educativo que usa tu cámara para reconocer gestos de manos y enseñarte matemáticas de forma interactiva. Puedes entrenar números y operaciones con tus dedos, luego usarlos para resolver ejercicios. Incluye cursos, seguimiento de progreso y una experiencia visual moderna.",
+      "is_correct": true,
+      "response_length": 285
+    },
+    {
+      "question": "¿Por qué se creó esta aplicación?",
+      "expected_category": "Inicio",
+      "predicted_response": "Se creó para hacer el aprendizaje de matemáticas más interactivo y divertido, combinando tecnología de reconocimiento de gestos con educación. Está pensada para estudiantes que quieren una forma innovadora de practicar, docentes que buscan herramientas lúdicas, y personas curiosas por experimentar con reconocimiento de manos.",
+      "is_correct": true,
+      "response_length": 327
+    },
+    {
+      "question": "¿Cuál es la portada?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa que enseña y practica operaciones matemáticas usando gestos de las manos y la cámara del dispositivo. Puedes aprender con cursos, entrenar gestos de manos y resolver ejercicios de forma interactiva. ¿Te gustaría que te lleve a la página principal para conocer más?",
+      "is_correct": true,
+      "response_length": 297
+    },
+    {
+      "question": "Descríbeme la página principal.",
+      "expected_category": "Inicio",
+      "predicted_response": "La página principal (/) te muestra todo lo que puedes hacer: entrenar gestos, tomar cursos, ver progreso y más. Es tu punto de partida perfecto para descubrir todas las funcionalidades de la plataforma.",
+      "is_correct": true,
+      "response_length": 202
+    },
+    {
+      "question": "¿Qué objetivos tiene esta plataforma?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa que enseña y practica operaciones matemáticas usando gestos de las manos y la cámara del dispositivo. Puedes aprender con cursos, entrenar gestos de manos y resolver ejercicios de forma interactiva. ¿Te gustaría que te lleve a la página principal para conocer más?",
+      "is_correct": true,
+      "response_length": 297
+    },
+    {
+      "question": "¿Cómo me ayuda esta app?",
+      "expected_category": "Inicio",
+      "predicted_response": "Te enseña matemáticas de forma revolucionaria: aritmética básica, operaciones con gestos, reconocimiento de patrones, coordinación visual-motora, y cómo la tecnología puede mejorar el aprendizaje tradicional.",
+      "is_correct": true,
+      "response_length": 208
+    },
+    {
+      "question": "Quiero entender de qué va esto.",
+      "expected_category": "Inicio",
+      "predicted_response": "Se trata de una plataforma innovadora que combina matemáticas con tecnología de reconocimiento de gestos. En lugar de usar calculadora, muestras números con tus dedos y la cámara los reconoce. Es ideal para hacer las matemáticas más divertidas y accesibles.",
+      "is_correct": true,
+      "response_length": 257
+    },
+    {
+      "question": "¿Cuál es la propuesta de valor?",
+      "expected_category": "Inicio",
+      "predicted_response": "Esta es una plataforma educativa que enseña y practica operaciones matemáticas usando gestos de las manos y la cámara del dispositivo. Puedes aprender con cursos, entrenar gestos de manos y resolver ejercicios de forma interactiva. ¿Te gustaría que te lleve a la página principal para conocer más?",
+      "is_correct": true,
+      "response_length": 297
+    },
+    {
+      "question": "¿Qué beneficios obtengo aquí?",
+      "expected_category": "Inicio",
+      "predicted_response": "Los beneficios son: aprendizaje visual e interactivo, no necesitas calculadora, desarrollas coordinación mano-ojo, las matemáticas se vuelven divertidas, tienes seguimiento de progreso, experimentas con IA, y aprendes a tu ritmo.",
+      "is_correct": true,
+      "response_length": 229
+    },
+    {
+      "question": "¿En qué consiste todo esto?",
+      "expected_category": "Inicio",
+      "predicted_response": "¡Hola! Esta plataforma combina inteligencia artificial con educación matemática. Usas gestos de manos para resolver operaciones. ¿Empezamos con el tutorial?",
+      "is_correct": true,
+      "response_length": 156
+    },
+    {
+      "question": "Preséntame el proyecto.",
+      "expected_category": "Inicio",
+      "predicted_response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usamos inteligencia artificial para reconocer gestos de manos y convertir el aprendizaje en una experiencia inmersiva y práctica.",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Necesito abrir mi cuenta.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Perfecto, puedes crear tu cuenta o iniciar sesión desde la sección de autenticación. El sistema incluye opciones de registro sencillo y también reconocimiento facial como alternativa si está habilitado. ¿Te llevo al área de acceso?",
+      "is_correct": true,
+      "response_length": 231
+    },
+    {
+      "question": "¿Dónde puedo darme de alta?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Puedes registrarte en la sección de autenticación. Ahí encontrarás las opciones para crear una cuenta nueva con tus datos básicos. El proceso es sencillo y rápido. ¿Quieres que te dirija allí ahora?",
+      "is_correct": true,
+      "response_length": 198
+    },
+    {
+      "question": "Crear usuario nuevo.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para crear una cuenta: 1) Ve a /auth, 2) Selecciona 'Registrarse', 3) Completa el formulario con email y contraseña, 4) Confirma tu registro, 5) ¡Ya puedes empezar a aprender!",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Muéstrame cómo registrarme.",
+      "expected_category": "Autenticación",
+      "predicted_response": "La portada está en la página de inicio (/) donde encontrarás la presentación completa de la plataforma, sus beneficios, testimonios de usuarios y cómo empezar tu experiencia de aprendizaje interactivo.",
+      "is_correct": true,
+      "response_length": 201
+    },
+    {
+      "question": "¿Cómo ingreso mis datos de acceso?",
+      "expected_category": "Autenticación",
+      "predicted_response": "En la sección de autenticación puedes ingresar tu correo y contraseña para acceder a tu cuenta. También hay opciones de reconocimiento facial si está configurado. El sistema es seguro y fácil de usar. ¿Te llevo a la pantalla de acceso?",
+      "is_correct": true,
+      "response_length": 235
+    },
+    {
+      "question": "Quiero validar mis credenciales.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para validar tus credenciales, ve a la sección de autenticación donde puedes iniciar sesión con tu correo y contraseña. El sistema verificará tu identidad de forma segura. ¿Te dirijo al área de acceso?",
+      "is_correct": false,
+      "response_length": 201
+    },
+    {
+      "question": "Ingresar con mi cuenta personal.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para entrar a tu cuenta ve a /auth, ingresa tus credenciales en el formulario de inicio de sesión, y accederás directamente a tu panel personalizado con todo tu progreso guardado.",
+      "is_correct": true,
+      "response_length": 179
+    },
+    {
+      "question": "Haz login conmigo.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Te dirijo al inicio de sesión: ve a /auth, ingresa tu email y contraseña en el formulario correspondiente, y accederás a tu panel personalizado con todos tus cursos y progreso.",
+      "is_correct": false,
+      "response_length": 176
+    },
+    {
+      "question": "Ayúdame a entrar al sistema.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para entrar a tu cuenta ve a /auth, ingresa tus credenciales en el formulario de inicio de sesión, y accederás directamente a tu panel personalizado con todo tu progreso guardado.",
+      "is_correct": true,
+      "response_length": 179
+    },
+    {
+      "question": "Acceso de usuario.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Se trata de una plataforma innovadora que combina matemáticas con tecnología de reconocimiento de gestos. En lugar de usar calculadora, muestras números con tus dedos y la cámara los reconoce. Es ideal para hacer las matemáticas más divertidas y accesibles.",
+      "is_correct": true,
+      "response_length": 257
+    },
+    {
+      "question": "¿Cómo hago para loguearme?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Sirve para aprender y practicar matemáticas de forma interactiva usando gestos de manos. Es perfecta para estudiantes que quieren una experiencia visual, docentes que buscan herramientas innovadoras, y padres que quieren ayudar a sus hijos con las matemáticas.",
+      "is_correct": false,
+      "response_length": 260
+    },
+    {
+      "question": "Entrar al portal de usuario.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios relacionados. Podrás continuar donde te quedaste y ver tu progreso en esta área. ¿Empezamos con geometría?",
+      "is_correct": false,
+      "response_length": 205
+    },
+    {
+      "question": "Validar acceso.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para validar tus credenciales, ve a la sección de autenticación donde puedes iniciar sesión con tu correo y contraseña. El sistema verificará tu identidad de forma segura. ¿Te dirijo al área de acceso?",
+      "is_correct": false,
+      "response_length": 201
+    },
+    {
+      "question": "Quiero tener una cuenta aquí.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para crear una cuenta: 1) Ve a /auth, 2) Selecciona 'Registrarse', 3) Completa el formulario con email y contraseña, 4) Confirma tu registro, 5) ¡Ya puedes empezar a aprender!",
+      "is_correct": true,
+      "response_length": 175
+    },
+    {
+      "question": "Ayúdame a abrir sesión.",
+      "expected_category": "Autenticación",
+      "predicted_response": "¡Claro! Te guío paso a paso: 1) Ve a /auth, 2) Haz clic en 'Registrarse', 3) Ingresa tu email, 4) Crea una contraseña segura, 5) Completa datos adicionales, 6) Confirma tu registro.",
+      "is_correct": true,
+      "response_length": 181
+    },
+    {
+      "question": "¿Dónde pongo mi correo y clave?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Para entrar a tu cuenta ve a /auth, ingresa tus credenciales en el formulario de inicio de sesión, y accederás directamente a tu panel personalizado con todo tu progreso guardado.",
+      "is_correct": true,
+      "response_length": 179
+    },
+    {
+      "question": "¿Puedo autenticarme con cámara?",
+      "expected_category": "Autenticación",
+      "predicted_response": "Sí, el sistema incluye reconocimiento facial como opción de autenticación si está habilitado en la configuración. Esta función te permite acceder usando tu cámara para mayor comodidad. ¿Quieres probar esta opción en la sección de acceso?",
+      "is_correct": false,
+      "response_length": 237
+    },
+    {
+      "question": "Activar inicio de sesión.",
+      "expected_category": "Autenticación",
+      "predicted_response": "La página de inicio es (/) donde encontrarás la bienvenida, presentación de la plataforma, beneficios, cómo funciona, testimonios y acceso directo a registro y login para comenzar tu experiencia.",
+      "is_correct": true,
+      "response_length": 195
+    },
+    {
+      "question": "Mostrar pantalla de acceso.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Tus datos de entrenamiento están detallados en /models: número de muestras por gesto, precisión alcanzada, tiempo invertido y recomendaciones para mejorar.",
+      "is_correct": false,
+      "response_length": 155
+    },
+    {
+      "question": "Hacer registro de usuario.",
+      "expected_category": "Autenticación",
+      "predicted_response": "Aquí puedes: entrenar gestos de números (0-9), resolver operaciones matemáticas con las manos, tomar cursos interactivos, ver tu progreso, y experimentar con inteligencia artificial educativa. Todo desde la comodidad de tu navegador.",
+      "is_correct": false,
+      "response_length": 233
+    },
+    {
+      "question": "Muéstrame mi área personal.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tu área personal es el panel principal donde puedes ver tu progreso, acceder a cursos, revisar actividades recomendadas y gestionar tu aprendizaje. Es tu centro de control con tarjetas de métricas y accesos rápidos. ¿Te llevo a tu panel?",
+      "is_correct": true,
+      "response_length": 237
+    },
+    {
+      "question": "Quiero acceder a mi panel de progreso.",
+      "expected_category": "Panel principal",
+      "predicted_response": "En tu panel de progreso puedes ver todas tus métricas de aprendizaje, cursos en curso, actividades completadas y recomendaciones personalizadas. Es tu vista principal para gestionar tu experiencia educativa. ¿Vamos a tu panel?",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Llévame al centro de control.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Se trata de una plataforma innovadora que combina matemáticas con tecnología de reconocimiento de gestos. En lugar de usar calculadora, muestras números con tus dedos y la cámara los reconoce. Es ideal para hacer las matemáticas más divertidas y accesibles.",
+      "is_correct": true,
+      "response_length": 257
+    },
+    {
+      "question": "Ver mi estado actual.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tu progreso está en /dashboard donde puedes ver: gestos entrenados, precisión alcanzada, cursos completados, tiempo de práctica y estadísticas detalladas de tu aprendizaje.",
+      "is_correct": true,
+      "response_length": 172
+    },
+    {
+      "question": "Abrir resumen de mi actividad.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tu tablero principal se abre en /dashboard, tu espacio personal donde controlas toda tu experiencia de aprendizaje: cursos, progreso, estadísticas y configuraciones.",
+      "is_correct": true,
+      "response_length": 165
+    },
+    {
+      "question": "¿Dónde veo mis logros?",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tus logros y avances los puedes ver en tu panel principal. Ahí se muestran tus métricas de progreso, cursos completados y actividades destacadas. Es tu centro de seguimiento personal. ¿Te dirijo a tu panel de logros?",
+      "is_correct": true,
+      "response_length": 216
+    },
+    {
+      "question": "Enséñame mis resultados.",
+      "expected_category": "Panel principal",
+      "predicted_response": "En /models puedes ver todos tus gestos grabados con previsualizaciones, estadísticas de uso y opciones para editarlos, eliminarlos o mejorar su entrenamiento.",
+      "is_correct": true,
+      "response_length": 158
+    },
+    {
+      "question": "Mostrar el seguimiento de mi aprendizaje.",
+      "expected_category": "Panel principal",
+      "predicted_response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usamos inteligencia artificial para reconocer gestos de manos y convertir el aprendizaje en una experiencia inmersiva y práctica.",
+      "is_correct": false,
+      "response_length": 226
+    },
+    {
+      "question": "Quiero consultar mi progreso global.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Para revisar tu progreso ve a /dashboard donde encontrarás gráficos detallados, porcentajes de completado, tiempo invertido y tu evolución en cada área de matemáticas.",
+      "is_correct": true,
+      "response_length": 167
+    },
+    {
+      "question": "Abrir estadísticas generales.",
+      "expected_category": "Panel principal",
+      "predicted_response": "El login se abre en /auth donde encontrarás el formulario de inicio de sesión. Ingresa tu email y contraseña para acceder a tu cuenta y comenzar tu experiencia de aprendizaje.",
+      "is_correct": false,
+      "response_length": 175
+    },
+    {
+      "question": "Revisar mis actividades en curso.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Las actividades recomendadas están en tu dashboard (/dashboard), personalizadas según tu progreso: ejercicios de gestos, lecciones sugeridas y desafíos adaptados a tu nivel.",
+      "is_correct": true,
+      "response_length": 173
+    },
+    {
+      "question": "Ver mi historial de ejercicios.",
+      "expected_category": "Panel principal",
+      "predicted_response": "El historial completo está en /models con línea de tiempo de tu aprendizaje: cuándo empezaste cada gesto, cómo ha mejorado tu precisión y tu evolución gestual.",
+      "is_correct": false,
+      "response_length": 159
+    },
+    {
+      "question": "Muestra mi tablero con cursos.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tu tablero personal está en /dashboard donde tienes una vista completa de tu experiencia: progreso, estadísticas, cursos activos y recomendaciones personalizadas.",
+      "is_correct": true,
+      "response_length": 162
+    },
+    {
+      "question": "Quiero repasar mis métricas.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tus avances están detallados en /dashboard con gráficos interactivos que muestran tu progreso en cada curso, mejoras en reconocimiento de gestos y logros alcanzados.",
+      "is_correct": true,
+      "response_length": 165
+    },
+    {
+      "question": "Dame un resumen de avances.",
+      "expected_category": "Panel principal",
+      "predicted_response": "En /dashboard tienes un resumen completo de tus cursos: cuáles has completado, en cuáles estás trabajando, tu progreso en cada uno y recomendaciones de próximos pasos.",
+      "is_correct": true,
+      "response_length": 167
+    },
+    {
+      "question": "Ver mi progreso diario.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tu progreso está en /dashboard donde puedes ver: gestos entrenados, precisión alcanzada, cursos completados, tiempo de práctica y estadísticas detalladas de tu aprendizaje.",
+      "is_correct": true,
+      "response_length": 172
+    },
+    {
+      "question": "Quiero saber cuánto he practicado.",
+      "expected_category": "Panel principal",
+      "predicted_response": "¡Perfecto! Para empezar: 1) Ve a la página de inicio (/), 2) Regístrate en /auth, 3) Accede a tu panel (/dashboard), 4) Comienza entrenando gestos en /arithmetic. ¡Es muy fácil!",
+      "is_correct": true,
+      "response_length": 177
+    },
+    {
+      "question": "Ver seguimiento de mis misiones.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Tus estadísticas completas están en /dashboard: precisión en reconocimiento de gestos, tiempo de estudio, cursos completados, logros obtenidos y análisis de tu rendimiento.",
+      "is_correct": true,
+      "response_length": 172
+    },
+    {
+      "question": "Abrir la sección principal del usuario.",
+      "expected_category": "Panel principal",
+      "predicted_response": "La sección de aritmética se abre en /arithmetic donde encontrarás todas las herramientas para aprender matemáticas con gestos: cámara, ejercicios, tutoriales y práctica interactiva.",
+      "is_correct": false,
+      "response_length": 181
+    },
+    {
+      "question": "Mostrar actividades recomendadas para mí.",
+      "expected_category": "Panel principal",
+      "predicted_response": "Las actividades recomendadas están en tu dashboard (/dashboard), personalizadas según tu progreso: ejercicios de gestos, lecciones sugeridas y desafíos adaptados a tu nivel.",
+      "is_correct": true,
+      "response_length": 173
+    },
+    {
+      "question": "Quiero probar la sección de aritmética.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Excelente! En la sección de aritmética puedes usar tu cámara para entrenar y reconocer gestos de manos. Puedes practicar números, operaciones y resolver ejercicios usando tus dedos. La cámara detecta tus movimientos en tiempo real. ¿Te llevo a practicar?",
+      "is_correct": true,
+      "response_length": 255
+    },
+    {
+      "question": "Empezar a hacer cuentas con gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Perfecto, en la sección de aritmética puedes hacer cuentas usando gestos de tus manos. La cámara reconoce números y operaciones que hagas con los dedos. Puedes entrenar nuevos gestos y luego usarlos para resolver ejercicios. ¿Empezamos a practicar?",
+      "is_correct": true,
+      "response_length": 248
+    },
+    {
+      "question": "Abrir práctica con cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "La práctica con cámara está en la sección de aritmética. Ahí puedes entrenar gestos, probar el reconocimiento en tiempo real y resolver operaciones usando tus manos. Asegúrate de tener buena iluminación y permisos de cámara. ¿Vamos a practicar?",
+      "is_correct": true,
+      "response_length": 244
+    },
+    {
+      "question": "¿Dónde entreno operaciones matemáticas?",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "En /arithmetic puedes hacer todas las operaciones básicas (suma, resta, multiplicación, división) usando gestos con tus manos. La cámara detecta tus movimientos y los convierte en matemáticas.",
+      "is_correct": true,
+      "response_length": 192
+    },
+    {
+      "question": "Iniciar reconocimiento de manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "El reconocimiento de manos funciona en la sección de aritmética. La cámara detecta tus gestos y los interpreta como números u operaciones. Puedes entrenar nuevos gestos y probar su precisión. ¿Te llevo a iniciar el reconocimiento?",
+      "is_correct": true,
+      "response_length": 230
+    },
+    {
+      "question": "Quiero probar mi gesto de número 5.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Puedes probar tu gesto del número 5 en la sección de aritmética. Ahí la cámara reconocerá tu seña y te mostrará la confianza del reconocimiento. Si necesitas mejorarlo, también puedes entrenarlo nuevamente. ¿Vamos a probarlo?",
+      "is_correct": true,
+      "response_length": 225
+    },
+    {
+      "question": "Practicar cálculo con la cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Las multiplicaciones con cámara están en /arithmetic. Usa gestos para representar los números y el sistema creará las operaciones de multiplicación automáticamente.",
+      "is_correct": true,
+      "response_length": 164
+    },
+    {
+      "question": "Hacer pruebas de gesticulación matemática.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Aquí puedes: entrenar gestos de números (0-9), resolver operaciones matemáticas con las manos, tomar cursos interactivos, ver tu progreso, y experimentar con inteligencia artificial educativa. Todo desde la comodidad de tu navegador.",
+      "is_correct": true,
+      "response_length": 233
+    },
+    {
+      "question": "Enséñame cómo entrenar señas nuevas.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "El entrenamiento de señas está en /arithmetic donde puedes enseñar al sistema tus gestos personalizados para números y operaciones. Cada persona tiene señas únicas que el sistema aprende.",
+      "is_correct": true,
+      "response_length": 187
+    },
+    {
+      "question": "Reconocer operaciones con los dedos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "En /arithmetic puedes hacer todas las operaciones básicas (suma, resta, multiplicación, división) usando gestos con tus manos. La cámara detecta tus movimientos y los convierte en matemáticas.",
+      "is_correct": true,
+      "response_length": 192
+    },
+    {
+      "question": "Poner a prueba el reconocimiento de gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Puedes probar el reconocimiento de mano en /arithmetic. El sistema detecta la posición de tus dedos y los convierte en números. Asegúrate de tener buena visibilidad de tu mano.",
+      "is_correct": true,
+      "response_length": 176
+    },
+    {
+      "question": "Hacer sumas levantando la mano.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "En /arithmetic puedes resolver sumas usando gestos con tu cámara. Muestra los números con tus dedos y el sistema los reconocerá para crear operaciones matemáticas interactivas.",
+      "is_correct": true,
+      "response_length": 176
+    },
+    {
+      "question": "Abrir ejercicios interactivos de gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "La sección de aritmética se abre en /arithmetic donde encontrarás todas las herramientas para aprender matemáticas con gestos: cámara, ejercicios, tutoriales y práctica interactiva.",
+      "is_correct": true,
+      "response_length": 181
+    },
+    {
+      "question": "Practicar matemáticas usando mis manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Genial! Puedes practicar matemáticas con tus manos en la sección de aritmética. Usa gestos para representar números y operaciones, la cámara los reconocerá y podrás resolver ejercicios de forma interactiva. ¿Te llevo a practicar ahora?",
+      "is_correct": true,
+      "response_length": 236
+    },
+    {
+      "question": "Probar cámara en operaciones básicas.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Las operaciones con señas están en /arithmetic donde puedes experimentar con diferentes combinaciones de gestos para crear sumas, restas, multiplicaciones y divisiones interactivas.",
+      "is_correct": true,
+      "response_length": 181
+    },
+    {
+      "question": "Quiero testear el detector de manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usamos inteligencia artificial para reconocer gestos de manos y convertir el aprendizaje en una experiencia inmersiva y práctica.",
+      "is_correct": true,
+      "response_length": 226
+    },
+    {
+      "question": "Mostrar entrenamiento con cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Tus datos de entrenamiento están detallados en /models: número de muestras por gesto, precisión alcanzada, tiempo invertido y recomendaciones para mejorar.",
+      "is_correct": false,
+      "response_length": 155
+    },
+    {
+      "question": "Validar un nuevo gesto de resta.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Para entrenar un gesto nuevo en /arithmetic: 1) Ve a la sección de calibración, 2) Selecciona 'Nuevo Gesto', 3) Repite el movimiento varias veces, 4) El sistema aprenderá tu seña personalizada.",
+      "is_correct": false,
+      "response_length": 193
+    },
+    {
+      "question": "Entrar a ejercicios de cámara interactiva.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios relacionados. Podrás continuar donde te quedaste y ver tu progreso en esta área. ¿Empezamos con geometría?",
+      "is_correct": false,
+      "response_length": 205
+    },
+    {
+      "question": "Hacer práctica visual con operaciones.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "La práctica con señas está en /arithmetic con ejercicios progresivos: desde números básicos hasta operaciones complejas, todo adaptado a tu nivel y estilo de gestos.",
+      "is_correct": true,
+      "response_length": 165
+    },
+    {
+      "question": "Quiero confirmar si detecta bien mis gestos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Tus avances están detallados en /dashboard con gráficos interactivos que muestran tu progreso en cada curso, mejoras en reconocimiento de gestos y logros alcanzados.",
+      "is_correct": true,
+      "response_length": 165
+    },
+    {
+      "question": "Iniciar práctica manual con cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "La práctica con señas está en /arithmetic con ejercicios progresivos: desde números básicos hasta operaciones complejas, todo adaptado a tu nivel y estilo de gestos.",
+      "is_correct": true,
+      "response_length": 165
+    },
+    {
+      "question": "¿Dónde corrijo un gesto mal grabado?",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Para entrenar un gesto nuevo en /arithmetic: 1) Ve a la sección de calibración, 2) Selecciona 'Nuevo Gesto', 3) Repite el movimiento varias veces, 4) El sistema aprenderá tu seña personalizada.",
+      "is_correct": false,
+      "response_length": 193
+    },
+    {
+      "question": "Practicar ejercicios sencillos con señas.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Los ejercicios con gestos están en /arithmetic. Ahí encontrarás diferentes niveles de dificultad, desde números básicos hasta operaciones complejas, todo usando tu cámara.",
+      "is_correct": true,
+      "response_length": 171
+    },
+    {
+      "question": "Activar modo de reconocimiento de cámara.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Puedes probar el reconocimiento de mano en /arithmetic. El sistema detecta la posición de tus dedos y los convierte en números. Asegúrate de tener buena visibilidad de tu mano.",
+      "is_correct": true,
+      "response_length": 176
+    },
+    {
+      "question": "Quiero sumar mostrando los dedos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Perfecto! Para empezar: 1) Ve a la página de inicio (/), 2) Regístrate en /auth, 3) Accede a tu panel (/dashboard), 4) Comienza entrenando gestos en /arithmetic. ¡Es muy fácil!",
+      "is_correct": true,
+      "response_length": 177
+    },
+    {
+      "question": "Probar sistema de gestos en operaciones.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "Puedes probar el reconocimiento de mano en /arithmetic. El sistema detecta la posición de tus dedos y los convierte en números. Asegúrate de tener buena visibilidad de tu mano.",
+      "is_correct": true,
+      "response_length": 176
+    },
+    {
+      "question": "Repetir entrenamiento de manos.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "El entrenamiento de gestos matemáticos está en /arithmetic. Aprende a usar tus manos para representar números y operaciones, creando una experiencia de aprendizaje única e innovadora.",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "Ver confiabilidad del detector.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "La bienvenida completa está en la página de inicio (/) con una presentación visual de cómo funciona la plataforma, sus beneficios únicos y guías paso a paso para nuevos usuarios.",
+      "is_correct": true,
+      "response_length": 178
+    },
+    {
+      "question": "Probar sección de entrenamiento visual.",
+      "expected_category": "Aritmética y gestos",
+      "predicted_response": "¡Excelente! En la sección de aritmética puedes usar tu cámara para entrenar y reconocer gestos de manos. Puedes practicar números, operaciones y resolver ejercicios usando tus dedos. La cámara detecta tus movimientos en tiempo real. ¿Te llevo a practicar?",
+      "is_correct": true,
+      "response_length": 255
+    },
+    {
+      "question": "Abrir mis configuraciones de gestos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus configuraciones y gestos guardados están en la sección de modelos. Ahí puedes ver todos los gestos que has entrenado, revisarlos, actualizarlos o eliminar los que no necesites. ¿Quieres revisar tus modelos guardados?",
+      "is_correct": true,
+      "response_length": 220
+    },
+    {
+      "question": "Consultar modelos ya creados.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Puedes consultar todos tus modelos y gestos entrenados en la sección de modelos. Ahí tienes tu librería personal de señas y configuraciones guardadas. ¿Te llevo a revisar tus modelos?",
+      "is_correct": true,
+      "response_length": 183
+    },
+    {
+      "question": "¿Dónde están mis registros entrenados?",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus registros y gestos entrenados están almacenados en la sección de modelos. Es tu colección personal donde puedes gestionar todos los entrenamientos que has realizado. ¿Quieres ver tus registros guardados?",
+      "is_correct": true,
+      "response_length": 207
+    },
+    {
+      "question": "Quiero ver mi librería de modelos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "En tu panel de progreso puedes ver todas tus métricas de aprendizaje, cursos en curso, actividades completadas y recomendaciones personalizadas. Es tu vista principal para gestionar tu experiencia educativa. ¿Vamos a tu panel?",
+      "is_correct": false,
+      "response_length": 226
+    },
+    {
+      "question": "Mostrar mi base de gestos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tu tablero personal está en /dashboard donde tienes una vista completa de tu experiencia: progreso, estadísticas, cursos activos y recomendaciones personalizadas.",
+      "is_correct": false,
+      "response_length": 162
+    },
+    {
+      "question": "Revisar almacenamiento de entrenamientos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Se trata de una plataforma innovadora que combina matemáticas con tecnología de reconocimiento de gestos. En lugar de usar calculadora, muestras números con tus dedos y la cámara los reconoce. Es ideal para hacer las matemáticas más divertidas y accesibles.",
+      "is_correct": true,
+      "response_length": 257
+    },
+    {
+      "question": "Lista de señas personalizadas.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "La lista completa de modelos se abre en /models donde puedes navegar por todos tus gestos guardados, organizados por fecha, precisión o frecuencia de uso.",
+      "is_correct": true,
+      "response_length": 154
+    },
+    {
+      "question": "Ver qué modelos ya grabé.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Puedes ver todos los modelos que has grabado en la sección de modelos. Ahí está tu catálogo completo de gestos entrenados con opciones para gestionarlos. ¿Te muestro tus modelos guardados?",
+      "is_correct": true,
+      "response_length": 188
+    },
+    {
+      "question": "Abrir catálogo de gestos propios.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tu colección personal de gestos se abre en /models donde tienes una galería visual de todos tus gestos entrenados con opciones de gestión y estadísticas detalladas.",
+      "is_correct": false,
+      "response_length": 164
+    },
+    {
+      "question": "Revisar colecciones de entrenamiento.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Se trata de una plataforma innovadora que combina matemáticas con tecnología de reconocimiento de gestos. En lugar de usar calculadora, muestras números con tus dedos y la cámara los reconoce. Es ideal para hacer las matemáticas más divertidas y accesibles.",
+      "is_correct": true,
+      "response_length": 257
+    },
+    {
+      "question": "Ver ejemplos que guardé.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "La bienvenida completa está en la página de inicio (/) con una presentación visual de cómo funciona la plataforma, sus beneficios únicos y guías paso a paso para nuevos usuarios.",
+      "is_correct": true,
+      "response_length": 178
+    },
+    {
+      "question": "Mostrar mi repertorio de gestos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tu tablero personal está en /dashboard donde tienes una vista completa de tu experiencia: progreso, estadísticas, cursos activos y recomendaciones personalizadas.",
+      "is_correct": false,
+      "response_length": 162
+    },
+    {
+      "question": "Quiero administrar mis modelos.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tus avances están detallados en /dashboard con gráficos interactivos que muestran tu progreso en cada curso, mejoras en reconocimiento de gestos y logros alcanzados.",
+      "is_correct": false,
+      "response_length": 165
+    },
+    {
+      "question": "Abrir mi carpeta de gestos entrenados.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "Tu colección personal de gestos se abre en /models donde tienes una galería visual de todos tus gestos entrenados con opciones de gestión y estadísticas detalladas.",
+      "is_correct": false,
+      "response_length": 164
+    },
+    {
+      "question": "Consultar historial de entrenamientos guardados.",
+      "expected_category": "Modelos guardados",
+      "predicted_response": "La lista completa de entrenamientos está en /models organizada cronológicamente, mostrando progreso, mejoras en precisión y recomendaciones para optimizar cada gesto.",
+      "is_correct": false,
+      "response_length": 166
+    },
+    {
+      "question": "Abrir contenido de un curso.",
+      "expected_category": "Cursos",
+      "predicted_response": "Para abrir el contenido de un curso específico, puedes acceder desde tu panel principal donde verás todos los cursos disponibles, o si conoces el nombre exacto, puedo llevarte directamente. ¿Qué curso te interesa o prefieres ver la lista completa?",
+      "is_correct": true,
+      "response_length": 247
+    },
+    {
+      "question": "Quiero entrar a la misión de geometría.",
+      "expected_category": "Cursos",
+      "predicted_response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios relacionados. Podrás continuar donde te quedaste y ver tu progreso en esta área. ¿Empezamos con geometría?",
+      "is_correct": false,
+      "response_length": 205
+    },
+    {
+      "question": "Ver misiones activas.",
+      "expected_category": "Cursos",
+      "predicted_response": "Tus misiones activas las puedes ver en tu panel principal, donde se muestran los cursos en progreso y las actividades recomendadas. Desde ahí puedes continuar con cualquier misión pendiente. ¿Revisamos tus misiones activas?",
+      "is_correct": true,
+      "response_length": 223
+    },
+    {
+      "question": "Continuar con mis actividades educativas.",
+      "expected_category": "Cursos",
+      "predicted_response": "Las actividades recomendadas están en tu dashboard (/dashboard), personalizadas según tu progreso: ejercicios de gestos, lecciones sugeridas y desafíos adaptados a tu nivel.",
+      "is_correct": false,
+      "response_length": 173
+    },
+    {
+      "question": "Ir al detalle de un curso.",
+      "expected_category": "Cursos",
+      "predicted_response": "Te llevo al dashboard (/dashboard), tu centro de control personal donde puedes ver todo tu progreso, acceder a cursos y revisar tus estadísticas de aprendizaje.",
+      "is_correct": true,
+      "response_length": 160
+    },
+    {
+      "question": "Mostrar curso de números enteros.",
+      "expected_category": "Cursos",
+      "predicted_response": "Te dirijo al curso de números enteros donde encontrarás lecciones específicas sobre este tema, ejercicios prácticos y seguimiento de tu progreso. ¿Empezamos con números enteros?",
+      "is_correct": true,
+      "response_length": 177
+    },
+    {
+      "question": "Abrir la lección que dejé pendiente.",
+      "expected_category": "Cursos",
+      "predicted_response": "Para abrir la cámara para gestos ve a /arithmetic y activa la función de reconocimiento. Asegúrate de tener buena iluminación y que tu cámara esté funcionando correctamente.",
+      "is_correct": false,
+      "response_length": 173
+    },
+    {
+      "question": "Seguir practicando en un curso.",
+      "expected_category": "Cursos",
+      "predicted_response": "En /dashboard tienes un resumen completo de tus cursos: cuáles has completado, en cuáles estás trabajando, tu progreso en cada uno y recomendaciones de próximos pasos.",
+      "is_correct": true,
+      "response_length": 167
+    },
+    {
+      "question": "Quiero abrir un módulo.",
+      "expected_category": "Cursos",
+      "predicted_response": "Para abrir el contenido de un curso específico, puedes acceder desde tu panel principal donde verás todos los cursos disponibles, o si conoces el nombre exacto, puedo llevarte directamente. ¿Qué curso te interesa o prefieres ver la lista completa?",
+      "is_correct": true,
+      "response_length": 247
+    },
+    {
+      "question": "Revisar el contenido de fracciones.",
+      "expected_category": "Cursos",
+      "predicted_response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usamos inteligencia artificial para reconocer gestos de manos y convertir el aprendizaje en una experiencia inmersiva y práctica.",
+      "is_correct": false,
+      "response_length": 226
+    },
+    {
+      "question": "Abrir curso de álgebra básica.",
+      "expected_category": "Cursos",
+      "predicted_response": "Te llevo al curso de álgebra básica con contenidos introductorios, ejercicios progresivos y actividades interactivas. Podrás aprender paso a paso los conceptos fundamentales. ¿Comenzamos con álgebra?",
+      "is_correct": true,
+      "response_length": 199
+    },
+    {
+      "question": "Mostrar mis avances en cursos.",
+      "expected_category": "Cursos",
+      "predicted_response": "Tus avances están detallados en /dashboard con gráficos interactivos que muestran tu progreso en cada curso, mejoras en reconocimiento de gestos y logros alcanzados.",
+      "is_correct": true,
+      "response_length": 165
+    },
+    {
+      "question": "Consultar las misiones que tengo.",
+      "expected_category": "Cursos",
+      "predicted_response": "Te dirijo al inicio de sesión: ve a /auth, ingresa tu email y contraseña en el formulario correspondiente, y accederás a tu panel personalizado con todos tus cursos y progreso.",
+      "is_correct": true,
+      "response_length": 176
+    },
+    {
+      "question": "Entrar al apartado de lecciones.",
+      "expected_category": "Cursos",
+      "predicted_response": "Te llevo a la misión de geometría donde encontrarás contenidos específicos, objetivos y ejercicios relacionados. Podrás continuar donde te quedaste y ver tu progreso en esta área. ¿Empezamos con geometría?",
+      "is_correct": false,
+      "response_length": 205
+    },
+    {
+      "question": "Abrir módulo de ejercicios.",
+      "expected_category": "Cursos",
+      "predicted_response": "La sección de aritmética se abre en /arithmetic donde encontrarás todas las herramientas para aprender matemáticas con gestos: cámara, ejercicios, tutoriales y práctica interactiva.",
+      "is_correct": true,
+      "response_length": 181
+    },
+    {
+      "question": "Ir al curso disponible más reciente.",
+      "expected_category": "Cursos",
+      "predicted_response": "Te llevo al dashboard (/dashboard), tu centro de control personal donde puedes ver todo tu progreso, acceder a cursos y revisar tus estadísticas de aprendizaje.",
+      "is_correct": true,
+      "response_length": 160
+    },
+    {
+      "question": "Revisar lista de mis cursos.",
+      "expected_category": "Cursos",
+      "predicted_response": "La lista completa de entrenamientos está en /models organizada cronológicamente, mostrando progreso, mejoras en precisión y recomendaciones para optimizar cada gesto.",
+      "is_correct": false,
+      "response_length": 166
+    },
+    {
+      "question": "Seguir en el tema pendiente.",
+      "expected_category": "Cursos",
+      "predicted_response": "El propósito es revolucionar la educación matemática haciéndola visual, interactiva y divertida. Usamos inteligencia artificial para reconocer gestos de manos y convertir el aprendizaje en una experiencia inmersiva y práctica.",
+      "is_correct": false,
+      "response_length": 226
+    },
+    {
+      "question": "Mostrar misión avanzada.",
+      "expected_category": "Cursos",
+      "predicted_response": "Tu tablero personal está en /dashboard donde tienes una vista completa de tu experiencia: progreso, estadísticas, cursos activos y recomendaciones personalizadas.",
+      "is_correct": true,
+      "response_length": 162
+    },
+    {
+      "question": "Quiero abrir mi curso preferido.",
+      "expected_category": "Cursos",
+      "predicted_response": "Para revisar tu progreso ve a /dashboard donde encontrarás gráficos detallados, porcentajes de completado, tiempo invertido y tu evolución en cada área de matemáticas.",
+      "is_correct": false,
+      "response_length": 167
+    },
+    {
+      "question": "Enséñame qué hay para explorar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Tienes varias opciones para explorar: puedes practicar gestos con la cámara en Aritmética, ver tu progreso en el Panel, revisar cursos disponibles, o gestionar tus modelos guardados. ¿Qué te interesa más: practicar gestos, ver cursos, o revisar tu progreso?",
+      "is_correct": false,
+      "response_length": 257
+    },
+    {
+      "question": "Recomiéndame un lugar donde empezar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Te recomiendo empezar por tu panel principal para ver las actividades disponibles, o si quieres probar algo nuevo, la sección de aritmética para experimentar con gestos y la cámara. ¿Prefieres ver tu panel o probar los gestos directamente?",
+      "is_correct": false,
+      "response_length": 239
+    },
+    {
+      "question": "¿Qué caminos tengo en esta aplicación?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Se creó para hacer el aprendizaje de matemáticas más interactivo y divertido, combinando tecnología de reconocimiento de gestos con educación. Está pensada para estudiantes que quieren una forma innovadora de practicar, docentes que buscan herramientas lúdicas, y personas curiosas por experimentar con reconocimiento de manos.",
+      "is_correct": false,
+      "response_length": 327
+    },
+    {
+      "question": "No sé qué opción elegir.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "No te preocupes, puedo ayudarte a decidir. Si es tu primera vez, te sugiero el panel principal para ver las opciones disponibles. Si quieres algo interactivo, prueba los gestos con cámara. Si buscas aprender paso a paso, revisa los cursos. ¿Qué te llama más la atención?",
+      "is_correct": true,
+      "response_length": 270
+    },
+    {
+      "question": "Ayúdame a navegar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Claro! Te guío paso a paso: 1) Ve a /auth, 2) Haz clic en 'Registrarse', 3) Ingresa tu email, 4) Crea una contraseña segura, 5) Completa datos adicionales, 6) Confirma tu registro.",
+      "is_correct": false,
+      "response_length": 181
+    },
+    {
+      "question": "Dame alternativas de secciones.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "En /dashboard tienes un resumen completo de tus cursos: cuáles has completado, en cuáles estás trabajando, tu progreso en cada uno y recomendaciones de próximos pasos.",
+      "is_correct": false,
+      "response_length": 167
+    },
+    {
+      "question": "Estoy confundido, ¿dónde voy?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡No te preocupes! Te oriento: si eres nuevo, ve al inicio (/). Si ya tienes cuenta, revisa tu dashboard (/dashboard). Para aprender, explora /courses. Para practicar gestos, usa /arithmetic.",
+      "is_correct": false,
+      "response_length": 190
+    },
+    {
+      "question": "Sugiéreme algo para probar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Sirve para aprender y practicar matemáticas de forma interactiva usando gestos de manos. Es perfecta para estudiantes que quieren una experiencia visual, docentes que buscan herramientas innovadoras, y padres que quieren ayudar a sus hijos con las matemáticas.",
+      "is_correct": true,
+      "response_length": 260
+    },
+    {
+      "question": "¿Qué actividades están disponibles?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Las actividades disponibles incluyen: entrenar y reconocer gestos con la cámara, seguir cursos de matemáticas, revisar tu progreso y logros, gestionar modelos guardados, y resolver ejercicios interactivos. ¿Cuál te interesa probar primero?",
+      "is_correct": false,
+      "response_length": 239
+    },
+    {
+      "question": "Quiero descubrir funciones nuevas.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Perfecto! Para empezar: 1) Ve a la página de inicio (/), 2) Regístrate en /auth, 3) Accede a tu panel (/dashboard), 4) Comienza entrenando gestos en /arithmetic. ¡Es muy fácil!",
+      "is_correct": false,
+      "response_length": 177
+    },
+    {
+      "question": "¿Dónde me conviene empezar?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Te ofrece: aprendizaje visual de matemáticas, reconocimiento de gestos en tiempo real, cursos estructurados, seguimiento de progreso personalizado, experiencia sin calculadora, y una forma innovadora de entender los números.",
+      "is_correct": false,
+      "response_length": 224
+    },
+    {
+      "question": "Estoy indeciso.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡No te preocupes! Te oriento: si eres nuevo, ve al inicio (/). Si ya tienes cuenta, revisa tu dashboard (/dashboard). Para aprender, explora /courses. Para practicar gestos, usa /arithmetic.",
+      "is_correct": false,
+      "response_length": 190
+    },
+    {
+      "question": "¿Qué modos tiene esta app?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Esta es una plataforma educativa revolucionaria que enseña matemáticas usando reconocimiento de gestos con tu cámara. Muestras números con las manos y la IA los reconoce para resolver operaciones. Visita la página de inicio (/) para conocer más detalles.",
+      "is_correct": true,
+      "response_length": 254
+    },
+    {
+      "question": "Dame un menú de posibilidades.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "En /dashboard tienes un resumen completo de tus cursos: cuáles has completado, en cuáles estás trabajando, tu progreso en cada uno y recomendaciones de próximos pasos.",
+      "is_correct": false,
+      "response_length": 167
+    },
+    {
+      "question": "¿Qué me recomiendas probar primero?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "En tu dashboard (/dashboard) encontrarás recomendaciones diarias personalizadas: lecciones sugeridas según tu progreso, ejercicios de gestos para practicar y objetivos alcanzables.",
+      "is_correct": false,
+      "response_length": 180
+    },
+    {
+      "question": "¿Cuáles son las rutas disponibles?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Las secciones principales son: 1) Inicio (/) - presentación general, 2) Cursos (/courses) - aprendizaje estructurado, 3) Aritmética (/arithmetic) - práctica con gestos, 4) Dashboard (/dashboard) - tu progreso personal.",
+      "is_correct": false,
+      "response_length": 218
+    },
+    {
+      "question": "No tengo claro cómo continuar.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "¡Te ayudo! Para acceder: 1) Ve a /auth, 2) Si tienes cuenta, usa 'Iniciar Sesión', 3) Si no tienes cuenta, selecciona 'Registrarse', 4) Completa el formulario y listo.",
+      "is_correct": false,
+      "response_length": 167
+    },
+    {
+      "question": "Indícame opciones básicas.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Aquí tienes las opciones principales: 1) Página de inicio (/) para conocer la plataforma, 2) Cursos (/courses) para aprender, 3) Práctica de gestos (/arithmetic), 4) Tu panel personal (/dashboard).",
+      "is_correct": true,
+      "response_length": 197
+    },
+    {
+      "question": "¿Qué puedo ver en la plataforma?",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "La bienvenida completa está en la página de inicio (/) con una presentación visual de cómo funciona la plataforma, sus beneficios únicos y guías paso a paso para nuevos usuarios.",
+      "is_correct": true,
+      "response_length": 178
+    },
+    {
+      "question": "Dame sugerencias de secciones.",
+      "expected_category": "Casos ambiguos",
+      "predicted_response": "Te sugiero estas secciones según tu interés: Panel Principal (para ver todo disponible), Aritmética (para práctica interactiva con gestos), Cursos (para aprendizaje estructurado), o Modelos (para gestionar tus entrenamientos). ¿Cuál prefieres explorar?",
+      "is_correct": false,
+      "response_length": 252
+    }
+  ],
+  "model_info": {
+    "model_path": "c:/Users/USER/Desktop/CHATBOT/ai_agent/models/trained_model",
+    "training_categories": [
+      "greeting",
+      "gestures",
+      "landing_page",
+      "specific_intents",
+      "faq_database",
+      "dashboard",
+      "ambiguous_cases",
+      "specific_questions",
+      "inicio_presentacion",
+      "authentication",
+      "out_of_context",
+      "modelos_guardados",
+      "saved_models",
+      "autenticacion",
+      "technical_support",
+      "courses",
+      "navegacion_ayuda",
+      "cursos",
+      "arithmetic_gestures",
+      "panel_dashboard",
+      "platform_info",
+      "navigation",
+      "aritmetica_gestos",
+      "arithmetic"
+    ]
+  }
+}

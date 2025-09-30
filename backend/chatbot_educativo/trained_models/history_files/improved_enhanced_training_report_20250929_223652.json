@@ -1,0 +1,279 @@
+{
+  "training_date": "2025-09-29T22:36:53.068562",
+  "model_files": {
+    "model": "trained_models/enhanced_models/improved_enhanced_model_20250929_223652.pkl",
+    "vectorizer": "trained_models/enhanced_models/improved_enhanced_vectorizer_20250929_223652.pkl",
+    "encoder": "trained_models/enhanced_models/improved_enhanced_encoder_20250929_223652.pkl"
+  },
+  "metrics": {
+    "accuracy": 0.923728813559322,
+    "avg_confidence": 0.6355612355373557,
+    "confidence_by_category": {
+      "specific_questions": 0.6327551252134681,
+      "technical_support": 0.4612335806688445,
+      "authentication": 0.6798763959892467,
+      "aritmetica_gestos": 0.7576774348918469,
+      "saved_models": 0.6318719934676488,
+      "out_of_context": 0.6385431733625321,
+      "dashboard": 0.6939661276129832,
+      "aritmetica": 0.6668696803133145,
+      "arithmetic": 0.6379209233128824,
+      "autenticacion": 0.6117774118126758,
+      "landing_page": 0.5792386381592685,
+      "inicio_presentacion": 0.7040483025394217,
+      "greeting": 0.7743793280884106,
+      "modelos_guardados": 0.7186510137330475,
+      "ayuda": 0.5045936543317627,
+      "ambiguous_cases": 0.4649380843073259,
+      "modelos": 0.6745818667662821,
+      "faq_database": 0.4665124355882927,
+      "navigation": 0.39743230665297846,
+      "courses": 0.5770268816414059,
+      "arithmetic_gestures": 0.5222424687156679,
+      "cursos": 0.7396660123765216,
+      "inicio": 0.46910935987495544,
+      "gestures": 0.5640561438809566,
+      "navegacion_ayuda": 0.6153139216886631,
+      "specific_intents": 0.47949994896508996,
+      "platform_info": 0.5838636917620572,
+      "panel_dashboard": 0.6998711294833401
+    },
+    "classification_report": {
+      "ambiguous_cases": {
+        "precision": 0.8888888888888888,
+        "recall": 0.8888888888888888,
+        "f1-score": 0.8888888888888888,
+        "support": 9.0
+      },
+      "arithmetic": {
+        "precision": 0.9428571428571428,
+        "recall": 0.9705882352941176,
+        "f1-score": 0.9565217391304348,
+        "support": 34.0
+      },
+      "arithmetic_gestures": {
+        "precision": 0.875,
+        "recall": 0.7,
+        "f1-score": 0.7777777777777778,
+        "support": 10.0
+      },
+      "aritmetica": {
+        "precision": 0.7777777777777778,
+        "recall": 1.0,
+        "f1-score": 0.875,
+        "support": 7.0
+      },
+      "aritmetica_gestos": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 5.0
+      },
+      "autenticacion": {
+        "precision": 0.8333333333333334,
+        "recall": 0.625,
+        "f1-score": 0.7142857142857143,
+        "support": 8.0
+      },
+      "authentication": {
+        "precision": 0.9428571428571428,
+        "recall": 0.9428571428571428,
+        "f1-score": 0.9428571428571428,
+        "support": 35.0
+      },
+      "ayuda": {
+        "precision": 0.8333333333333334,
+        "recall": 0.8333333333333334,
+        "f1-score": 0.8333333333333334,
+        "support": 6.0
+      },
+      "courses": {
+        "precision": 0.875,
+        "recall": 1.0,
+        "f1-score": 0.9333333333333333,
+        "support": 7.0
+      },
+      "cursos": {
+        "precision": 1.0,
+        "recall": 0.875,
+        "f1-score": 0.9333333333333333,
+        "support": 8.0
+      },
+      "dashboard": {
+        "precision": 0.9473684210526315,
+        "recall": 0.9473684210526315,
+        "f1-score": 0.9473684210526315,
+        "support": 38.0
+      },
+      "faq_database": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 7.0
+      },
+      "gestures": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 7.0
+      },
+      "greeting": {
+        "precision": 1.0,
+        "recall": 0.9411764705882353,
+        "f1-score": 0.9696969696969697,
+        "support": 34.0
+      },
+      "inicio": {
+        "precision": 0.6666666666666666,
+        "recall": 0.6666666666666666,
+        "f1-score": 0.6666666666666666,
+        "support": 3.0
+      },
+      "inicio_presentacion": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 4.0
+      },
+      "landing_page": {
+        "precision": 0.7777777777777778,
+        "recall": 0.875,
+        "f1-score": 0.8235294117647058,
+        "support": 8.0
+      },
+      "modelos": {
+        "precision": 0.75,
+        "recall": 1.0,
+        "f1-score": 0.8571428571428571,
+        "support": 6.0
+      },
+      "modelos_guardados": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 4.0
+      },
+      "navegacion_ayuda": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 5.0
+      },
+      "navigation": {
+        "precision": 0.7142857142857143,
+        "recall": 0.7142857142857143,
+        "f1-score": 0.7142857142857143,
+        "support": 7.0
+      },
+      "out_of_context": {
+        "precision": 0.9210526315789473,
+        "recall": 1.0,
+        "f1-score": 0.958904109589041,
+        "support": 35.0
+      },
+      "panel_dashboard": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 4.0
+      },
+      "platform_info": {
+        "precision": 0.6666666666666666,
+        "recall": 1.0,
+        "f1-score": 0.8,
+        "support": 4.0
+      },
+      "saved_models": {
+        "precision": 1.0,
+        "recall": 0.7777777777777778,
+        "f1-score": 0.875,
+        "support": 9.0
+      },
+      "specific_intents": {
+        "precision": 1.0,
+        "recall": 0.875,
+        "f1-score": 0.9333333333333333,
+        "support": 8.0
+      },
+      "specific_questions": {
+        "precision": 0.967741935483871,
+        "recall": 0.8823529411764706,
+        "f1-score": 0.9230769230769231,
+        "support": 34.0
+      },
+      "technical_support": {
+        "precision": 0.8888888888888888,
+        "recall": 1.0,
+        "f1-score": 0.9411764705882353,
+        "support": 8.0
+      },
+      "accuracy": 0.923728813559322,
+      "macro avg": {
+        "precision": 0.9024820114803136,
+        "recall": 0.9112605568543207,
+        "f1-score": 0.9023397192906085,
+        "support": 354.0
+      },
+      "weighted avg": {
+        "precision": 0.928483960112906,
+        "recall": 0.923728813559322,
+        "f1-score": 0.9233246601151818,
+        "support": 354.0
+      }
+    }
+  },
+  "validation_results": [
+    {
+      "question": "Hola",
+      "expected": "greeting",
+      "predicted": "greeting",
+      "confidence": 0.605645517994545,
+      "correct": true
+    },
+    {
+      "question": "¿Cómo inicio sesión?",
+      "expected": "authentication",
+      "predicted": "authentication",
+      "confidence": 0.41462487924051844,
+      "correct": true
+    },
+    {
+      "question": "¿Qué cursos hay?",
+      "expected": "specific_questions",
+      "predicted": "platform_info",
+      "confidence": 0.2760647305578326,
+      "correct": false
+    },
+    {
+      "question": "¿Dónde está el panel principal?",
+      "expected": "dashboard",
+      "predicted": "navigation",
+      "confidence": 0.4684841467117118,
+      "correct": false
+    },
+    {
+      "question": "¿Cómo hago operaciones aritméticas?",
+      "expected": "arithmetic",
+      "predicted": "arithmetic",
+      "confidence": 0.48452769405412405,
+      "correct": true
+    },
+    {
+      "question": "Recetas de cocina",
+      "expected": "out_of_context",
+      "predicted": "out_of_context",
+      "confidence": 0.4793971024347204,
+      "correct": true
+    }
+  ],
+  "model_info": {
+    "type": "improved_enhanced_voting_classifier",
+    "estimators": 4,
+    "features": {
+      "tfidf_word_features": 1824,
+      "tfidf_char_features": 3000,
+      "count_features": 1153
+    },
+    "classes": 28
+  }
+}

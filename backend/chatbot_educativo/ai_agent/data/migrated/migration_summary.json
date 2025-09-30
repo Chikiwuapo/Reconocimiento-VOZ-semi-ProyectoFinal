@@ -1,0 +1,13 @@
+{
+  "migration_date": "2025-09-29T01:43:47.277214",
+  "source_database": "db.sqlite3",
+  "destination_directory": "ai_agent/data/migrated",
+  "migrated_items": {
+    "training_data_count": 10,
+    "faqs_count": 3,
+    "learning_patterns_count": 3,
+    "response_categories": 3,
+    "courses_count": 3
+  },
+  "total_migrated_items": 22
+}

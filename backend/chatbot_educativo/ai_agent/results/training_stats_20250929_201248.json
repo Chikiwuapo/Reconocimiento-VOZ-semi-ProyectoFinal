@@ -1,0 +1,57 @@
+{
+  "success": true,
+  "timestamp": "2025-09-29T20:12:48.761746",
+  "training_duration_seconds": 0.020375728607177734,
+  "data_info": {
+    "total_samples": 21,
+    "categories": 6
+  },
+  "model_metrics": {
+    "accuracy": 0.75,
+    "loss": 0.5,
+    "val_accuracy": 0.7
+  },
+  "trae_agent": {
+    "agent_created": true,
+    "agent_config": {
+      "name": "Educational Math Assistant",
+      "description": "Asistente educativo especializado en matemáticas con gestos",
+      "capabilities": [
+        "mathematical_problem_solving",
+        "gesture_recognition_guidance",
+        "educational_content_delivery",
+        "student_progress_tracking",
+        "interactive_learning_facilitation"
+      ],
+      "personality": {
+        "tone": "friendly_educational",
+        "expertise_level": "adaptive",
+        "interaction_style": "encouraging_supportive",
+        "language": "spanish"
+      },
+      "knowledge_domains": [
+        "basic_arithmetic",
+        "gesture_based_learning",
+        "educational_platform_navigation",
+        "student_motivation",
+        "interactive_mathematics"
+      ],
+      "training_data_summary": {
+        "total_examples": 21,
+        "categories": [
+          "matematicas",
+          "navegacion",
+          "ayuda",
+          "gestos",
+          "motivacion",
+          "saludos"
+        ],
+        "avg_confidence": 0.819047619047619
+      }
+    },
+    "creation_date": "2025-09-29T20:12:48.759830",
+    "created_by": "trae_ai_agent_builder",
+    "status": "ready_for_deployment"
+  },
+  "model_path": "ai_agent/models/trained_model"
+}
