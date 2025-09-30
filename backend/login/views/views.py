@@ -35,11 +35,157 @@ def index(request):
 
 def bienvenido_view(request):
     """Vista para la pantalla de bienvenida de AriasDigitalSoft"""
-    return render(request, 'login/bienvenido.html')
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bienvenido - AriasDigitalSoft</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+            .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h1 { color: #333; text-align: center; }
+            .welcome-message { text-align: center; margin: 20px 0; }
+            .nav-links { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
+            .nav-links a { padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+            .nav-links a:hover { background: #0056b3; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>¡Bienvenido a AriasDigitalSoft!</h1>
+            <div class="welcome-message">
+                <p>Sistema de Reconocimiento de Voz y Gestos</p>
+                <p>Plataforma educativa con tecnología avanzada de IA</p>
+            </div>
+            <div class="nav-links">
+                <a href="/login/">Iniciar Sesión</a>
+                <a href="/register/">Registrarse</a>
+                <a href="/operaciones/">Operaciones</a>
+                <a href="/admin/">Administración</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content, content_type='text/html')
 
 
 def login_view(request):
-    return render(request, 'login/login.html')
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Iniciar Sesión - AriasDigitalSoft</title>
+        <link rel="stylesheet" href="/static/css/login.css">
+        <style>
+            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+            .container { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h2 { color: #333; text-align: center; margin-bottom: 30px; }
+            .form-group { margin-bottom: 20px; }
+            label { display: block; margin-bottom: 5px; color: #555; }
+            input[type="email"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+            button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+            button:hover { background: #0056b3; }
+            .links { text-align: center; margin-top: 20px; }
+            .links a { color: #007bff; text-decoration: none; }
+            .links a:hover { text-decoration: underline; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Iniciar Sesión</h2>
+            <form method="post" action="/api/login/">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" id="btnLogin">Iniciar Sesión</button>
+            </form>
+            <div class="links">
+                <a href="/register/">¿No tienes cuenta? Regístrate</a><br>
+                <a href="/bienvenido/">Volver al inicio</a>
+            </div>
+        </div>
+        <script src="/static/js/login.js"></script>
+        <script src="/static/js/voice_login.js"></script>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content, content_type='text/html')
+
+
+def generate_register_html(pending_token):
+    """Genera el HTML para la página de registro"""
+    return f"""
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registro - AriasDigitalSoft</title>
+        <link rel="stylesheet" href="/static/css/register.css">
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }}
+            .container {{ max-width: 500px; margin: 20px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+            h2 {{ color: #333; text-align: center; margin-bottom: 30px; }}
+            .form-group {{ margin-bottom: 20px; }}
+            label {{ display: block; margin-bottom: 5px; color: #555; }}
+            input[type="text"], input[type="email"] {{ width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }}
+            button {{ width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }}
+            button:hover {{ background: #218838; }}
+            .links {{ text-align: center; margin-top: 20px; }}
+            .links a {{ color: #007bff; text-decoration: none; }}
+            .links a:hover {{ text-decoration: underline; }}
+            .camera-section {{ margin: 20px 0; text-align: center; }}
+            #video {{ width: 100%; max-width: 400px; border: 2px solid #ddd; border-radius: 5px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>Registro de Usuario</h2>
+            <form method="post" id="registerForm">
+                <input type="hidden" name="pending_token" value="{pending_token}">
+                <div class="form-group">
+                    <label for="nombres">Nombres:</label>
+                    <input type="text" id="nombres" name="nombres" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellidos">Apellidos:</label>
+                    <input type="text" id="apellidos" name="apellidos" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="dni">DNI:</label>
+                    <input type="text" id="dni" name="dni" required>
+                </div>
+                <div class="camera-section">
+                    <video id="video" autoplay muted></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                </div>
+                <button type="submit">Registrarse</button>
+            </form>
+            <div class="links">
+                <a href="/login/">¿Ya tienes cuenta? Inicia sesión</a><br>
+                <a href="/bienvenido/">Volver al inicio</a>
+            </div>
+        </div>
+        <script src="/static/js/register.js"></script>
+        <script src="/static/js/voice_register.js"></script>
+        <script src="/static/js/facemesh.js"></script>
+    </body>
+    </html>
+    """
 
 
 def register_view(request):
@@ -64,7 +210,8 @@ def register_view(request):
 
         if not all([nombres, apellidos, email, dni]):
             messages.error(request, 'Todos los campos son obligatorios.')
-            return render(request, 'login/register.html')
+            html_content = generate_register_html(pending_registration.token)
+            return HttpResponse(html_content, content_type='text/html')
 
         try:
             # Buscar usuario ya creado en el paso 1 o crear si no existe
@@ -121,7 +268,8 @@ def register_view(request):
                 log.debug('register_view: embeddings_list vacío tras procesamiento; abortando registro (usuario se mantiene)')
                 messages.error(request, 'No se pudo extraer información facial válida. Intenta nuevamente con buena iluminación.')
                 # No eliminar al usuario existente: mantener datos básicos
-                return render(request, 'login/register.html')
+                html_content = generate_register_html(pending_registration.token)
+                return HttpResponse(html_content, content_type='text/html')
 
             # Guarda compatibilidad binaria principal (primer embedding) y posición principal
             import numpy as _np
@@ -141,9 +289,8 @@ def register_view(request):
             log.exception(f'register_view: excepción {e}')
             messages.error(request, f'Error al registrar: {e}')
 
-    return render(request, 'login/register.html', {
-        'pending_token': pending_registration.token
-    })
+    html_content = generate_register_html(pending_registration.token)
+    return HttpResponse(html_content, content_type='text/html')
 
 
 @require_POST
@@ -342,8 +489,50 @@ def api_register_basic(request):
 
 @login_required
 def mantenimiento_view(request):
-    # Pasamos el usuario autenticado como 'user' para el template
-    return render(request, 'login/mantenimiento.html', {'user': request.user})
+    # Generar HTML para la página de mantenimiento
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mantenimiento - AriasDigitalSoft</title>
+        <link rel="stylesheet" href="/static/css/mantenimiento.css">
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }}
+            .container {{ max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+            h1 {{ color: #333; text-align: center; }}
+            .user-info {{ background: #e9ecef; padding: 20px; border-radius: 5px; margin: 20px 0; }}
+            .nav-links {{ display: flex; justify-content: center; gap: 20px; margin-top: 30px; }}
+            .nav-links a {{ padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }}
+            .nav-links a:hover {{ background: #0056b3; }}
+            .logout-btn {{ background: #dc3545; }}
+            .logout-btn:hover {{ background: #c82333; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Panel de Mantenimiento</h1>
+            <div class="user-info">
+                <h3>Usuario Autenticado:</h3>
+                <p><strong>Email:</strong> {request.user.email}</p>
+                <p><strong>Nombres:</strong> {request.user.nombres}</p>
+                <p><strong>Apellidos:</strong> {request.user.apellidos}</p>
+                <p><strong>DNI:</strong> {request.user.dni}</p>
+            </div>
+            <div class="nav-links">
+                <a href="/bienvenido/">Inicio</a>
+                <a href="/operaciones/">Operaciones</a>
+                <a href="/estadistica/">Estadísticas</a>
+                <a href="/admin/">Admin</a>
+                <a href="/logout/" class="logout-btn">Cerrar Sesión</a>
+            </div>
+        </div>
+        <script src="/static/js/mantenimiento.js"></script>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content, content_type='text/html')
 
 
 def logout_view(request):
@@ -569,13 +758,75 @@ def estadistica_view(request):
     # Obtener todos los usuarios administradores (con dominio @senati.pe)
     admin_users = Usuario.objects.filter(email__iendswith='@senati.pe').order_by('nombres', 'apellidos')
     
-    context = {
-        'user': request.user,
-        'username': request.user.nombres or 'Administrador',
-        'admin_users': admin_users
-    }
+    # Generar HTML para la página de estadísticas
+    admin_users_html = ""
+    for user in admin_users:
+        admin_users_html += f"""
+        <tr>
+            <td>{user.nombres} {user.apellidos}</td>
+            <td>{user.email}</td>
+            <td>{user.dni}</td>
+            <td>{user.date_joined.strftime('%d/%m/%Y')}</td>
+        </tr>
+        """
     
-    return render(request, 'login/estadistica.html', context)
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Estadísticas - Panel Administrativo</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }}
+            .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+            h1 {{ color: #333; text-align: center; }}
+            .user-info {{ background: #e9ecef; padding: 20px; border-radius: 5px; margin: 20px 0; }}
+            table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
+            th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }}
+            th {{ background-color: #f8f9fa; font-weight: bold; }}
+            .nav-links {{ display: flex; justify-content: center; gap: 20px; margin-top: 30px; }}
+            .nav-links a {{ padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }}
+            .nav-links a:hover {{ background: #0056b3; }}
+            .logout-btn {{ background: #dc3545; }}
+            .logout-btn:hover {{ background: #c82333; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Panel de Estadísticas Administrativas</h1>
+            <div class="user-info">
+                <h3>Administrador: {request.user.nombres or 'Administrador'}</h3>
+                <p><strong>Email:</strong> {request.user.email}</p>
+            </div>
+            
+            <h2>Usuarios Administradores (@senati.pe)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>DNI</th>
+                        <th>Fecha de Registro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {admin_users_html}
+                </tbody>
+            </table>
+            
+            <div class="nav-links">
+                <a href="/bienvenido/">Inicio</a>
+                <a href="/mantenimiento/">Mantenimiento</a>
+                <a href="/admin/">Admin Django</a>
+                <a href="/logout/" class="logout-btn">Cerrar Sesión</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return HttpResponse(html_content, content_type='text/html')
 
 
 def get_redirect_url_by_domain(email):
