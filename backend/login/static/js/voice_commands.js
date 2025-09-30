@@ -367,11 +367,21 @@ class VoiceFormCommands {
         this.recognition.interimResults = false;
         this.recognition.lang = 'es-ES';
 
-        // Configuración específica por navegador
+        // Configuración específica por navegador para evitar errores de network
         if (this.browserInfo.isChrome || this.browserInfo.isBrave) {
-            // Chrome y Brave - configuración optimizada
-            this.recognition.maxAlternatives = 3;
-            // Evitar configurar serviceURI que puede causar errores de red
+            // Chrome y Brave - configuración optimizada para evitar errores de red
+            this.recognition.maxAlternatives = 1; // Reducido para evitar sobrecarga
+            
+            // SOLUCIÓN ESPECÍFICA PARA BRAVE: Evitar configuraciones que causan errores de red
+            if (this.browserInfo.isBrave) {
+                // Brave tiene problemas específicos con el servicio de reconocimiento
+                // Usar configuración mínima y robusta
+                this.recognition.continuous = false; // Cambiar a false para Brave
+                this.recognition.maxAlternatives = 1;
+                
+                // Configurar timeout más corto para Brave
+                this.braveTimeout = 5000; // 5 segundos máximo
+            }
         } else if (this.browserInfo.isEdge) {
             // Microsoft Edge - configuración conservadora
             this.recognition.maxAlternatives = 1;
@@ -448,19 +458,41 @@ class VoiceFormCommands {
                 
             case 'network':
                 console.warn('Error de red en reconocimiento de voz');
-                this.showError('⚠️ Problema de conexión. Verifica tu internet e intenta nuevamente.');
-                // Intentar reiniciar después de un delay
-                if (this.isEnabled) {
-                    setTimeout(() => {
-                        if (this.isEnabled && !this.isListening) {
-                            this.startListening();
-                        }
-                    }, 3000);
+                
+                // SOLUCIÓN ESPECÍFICA PARA BRAVE: Manejo especial de errores de red
+                if (this.browserInfo.isBrave) {
+                    this.showError('⚠️ Brave detectado: Reiniciando reconocimiento en modo compatible...');
+                    
+                    // Para Brave, reiniciar inmediatamente con configuración robusta
+                    if (this.isEnabled) {
+                        setTimeout(() => {
+                            if (this.isEnabled && !this.isListening) {
+                                // Reconfigurar para Brave antes de reiniciar
+                                this.recognition.continuous = false;
+                                this.recognition.maxAlternatives = 1;
+                                this.startListening();
+                            }
+                        }, 1000); // Delay más corto para Brave
+                    }
+                } else {
+                    this.showError('⚠️ Problema de conexión. Verifica tu internet e intenta nuevamente.');
+                    // Intentar reiniciar después de un delay para otros navegadores
+                    if (this.isEnabled) {
+                        setTimeout(() => {
+                            if (this.isEnabled && !this.isListening) {
+                                this.startListening();
+                            }
+                        }, 3000);
+                    }
                 }
                 break;
                 
             case 'service-not-allowed':
-                this.showError('❌ Servicio de reconocimiento no disponible. Intenta con otro navegador.');
+                if (this.browserInfo.isBrave) {
+                    this.showError('❌ Brave: Habilita el reconocimiento de voz en brave://settings/privacy');
+                } else {
+                    this.showError('❌ Servicio de reconocimiento no disponible. Intenta con otro navegador.');
+                }
                 this.isEnabled = false;
                 break;
                 
@@ -474,7 +506,11 @@ class VoiceFormCommands {
                 
             default:
                 console.warn(`Error de reconocimiento no manejado: ${errorType}`);
-                this.showError(`⚠️ Error de reconocimiento: ${errorType}. Intenta nuevamente.`);
+                if (this.browserInfo.isBrave) {
+                    this.showError(`⚠️ Brave: Error ${errorType}. Intenta recargar la página.`);
+                } else {
+                    this.showError(`⚠️ Error de reconocimiento: ${errorType}. Intenta nuevamente.`);
+                }
                 break;
         }
     }
@@ -1412,6 +1448,16 @@ class VoiceFormCommands {
         localStorage.setItem('voiceCommandsEnabled', 'true');
         
         try {
+            // CONFIGURACIÓN ESPECÍFICA PARA BRAVE antes de iniciar
+            if (this.browserInfo.isBrave) {
+                // Asegurar configuración robusta para Brave
+                this.recognition.continuous = false;
+                this.recognition.interimResults = false;
+                this.recognition.maxAlternatives = 1;
+                
+                console.log('Brave detectado: Usando configuración optimizada');
+            }
+
             // Verificar permisos antes de iniciar
             if (navigator.permissions) {
                 navigator.permissions.query({ name: 'microphone' }).then((result) => {
@@ -1436,7 +1482,11 @@ class VoiceFormCommands {
                     }
                 }, 500);
             } else {
-                this.showError('❌ Error iniciando reconocimiento de voz. Intenta nuevamente.');
+                if (this.browserInfo.isBrave) {
+                    this.showError('❌ Brave: Error iniciando reconocimiento. Recarga la página e intenta nuevamente.');
+                } else {
+                    this.showError('❌ Error iniciando reconocimiento de voz. Intenta nuevamente.');
+                }
             }
         }
     }

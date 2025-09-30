@@ -262,6 +262,22 @@ def api_register_basic(request):
         if '@' not in email or '.' not in email.split('@')[-1]:
             return JsonResponse({'ok': False, 'error': 'Email inválido'}, status=400)
 
+        # Validación previa de DNI único
+        existing_dni_user = Usuario.objects.filter(dni=dni).first()
+        if existing_dni_user and existing_dni_user.email != email:
+            return JsonResponse({
+                'ok': False, 
+                'error': f'El DNI {dni} ya está registrado con otro email. Por favor, verifica el número o usa otro DNI.'
+            }, status=400)
+
+        # Validación previa de email único
+        existing_email_user = Usuario.objects.filter(email=email).first()
+        if existing_email_user and existing_email_user.dni != dni:
+            return JsonResponse({
+                'ok': False, 
+                'error': f'El email {email} ya está registrado con otro DNI. Por favor, usa otro email.'
+            }, status=400)
+
         # Crea o actualiza con el manager adecuado si existe
         from django.db import IntegrityError
         try:
@@ -301,7 +317,22 @@ def api_register_basic(request):
                 user.dni = dni
                 user.save(update_fields=['nombres', 'apellidos', 'dni'])
         except IntegrityError as ie:
-            return JsonResponse({'ok': False, 'error': 'Duplicado o restricción de integridad'}, status=400)
+            error_message = str(ie)
+            if 'login_usuario.dni' in error_message or 'dni' in error_message.lower():
+                return JsonResponse({
+                    'ok': False, 
+                    'error': f'El DNI {dni} ya está registrado. Por favor, verifica el número o usa otro DNI.'
+                }, status=400)
+            elif 'login_usuario.email' in error_message or 'email' in error_message.lower():
+                return JsonResponse({
+                    'ok': False, 
+                    'error': f'El email {email} ya está registrado. Por favor, usa otro email.'
+                }, status=400)
+            else:
+                return JsonResponse({
+                    'ok': False, 
+                    'error': 'Ya existe un usuario con estos datos. Verifica DNI y email.'
+                }, status=400)
 
         return JsonResponse({'ok': True, 'created': created})
     except Exception as e:
