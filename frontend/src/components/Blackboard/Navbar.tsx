@@ -72,10 +72,18 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
     <header className={`${isDarkMode ? 'bg-[#0A0A0A]/95 border-b border-gray-900' : 'bg-white/80 border-b border-slate-100'} backdrop-blur sticky top-0 z-40`}>
       <div className="container-page flex items-center justify-between py-2">
         <Link to="/blackboard" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
-          <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary ${isDarkMode ? 'bg-gray-800' : 'bg-primary/10'}`}>
-            {/* Abstract ML icon */}
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-              <path d="M4 7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1h2a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3h-2v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/>
+          <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-primary/10'}`}>
+            {/* Icono "A" de AriasDigitalSoft */}
+            <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6">
+              <defs>
+                <linearGradient id={`grad-navbar-${Math.random().toString(36).substr(2, 9)}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#3A7BD5"/>
+                  <stop offset="50%" stopColor="#6A11CB"/>
+                  <stop offset="100%" stopColor="#F53844"/>
+                </linearGradient>
+              </defs>
+              <path d="M128 400 L256 96 L384 400" stroke="#3A7BD5" strokeWidth="20" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M176 300 L336 300" stroke="#6A11CB" strokeWidth="18" strokeLinecap="round"/>
             </svg>
           </span>
           <span className={`font-poppins font-bold text-lg ${isDarkMode ? 'text-gray-100' : 'text-header'} hidden lg:inline`}>AresDigitalAcademy</span>

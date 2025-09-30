@@ -83,13 +83,13 @@ const DatabaseMetricsChart: React.FC<DatabaseMetricsChartProps> = ({ data, isDar
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className={`flex rounded-lg p-1 ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
             <button
               onClick={() => setSelectedView('performance')}
               className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                 selectedView === 'performance'
                   ? 'bg-blue-500 text-white'
-                  : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  : isDarkMode ? 'text-blue-200 hover:text-white hover:bg-blue-600/50' : 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
               }`}
             >
               Rendimiento
@@ -99,7 +99,7 @@ const DatabaseMetricsChart: React.FC<DatabaseMetricsChartProps> = ({ data, isDar
               className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                 selectedView === 'usage'
                   ? 'bg-blue-500 text-white'
-                  : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  : isDarkMode ? 'text-blue-200 hover:text-white hover:bg-blue-600/50' : 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
               }`}
             >
               Uso
@@ -195,12 +195,14 @@ const DatabaseMetricsChart: React.FC<DatabaseMetricsChartProps> = ({ data, isDar
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
             <XAxis 
               dataKey="time" 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? "#FFFFFF" : "#000000"}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <YAxis 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? "#FFFFFF" : "#000000"}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <Tooltip 
               contentStyle={{ 
@@ -244,36 +246,36 @@ const DatabaseMetricsChart: React.FC<DatabaseMetricsChartProps> = ({ data, isDar
 
       {/* Alertas y recomendaciones */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className={`p-4 rounded-lg border ${
+        <div className={`p-4 rounded-lg border border-black ${
           currentDiskUsage > 80 
-            ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20' 
-            : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700/50'
+            ? 'border-red-500' 
+            : 'border-black'
         }`}>
           <div className="flex items-center gap-2 mb-2">
             <HardDrive className={`w-4 h-4 ${currentDiskUsage > 80 ? 'text-red-500' : 'text-gray-500'}`} />
-            <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
               Estado del Disco
             </span>
           </div>
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             {currentDiskUsage > 80 
               ? '⚠️ Uso de disco alto. Considere limpiar logs antiguos.'
               : '✅ Uso de disco dentro de límites normales.'}
           </p>
         </div>
         
-        <div className={`p-4 rounded-lg border ${
+        <div className={`p-4 rounded-lg border border-black ${
           parseFloat(avgCacheHitRate) < 80 
-            ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20' 
-            : 'border-gray-200 bg-gray-50 dark:border-gray-600 dark:bg-gray-700/50'
+            ? 'border-yellow-500' 
+            : 'border-black'
         }`}>
           <div className="flex items-center gap-2 mb-2">
             <Zap className={`w-4 h-4 ${parseFloat(avgCacheHitRate) < 80 ? 'text-yellow-500' : 'text-gray-500'}`} />
-            <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
               Rendimiento Cache
             </span>
           </div>
-          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             {parseFloat(avgCacheHitRate) < 80 
               ? '⚠️ Cache hit rate bajo. Optimice configuración de cache.'
               : '✅ Cache funcionando eficientemente.'}

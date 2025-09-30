@@ -1,6 +1,7 @@
 import React from 'react'
 import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Cell } from 'recharts'
 import type { SystemMetrics } from '../../../types/dashboard.ts'
+import { useTheme } from '../../../App'
 
 interface SystemMetricsChartProps {
   data: SystemMetrics
@@ -8,6 +9,8 @@ interface SystemMetricsChartProps {
 }
 
 const SystemMetricsChart: React.FC<SystemMetricsChartProps> = ({ data, className = '' }) => {
+  const { isDarkMode } = useTheme()
+  
   // Helpers de exportación
   const downloadFile = (filename: string, content: string, mime = 'text/plain') => {
     const blob = new Blob([content], { type: mime })
@@ -78,9 +81,9 @@ const SystemMetricsChart: React.FC<SystemMetricsChartProps> = ({ data, className
   }
 
   return (
-    <div className={`bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 ${className}`}>
+    <div className={`backdrop-blur-sm rounded-xl p-6 border border-gray-700 ${className}`}>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-white">Métricas del Sistema</h3>
+        <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Métricas del Sistema</h3>
         <div className="flex items-center gap-2">
           <button
             onClick={handleExport}
@@ -102,8 +105,15 @@ const SystemMetricsChart: React.FC<SystemMetricsChartProps> = ({ data, className
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 40 }} barCategoryGap="20%">
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={true} />
-              <XAxis dataKey="name" stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
-              <YAxis stroke="#9CA3AF" tick={{ fill: '#9CA3AF' }} />
+              <XAxis 
+                dataKey="name" 
+                stroke={isDarkMode ? "#FFFFFF" : "#000000"} 
+                tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }} 
+              />
+              <YAxis 
+                stroke={isDarkMode ? "#FFFFFF" : "#000000"} 
+                tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }} 
+              />
               <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid #374151', color: '#E5E7EB' }} />
               <Legend />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>
@@ -119,40 +129,40 @@ const SystemMetricsChart: React.FC<SystemMetricsChartProps> = ({ data, className
       {/* Detalles */}
       {data && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-700">
-          <div className="bg-gray-700/50 rounded-lg p-3">
+          <div className="rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">CPU</span>
-              <span className={`text-sm font-semibold ${data.cpu.usage > 80 ? 'text-red-400' : data.cpu.usage > 60 ? 'text-yellow-400' : 'text-green-400'}`}>{data.cpu.usage}%</span>
+              <span className={`text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>CPU</span>
+              <span className={`text-sm font-semibold ${data.cpu.usage > 80 ? 'text-red-400' : data.cpu.usage > 60 ? 'text-yellow-400' : 'text-green-400'}`}>{data.cpu.usage.toFixed(2)}%</span>
             </div>
             <div className="w-full bg-gray-600 rounded-full h-2">
               <div className={`h-2 rounded-full ${data.cpu.usage > 80 ? 'bg-red-500' : data.cpu.usage > 60 ? 'bg-yellow-500' : 'bg-green-500'}`} style={{ width: `${data.cpu.usage}%` }} />
             </div>
           </div>
 
-          <div className="bg-gray-700/50 rounded-lg p-3">
+          <div className="rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">RAM</span>
-              <span className={`text-sm font-semibold ${data.ram.percentage > 85 ? 'text-red-400' : data.ram.percentage > 60 ? 'text-yellow-400' : 'text-green-400'}`}>{data.ram.percentage}%</span>
+              <span className={`text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>RAM</span>
+              <span className={`text-sm font-semibold ${data.ram.percentage > 85 ? 'text-red-400' : data.ram.percentage > 60 ? 'text-yellow-400' : 'text-green-400'}`}>{data.ram.percentage.toFixed(2)}%</span>
             </div>
             <div className="w-full bg-gray-600 rounded-full h-2">
               <div className={`h-2 rounded-full ${data.ram.percentage > 85 ? 'bg-red-500' : data.ram.percentage > 60 ? 'bg-yellow-500' : 'bg-green-500'}`} style={{ width: `${data.ram.percentage}%` }} />
             </div>
           </div>
 
-          <div className="bg-gray-700/50 rounded-lg p-3">
+          <div className="rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">Almacenamiento</span>
-              <span className={`text-sm font-semibold ${data.storage.percentage > 85 ? 'text-red-400' : data.storage.percentage > 60 ? 'text-yellow-400' : 'text-green-400'}`}>{data.storage.percentage}%</span>
+              <span className={`text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>Almacenamiento</span>
+              <span className={`text-sm font-semibold ${data.storage.percentage > 85 ? 'text-red-400' : data.storage.percentage > 60 ? 'text-yellow-400' : 'text-green-400'}`}>{data.storage.percentage.toFixed(2)}%</span>
             </div>
             <div className="w-full bg-gray-600 rounded-full h-2">
               <div className="h-2 rounded-full bg-purple-500" style={{ width: `${data.storage.percentage}%` }} />
             </div>
           </div>
 
-          <div className="bg-gray-700/50 rounded-lg p-3">
+          <div className="rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">Red</span>
-              <span className="text-sm font-semibold text-blue-400">{data.network.latency} ms</span>
+              <span className={`text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>Red</span>
+              <span className="text-sm font-semibold text-blue-400">{data.network.latency.toFixed(2)} ms</span>
             </div>
             <div className="w-full bg-gray-600 rounded-full h-2">
               <div className="h-2 rounded-full bg-blue-500" style={{ width: `${Math.min((data.network.latency || 0) * 2, 100)}%` }} />

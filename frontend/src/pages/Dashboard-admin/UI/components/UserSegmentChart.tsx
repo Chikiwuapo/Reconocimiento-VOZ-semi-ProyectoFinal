@@ -90,13 +90,13 @@ const UserSegmentChart: React.FC<UserSegmentChartProps> = ({ data, isDarkMode = 
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className={`flex rounded-lg p-1 ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
             <button
               onClick={() => setViewType('pie')}
               className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                 viewType === 'pie'
                   ? 'bg-blue-500 text-white'
-                  : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  : isDarkMode ? 'text-blue-200 hover:text-white hover:bg-blue-600/50' : 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
               }`}
             >
               Circular
@@ -106,7 +106,7 @@ const UserSegmentChart: React.FC<UserSegmentChartProps> = ({ data, isDarkMode = 
               className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                 viewType === 'bar'
                   ? 'bg-blue-500 text-white'
-                  : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  : isDarkMode ? 'text-blue-200 hover:text-white hover:bg-blue-600/50' : 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
               }`}
             >
               Barras
@@ -171,16 +171,18 @@ const UserSegmentChart: React.FC<UserSegmentChartProps> = ({ data, isDarkMode = 
                 <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
                 <XAxis 
                   dataKey="name" 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  stroke={isDarkMode ? '#FFFFFF' : '#000000'}
                   fontSize={12}
                   angle={-45}
                   textAnchor="end"
                   height={80}
+                  tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
                 />
                 <YAxis 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  stroke={isDarkMode ? '#FFFFFF' : '#000000'}
                   fontSize={12}
                   tickFormatter={(value) => value.toLocaleString()}
+                  tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
                 />
                 <Tooltip 
                   contentStyle={{ 
