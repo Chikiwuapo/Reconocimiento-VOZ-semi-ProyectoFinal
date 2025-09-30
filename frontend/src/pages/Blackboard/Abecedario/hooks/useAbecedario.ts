@@ -321,12 +321,12 @@ export function useAbecedario() {
 
       const response = await recognizeGestureAPI(payload)
       
-      if (response.letra_reconocida) {
-        setRecognizedLetter(response.letra_reconocida)
-        setRecognitionConfidence(response.confianza || 0)
+      if (response.success && response.letra_reconocida) {
+        setRecognizedLetter(response.letra_reconocida.letra_vinculada)
+        setRecognitionConfidence(response.letra_reconocida.confianza || 0)
         setError(null)
       } else {
-        setError('No se pudo reconocer la letra')
+        setError(response.error || 'No se pudo reconocer la letra')
       }
     } catch (error) {
       console.error('Error recognizing gesture:', error)

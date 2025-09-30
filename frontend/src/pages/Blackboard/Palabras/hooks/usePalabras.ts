@@ -274,14 +274,21 @@ export function usePalabras() {
     if (points.length === 0) return
 
     try {
-      const data = await recognizeGestureAPI({ frame: lastFrameRef.current })
-      if (data?.palabra_reconocida) {
-        setRecognizedWord(data.palabra_reconocida)
-        setRecognitionConfidence(data.confianza || 0)
+      const response = await recognizeGestureAPI({ frame: lastFrameRef.current })
+      if (response?.success && response?.palabra_reconocida) {
+        setRecognizedWord(response.palabra_reconocida.palabra_vinculada)
+        setRecognitionConfidence(response.palabra_reconocida.confianza || 0)
+        setError('')
+      } else {
+        setError(response?.error || 'No se pudo reconocer la palabra')
+        setRecognizedWord('')
+        setRecognitionConfidence(0)
       }
     } catch (e: any) {
       console.error(e)
       setError(e?.message || 'No se pudo reconocer la palabra')
+      setRecognizedWord('')
+      setRecognitionConfidence(0)
     }
   }
 

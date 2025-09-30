@@ -286,6 +286,7 @@ export function useVocales() {
   const recognizeCurrentGesture = async () => {
     if (!lastFrameRef.current || (!lastFrameRef.current.leftHand && !lastFrameRef.current.rightHand)) {
       setError('No se detecta ninguna mano')
+      return
     }
 
     try {
@@ -295,12 +296,12 @@ export function useVocales() {
 
       const response = await recognizeGestureAPI(payload)
       
-      if (response.vocal_reconocida) {
-        setRecognizedVocal(response.vocal_reconocida)
-        setRecognitionConfidence(response.confianza || 0)
+      if (response.success && response.vocal_reconocida) {
+        setRecognizedVocal(response.vocal_reconocida.vocal_vinculada)
+        setRecognitionConfidence(response.vocal_reconocida.confianza || 0)
         setError(null)
       } else {
-        setError('No se pudo reconocer la vocal')
+        setError(response.error || 'No se pudo reconocer la vocal')
       }
     } catch (error) {
       console.error('Error recognizing gesture:', error)
