@@ -2,7 +2,7 @@ services:
   # Backend Django Service
   - type: web
     name: reconocimiento-voz-backend
-    runtime: python3
+    runtime: python
     buildCommand: "./build.sh"
     startCommand: "gunicorn core.wsgi:application"
     plan: free
@@ -12,11 +12,11 @@ services:
     healthCheckPath: /admin/
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
       - key: DEBUG
-        value: false
+        value: "false"
       - key: DJANGO_SETTINGS_MODULE
-        value: core.settings
+        value: "core.settings"
       - key: SECRET_KEY
         generateValue: true
       # SQLite configuration - leave DATABASE_URL empty to use SQLite
