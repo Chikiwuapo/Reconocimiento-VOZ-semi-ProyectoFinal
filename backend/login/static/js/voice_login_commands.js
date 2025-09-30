@@ -309,7 +309,7 @@ class VoiceLoginCommands {
         // 2. Correcciones críticas optimizadas - Solo las más comunes
         const quickCorrections = {
             // Solo dominios más frecuentes
-            'gmai': 'gmail', 'gmeil': 'gmail', 'jmail': 'gmail',
+            'gmai': 'gmail', 'gmeil': 'gmail', 'gmaill': 'gmail', 'gmall': 'gmail', 'jmail': 'gmail',
             'hotmeil': 'hotmail', 'otmail': 'hotmail',
             'outluk': 'outlook', 'outlok': 'outlook',
             'sennati': 'senati', 'cenati': 'senati', 'snati': 'senati',
@@ -339,6 +339,13 @@ class VoiceLoginCommands {
         if (processedEmail.includes('@hotmail') && !processedEmail.includes('.com')) {
             processedEmail = processedEmail.replace(/@hotmail$/, '@hotmail.com');
         }
+        
+        // Correcciones específicas para dominios con letras extra
+        processedEmail = processedEmail
+            .replace(/@gmaill\.com$/i, '@gmail.com')
+            .replace(/@gmall\.com$/i, '@gmail.com')
+            .replace(/@gmaill\.co$/i, '@gmail.com')
+            .replace(/@gmall\.co$/i, '@gmail.com');
         
         // 5. Validación final rápida
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

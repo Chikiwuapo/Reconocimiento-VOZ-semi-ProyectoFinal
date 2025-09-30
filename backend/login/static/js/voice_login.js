@@ -277,6 +277,8 @@ class VoiceLogin {
             'gmail': 'gmail',
             'gmai': 'gmail',
             'gmeil': 'gmail',
+            'gmaill': 'gmail',
+            'gmall': 'gmail',
             'jmail': 'gmail',
             'gemail': 'gmail',
             'hotmail': 'hotmail',
@@ -372,6 +374,10 @@ class VoiceLogin {
             [/@salti\.p$/i, '@senati.pe'],
             
             // Corregir otros dominios mal transcritos
+            [/@gmaill\.com$/i, '@gmail.com'],
+            [/@gmall\.com$/i, '@gmail.com'],
+            [/@gmaill\.co$/i, '@gmail.com'],
+            [/@gmall\.co$/i, '@gmail.com'],
             [/@gmail\.co$/i, '@gmail.com'],
             [/@hotmail\.co$/i, '@hotmail.com'],
             [/@outlook\.co$/i, '@outlook.com']
