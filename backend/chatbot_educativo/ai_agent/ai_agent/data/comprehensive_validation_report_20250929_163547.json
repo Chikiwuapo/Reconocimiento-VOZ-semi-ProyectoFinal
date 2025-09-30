@@ -1,0 +1,973 @@
+{
+  "timestamp": "2025-09-29T16:35:47.376505",
+  "total_questions": 45,
+  "correct_responses": 39,
+  "context_filter_accuracy": 86.66666666666667,
+  "category_results": {
+    "Inicio": {
+      "total_questions": 5,
+      "correct_responses": 5,
+      "accuracy": 100.0,
+      "questions": [
+        {
+          "question": "¿Cómo puedo empezar a usar la plataforma?",
+          "category": "Inicio",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Qué es esta aplicación?",
+          "category": "Inicio",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cuáles son las funciones principales?",
+          "category": "Inicio",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo navego por la interfaz?",
+          "category": "Inicio",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Dónde encuentro ayuda?",
+          "category": "Inicio",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        }
+      ]
+    },
+    "Autenticación": {
+      "total_questions": 5,
+      "correct_responses": 5,
+      "accuracy": 100.0,
+      "questions": [
+        {
+          "question": "¿Cómo me registro?",
+          "category": "Autenticación",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo inicio sesión?",
+          "category": "Autenticación",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "Olvidé mi contraseña",
+          "category": "Autenticación",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo cambio mi contraseña?",
+          "category": "Autenticación",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo cierro sesión?",
+          "category": "Autenticación",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        }
+      ]
+    },
+    "Panel principal": {
+      "total_questions": 5,
+      "correct_responses": 5,
+      "accuracy": 100.0,
+      "questions": [
+        {
+          "question": "¿Qué puedo hacer en el panel principal?",
+          "category": "Panel principal",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo accedo a mis cursos?",
+          "category": "Panel principal",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Dónde veo mi progreso?",
+          "category": "Panel principal",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo personalizo mi perfil?",
+          "category": "Panel principal",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Qué significan las estadísticas?",
+          "category": "Panel principal",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        }
+      ]
+    },
+    "Aritmética y gestos": {
+      "total_questions": 5,
+      "correct_responses": 5,
+      "accuracy": 100.0,
+      "questions": [
+        {
+          "question": "¿Cómo funciona el reconocimiento de gestos?",
+          "category": "Aritmética y gestos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Qué operaciones matemáticas puedo hacer?",
+          "category": "Aritmética y gestos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo dibujo números en el aire?",
+          "category": "Aritmética y gestos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Qué gestos reconoce la aplicación?",
+          "category": "Aritmética y gestos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo mejoro la precisión de los gestos?",
+          "category": "Aritmética y gestos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        }
+      ]
+    },
+    "Modelos guardados": {
+      "total_questions": 5,
+      "correct_responses": 5,
+      "accuracy": 100.0,
+      "questions": [
+        {
+          "question": "¿Cómo guardo un modelo?",
+          "category": "Modelos guardados",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Dónde veo mis modelos guardados?",
+          "category": "Modelos guardados",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo cargo un modelo anterior?",
+          "category": "Modelos guardados",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Puedo eliminar modelos guardados?",
+          "category": "Modelos guardados",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo exporto mis modelos?",
+          "category": "Modelos guardados",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        }
+      ]
+    },
+    "Cursos": {
+      "total_questions": 5,
+      "correct_responses": 5,
+      "accuracy": 100.0,
+      "questions": [
+        {
+          "question": "¿Qué cursos están disponibles?",
+          "category": "Cursos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo me inscribo en un curso?",
+          "category": "Cursos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo veo mi progreso en los cursos?",
+          "category": "Cursos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Puedo repetir lecciones?",
+          "category": "Cursos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Hay certificados disponibles?",
+          "category": "Cursos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        }
+      ]
+    },
+    "Casos ambiguos": {
+      "total_questions": 5,
+      "correct_responses": 5,
+      "accuracy": 100.0,
+      "questions": [
+        {
+          "question": "¿Puedes ayudarme?",
+          "category": "Casos ambiguos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "No entiendo",
+          "category": "Casos ambiguos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Qué hago ahora?",
+          "category": "Casos ambiguos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "Tengo un problema",
+          "category": "Casos ambiguos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo funciona esto?",
+          "category": "Casos ambiguos",
+          "expected_in_context": true,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": true,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": true
+        }
+      ]
+    },
+    "Fuera de contexto": {
+      "total_questions": 10,
+      "correct_responses": 4,
+      "accuracy": 40.0,
+      "questions": [
+        {
+          "question": "¿Cuál es la capital de Francia?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": false,
+          "context_confidence": 0.95,
+          "context_correct": true,
+          "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo cocino pasta?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": false,
+          "context_confidence": 0.95,
+          "context_correct": true,
+          "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Qué tiempo hace hoy?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": false,
+          "context_confidence": 0.95,
+          "context_correct": true,
+          "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cuándo es el próximo partido de fútbol?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": false,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": false
+        },
+        {
+          "question": "¿Cómo arreglo mi coche?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": false,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": false
+        },
+        {
+          "question": "¿Qué película me recomiendas?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": false,
+          "context_confidence": 0.95,
+          "context_correct": true,
+          "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+          "overall_correct": true
+        },
+        {
+          "question": "¿Cómo invierto en la bolsa?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": false,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": false
+        },
+        {
+          "question": "¿Cuál es el mejor restaurante cerca?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": false,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": false
+        },
+        {
+          "question": "¿Cómo aprendo a tocar guitarra?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": false,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": false
+        },
+        {
+          "question": "¿Qué es la inteligencia artificial?",
+          "category": "Fuera de contexto",
+          "expected_in_context": false,
+          "detected_in_context": true,
+          "context_confidence": 0.7,
+          "context_correct": false,
+          "model_response": "Respuesta apropiada del modelo",
+          "overall_correct": false
+        }
+      ]
+    }
+  },
+  "detailed_results": [
+    {
+      "question": "¿Cómo puedo empezar a usar la plataforma?",
+      "category": "Inicio",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué es esta aplicación?",
+      "category": "Inicio",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cuáles son las funciones principales?",
+      "category": "Inicio",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo navego por la interfaz?",
+      "category": "Inicio",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Dónde encuentro ayuda?",
+      "category": "Inicio",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo me registro?",
+      "category": "Autenticación",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo inicio sesión?",
+      "category": "Autenticación",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "Olvidé mi contraseña",
+      "category": "Autenticación",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo cambio mi contraseña?",
+      "category": "Autenticación",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo cierro sesión?",
+      "category": "Autenticación",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué puedo hacer en el panel principal?",
+      "category": "Panel principal",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo accedo a mis cursos?",
+      "category": "Panel principal",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Dónde veo mi progreso?",
+      "category": "Panel principal",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo personalizo mi perfil?",
+      "category": "Panel principal",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué significan las estadísticas?",
+      "category": "Panel principal",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo funciona el reconocimiento de gestos?",
+      "category": "Aritmética y gestos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué operaciones matemáticas puedo hacer?",
+      "category": "Aritmética y gestos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo dibujo números en el aire?",
+      "category": "Aritmética y gestos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué gestos reconoce la aplicación?",
+      "category": "Aritmética y gestos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo mejoro la precisión de los gestos?",
+      "category": "Aritmética y gestos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo guardo un modelo?",
+      "category": "Modelos guardados",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Dónde veo mis modelos guardados?",
+      "category": "Modelos guardados",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo cargo un modelo anterior?",
+      "category": "Modelos guardados",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Puedo eliminar modelos guardados?",
+      "category": "Modelos guardados",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo exporto mis modelos?",
+      "category": "Modelos guardados",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué cursos están disponibles?",
+      "category": "Cursos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo me inscribo en un curso?",
+      "category": "Cursos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo veo mi progreso en los cursos?",
+      "category": "Cursos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Puedo repetir lecciones?",
+      "category": "Cursos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Hay certificados disponibles?",
+      "category": "Cursos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Puedes ayudarme?",
+      "category": "Casos ambiguos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "No entiendo",
+      "category": "Casos ambiguos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué hago ahora?",
+      "category": "Casos ambiguos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "Tengo un problema",
+      "category": "Casos ambiguos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo funciona esto?",
+      "category": "Casos ambiguos",
+      "expected_in_context": true,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": true,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cuál es la capital de Francia?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": false,
+      "context_confidence": 0.95,
+      "context_correct": true,
+      "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo cocino pasta?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": false,
+      "context_confidence": 0.95,
+      "context_correct": true,
+      "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Qué tiempo hace hoy?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": false,
+      "context_confidence": 0.95,
+      "context_correct": true,
+      "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cuándo es el próximo partido de fútbol?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": false,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": false
+    },
+    {
+      "question": "¿Cómo arreglo mi coche?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": false,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": false
+    },
+    {
+      "question": "¿Qué película me recomiendas?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": false,
+      "context_confidence": 0.95,
+      "context_correct": true,
+      "model_response": "Lo siento, esa pregunta está fuera del contexto de esta plataforma educativa.",
+      "overall_correct": true
+    },
+    {
+      "question": "¿Cómo invierto en la bolsa?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": false,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": false
+    },
+    {
+      "question": "¿Cuál es el mejor restaurante cerca?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": false,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": false
+    },
+    {
+      "question": "¿Cómo aprendo a tocar guitarra?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": false,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": false
+    },
+    {
+      "question": "¿Qué es la inteligencia artificial?",
+      "category": "Fuera de contexto",
+      "expected_in_context": false,
+      "detected_in_context": true,
+      "context_confidence": 0.7,
+      "context_correct": false,
+      "model_response": "Respuesta apropiada del modelo",
+      "overall_correct": false
+    }
+  ],
+  "context_filtering_results": {
+    "in_context_correctly_accepted": 35,
+    "out_of_context_correctly_rejected": 4,
+    "false_positives": 6,
+    "false_negatives": 0
+  },
+  "overall_accuracy": 86.66666666666667
+}

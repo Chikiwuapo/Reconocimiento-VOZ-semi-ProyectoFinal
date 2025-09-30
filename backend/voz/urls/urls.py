@@ -26,6 +26,7 @@ urlpatterns = [
     
     # APIs para registro y reconocimiento de voz
     path('api/register_audio/', views.register_audio, name='register_audio'),
+    path('api/get_pending_token/', views.get_pending_token, name='get_pending_token'),
     path('api/recognize_command/', views.recognize_command, name='recognize_command'),
     path('api/voice_status/', views.voice_status, name='voice_status'),
     path('api/voice_profile/<int:profile_id>/', views.delete_voice_profile, name='delete_voice_profile'),

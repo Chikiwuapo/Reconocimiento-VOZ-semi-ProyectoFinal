@@ -1,0 +1,20 @@
+{
+  "cleanup_date": "2025-09-29T15:57:25.923982",
+  "files_deleted": [
+    "ai_agent/data/migrated/migrated_data.json",
+    "sample_training_data.json",
+    "ai_agent/results/training_stats_20250929_015447.json",
+    "ai_agent/results/training_stats_20250929_020741.json",
+    "ai_agent/results/training_stats_20250929_022338.json",
+    "ai_agent/results/training_stats_20250929_033432.json",
+    "ai_agent/results/training_stats_20250929_034400.json",
+    "ai_agent/results/training_stats_20250929_034915.json",
+    "ai_agent/results/training_stats_20250929_035854.json",
+    "ai_agent/results/training_stats_20250929_150315.json",
+    "ai_agent/results/training_stats_20250929_153754.json",
+    "ai_agent/results/training_stats_20250929_153849.json"
+  ],
+  "failed_deletions": [],
+  "total_deleted": 12,
+  "total_failed": 0
+}

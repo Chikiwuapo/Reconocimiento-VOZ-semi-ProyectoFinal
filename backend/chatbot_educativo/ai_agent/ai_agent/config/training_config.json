@@ -1,0 +1,27 @@
+{
+  "model_settings": {
+    "max_features": 10000,
+    "max_length": 100,
+    "embedding_dim": 128,
+    "lstm_units": 64,
+    "dropout_rate": 0.5
+  },
+  "training_settings": {
+    "batch_size": 32,
+    "epochs": 50,
+    "validation_split": 0.2,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 10
+  },
+  "data_settings": {
+    "min_samples_per_category": 10,
+    "max_samples_per_category": 1000,
+    "augmentation_enabled": true,
+    "quality_threshold": 0.7
+  },
+  "trae_integration": {
+    "use_trae_optimization": true,
+    "use_trae_augmentation": true,
+    "use_trae_validation": true
+  }
+}

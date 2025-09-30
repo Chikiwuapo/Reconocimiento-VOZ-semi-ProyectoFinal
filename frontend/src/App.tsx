@@ -18,6 +18,7 @@ import CaptureSamplesPalabras from './pages/Blackboard/Palabras/CaptureSamples'
 import TrainModelPalabras from './pages/Blackboard/Palabras/TrainModel'
 import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
+import Dashboard_admin from './pages/Dashboard-admin/UI/Dashboard_admin'
 import { ModelProvider } from './contexts/ModelContext'
 
 // Contexto global para tema oscuro profundo
@@ -61,6 +62,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/splash" element={<SplashScreen />} />
             <Route path="/auth" element={<AuthFlowPage />} />
+            <Route path="/estadistica" element={<Dashboard_admin />} />
             <Route path="/blackboard" element={<Blackboard />} />
             <Route path="/blackboard/models" element={<Models />} />
             <Route path="/arithmetic/capture" element={<CaptureSamples />} />

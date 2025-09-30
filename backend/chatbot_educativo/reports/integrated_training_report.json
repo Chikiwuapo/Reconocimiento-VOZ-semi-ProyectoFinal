@@ -1,0 +1,92 @@
+{
+  "timestamp": "2025-09-29T16:19:23.899291",
+  "dataset_source": "training_data_integrated.csv",
+  "training_result": {
+    "success": true,
+    "timestamp": "2025-09-29T16:19:23.895690",
+    "training_duration_seconds": 0.002866983413696289,
+    "data_info": {
+      "total_samples": 100,
+      "categories": 7
+    },
+    "model_metrics": {
+      "accuracy": 0.75,
+      "loss": 0.5,
+      "val_accuracy": 0.7
+    },
+    "trae_agent": {
+      "agent_created": true,
+      "agent_config": {
+        "name": "Educational Math Assistant",
+        "description": "Asistente educativo especializado en matemáticas con gestos",
+        "capabilities": [
+          "mathematical_problem_solving",
+          "gesture_recognition_guidance",
+          "educational_content_delivery",
+          "student_progress_tracking",
+          "interactive_learning_facilitation"
+        ],
+        "personality": {
+          "tone": "friendly_educational",
+          "expertise_level": "adaptive",
+          "interaction_style": "encouraging_supportive",
+          "language": "spanish"
+        },
+        "knowledge_domains": [
+          "basic_arithmetic",
+          "gesture_based_learning",
+          "educational_platform_navigation",
+          "student_motivation",
+          "interactive_mathematics"
+        ],
+        "training_data_summary": {
+          "total_examples": 100,
+          "categories": [
+            "dashboard",
+            "arithmetic_gestures",
+            "saved_models",
+            "landing_page",
+            "authentication",
+            "platform_info",
+            "greeting"
+          ],
+          "avg_confidence": 0.8
+        }
+      },
+      "creation_date": "2025-09-29T16:19:23.894357",
+      "created_by": "trae_ai_agent_builder",
+      "status": "ready_for_deployment"
+    },
+    "model_path": "ai_agent/models/trained_model"
+  },
+  "dataset_info": {
+    "total_records": 260,
+    "categories": 24,
+    "category_distribution": {
+      "arithmetic_gestures": 28,
+      "authentication": 19,
+      "dashboard": 19,
+      "landing_page": 15,
+      "saved_models": 15,
+      "specific_questions": 15,
+      "out_of_context": 15,
+      "ambiguous_cases": 15,
+      "specific_intents": 10,
+      "gestures": 10,
+      "greeting": 10,
+      "navigation": 10,
+      "arithmetic": 10,
+      "faq_database": 10,
+      "technical_support": 10,
+      "courses": 9,
+      "navegacion_ayuda": 6,
+      "aritmetica_gestos": 6,
+      "platform_info": 5,
+      "inicio_presentacion": 5,
+      "cursos": 5,
+      "autenticacion": 5,
+      "panel_dashboard": 4,
+      "modelos_guardados": 4
+    }
+  }
+}

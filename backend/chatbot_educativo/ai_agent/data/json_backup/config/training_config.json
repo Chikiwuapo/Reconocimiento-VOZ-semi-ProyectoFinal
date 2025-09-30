@@ -1,0 +1,47 @@
+{
+  "model_settings": {
+    "naive_bayes": {
+      "alpha": 1.0,
+      "fit_prior": true
+    },
+    "tensorflow": {
+      "embedding_dim": 100,
+      "lstm_units": 64,
+      "dropout": 0.5,
+      "learning_rate": 0.001,
+      "batch_size": 32,
+      "epochs": 50
+    }
+  },
+  "csv_storage": {
+    "enabled": true,
+    "base_directory": "ai_agent/data/csv_storage",
+    "files": {
+      "training_data": "training_data.csv",
+      "training_parameters": "training_parameters.csv",
+      "training_results": "training_results.csv",
+      "model_metrics": "model_metrics.csv"
+    },
+    "backup_enabled": true,
+    "auto_cleanup": false,
+    "max_backup_files": 10
+  },
+  "training_settings": {
+    "batch_size": 32,
+    "epochs": 50,
+    "validation_split": 0.2,
+    "learning_rate": 0.001,
+    "early_stopping_patience": 10
+  },
+  "data_settings": {
+    "min_samples_per_category": 10,
+    "max_samples_per_category": 1000,
+    "augmentation_enabled": true,
+    "quality_threshold": 0.7
+  },
+  "trae_integration": {
+    "use_trae_optimization": true,
+    "use_trae_augmentation": true,
+    "use_trae_validation": true
+  }
+}

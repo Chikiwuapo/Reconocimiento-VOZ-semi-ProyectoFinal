@@ -534,6 +534,23 @@ def login_page(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def get_pending_token(request):
+    """Obtiene o crea un token de registro pendiente para la sesión actual."""
+    try:
+        pending_registration = get_or_create_pending_registration(request)
+        return JsonResponse({
+            'success': True,
+            'pending_token': pending_registration.token
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al obtener token: {str(e)}'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def registrar_usuario(request):
     """
     Vista para registrar un nuevo usuario con username, password y frase_voz

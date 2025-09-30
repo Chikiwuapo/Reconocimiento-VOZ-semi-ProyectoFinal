@@ -1,0 +1,146 @@
+[
+  {
+    "input_text": "¿Cuál es la función principal de esta plataforma?",
+    "expected_category": "Inicio",
+    "response": "Esta es una plataforma educativa que enseña y practica operaciones matemáticas usando gestos de las manos y la cámara del dispositivo. Puedes aprender con cursos, entrenar gestos de manos y resolver ejercicios de forma interactiva. ¿Te gustaría que te lleve a la página principal para conocer más?",
+    "keywords": ["función", "plataforma", "principal", "qué es"],
+    "confidence": 0.95,
+    "source": "user_questions_with_context",
+    "redirect_url": "/"
+  },
+  {
+    "input_text": "¿Cómo se presenta inicialmente la plataforma al usuario?",
+    "expected_category": "Inicio",
+    "response": "La plataforma se presenta con una página de bienvenida que incluye un mensaje atractivo, descripción del valor educativo, elementos visuales modernos y botones para comenzar. También hay una pantalla de carga (splash) para una transición suave. ¿Quieres ver la presentación inicial?",
+    "keywords": ["presenta", "inicialmente", "bienvenida", "portada"],
+    "confidence": 0.90,
+    "source": "user_questions_with_context",
+    "redirect_url": "/"
+  },
+  {
+    "input_text": "¿Cómo puedo acceder a mi cuenta?",
+    "expected_category": "Autenticación",
+    "response": "Puedes acceder a tu cuenta a través de la sección de autenticación. Ofrecemos opciones de inicio de sesión con datos básicos y también reconocimiento facial como opción avanzada. ¿Te llevo a la página de inicio de sesión?",
+    "keywords": ["acceder", "cuenta", "iniciar sesión", "login"],
+    "confidence": 0.95,
+    "source": "user_questions_with_context",
+    "redirect_url": "/auth"
+  },
+  {
+    "input_text": "¿Cómo me registro en la plataforma?",
+    "expected_category": "Autenticación",
+    "response": "El registro es muy sencillo. En la sección de autenticación encontrarás opciones para crear una nueva cuenta con datos básicos o usando reconocimiento facial si está habilitado. ¿Quieres que te lleve al formulario de registro?",
+    "keywords": ["registro", "registrar", "crear cuenta", "sign up"],
+    "confidence": 0.95,
+    "source": "user_questions_with_context",
+    "redirect_url": "/auth"
+  },
+  {
+    "input_text": "¿Dónde puedo ver mi panel personal?",
+    "expected_category": "Panel principal",
+    "response": "Tu panel personal está en el Dashboard, donde puedes ver tarjetas con métricas, tu progreso, accesos rápidos a cursos y actividades recomendadas. Es tu centro de control principal. ¿Te llevo a tu panel?",
+    "keywords": ["panel", "personal", "dashboard", "progreso"],
+    "confidence": 0.95,
+    "source": "user_questions_with_context",
+    "redirect_url": "/dashboard"
+  },
+  {
+    "input_text": "¿Cómo accedo a las funciones del dashboard?",
+    "expected_category": "Panel principal",
+    "response": "En el dashboard encontrarás tarjetas organizadas con métricas de progreso, atajos a cursos, actividades destacadas y secciones recomendadas. Todo está diseñado para acceso rápido a las funciones principales. ¿Quieres explorar tu dashboard?",
+    "keywords": ["dashboard", "funciones", "acceso", "métricas"],
+    "confidence": 0.90,
+    "source": "user_questions_with_context",
+    "redirect_url": "/dashboard"
+  },
+  {
+    "input_text": "¿Cómo puedo practicar aritmética con gestos?",
+    "expected_category": "Aritmética y gestos",
+    "response": "En la sección de Aritmética puedes usar la cámara para reconocer gestos de tus manos. Hay controles para 'Entrenar' nuevos gestos y 'Probar' operaciones matemáticas. La cámara ocupa el foco principal con indicadores de confianza del reconocimiento. ¿Te llevo a practicar?",
+    "keywords": ["aritmética", "gestos", "practicar", "cámara"],
+    "confidence": 0.95,
+    "source": "user_questions_with_context",
+    "redirect_url": "/arithmetic"
+  },
+  {
+    "input_text": "¿Cómo entreno la cámara para reconocer mis gestos?",
+    "expected_category": "Aritmética y gestos",
+    "response": "El entrenamiento se hace en la sección Aritmética. Usas el botón 'Entrenar' para grabar ejemplos de tus gestos (números u operaciones) y el sistema aprende a reconocerlos automáticamente. Necesitas buena iluminación y permisos de cámara del navegador. ¿Empezamos el entrenamiento?",
+    "keywords": ["entrenar", "cámara", "reconocer", "gestos"],
+    "confidence": 0.95,
+    "source": "user_questions_with_context",
+    "redirect_url": "/arithmetic"
+  },
+  {
+    "input_text": "¿Cómo valido que mis gestos sean reconocidos correctamente?",
+    "expected_category": "Aritmética y gestos",
+    "response": "Después de entrenar, puedes usar el botón 'Probar' en la sección Aritmética para validar que la cámara reconoce tus gestos correctamente. El sistema muestra indicadores de confianza del reconocimiento en tiempo real. ¿Quieres probar tus gestos ahora?",
+    "keywords": ["validar", "gestos", "reconocidos", "correctamente"],
+    "confidence": 0.90,
+    "source": "user_questions_with_context",
+    "redirect_url": "/arithmetic"
+  },
+  {
+    "input_text": "¿Dónde puedo acceder a mis modelos guardados?",
+    "expected_category": "Modelos guardados",
+    "response": "Tus modelos y gestos guardados están en la sección Modelos. Allí puedes ver una lista de todos los gestos/modelos que has entrenado, y realizar acciones como revisar, actualizar o eliminar registros según tus permisos. ¿Te muestro tus modelos guardados?",
+    "keywords": ["modelos", "guardados", "acceder", "gestos"],
+    "confidence": 0.95,
+    "source": "user_questions_with_context",
+    "redirect_url": "/models"
+  },
+  {
+    "input_text": "¿Cómo puedo continuar con mis cursos?",
+    "expected_category": "Cursos",
+    "response": "Puedes continuar tus cursos desde el Dashboard donde verás tus actividades, o acceder directamente a un curso específico si conoces su nombre. Cada curso tiene contenidos, objetivos y te permite continuar donde te quedaste. ¿Quieres ver tus cursos disponibles?",
+    "keywords": ["continuar", "cursos", "lecciones", "educativo"],
+    "confidence": 0.90,
+    "source": "user_questions_with_context",
+    "redirect_url": "/dashboard"
+  },
+  {
+    "input_text": "¿Qué tipo de cursos educativos están disponibles?",
+    "expected_category": "Cursos",
+    "response": "Los cursos están enfocados en matemáticas interactivas usando gestos de manos. Incluyen aritmética básica, operaciones avanzadas y misiones guiadas. Cada curso tiene contenidos estructurados y objetivos claros. Puedes explorarlos desde tu panel. ¿Te interesa algún tema en particular?",
+    "keywords": ["cursos", "educativos", "disponibles", "matemáticas"],
+    "confidence": 0.85,
+    "source": "user_questions_with_context",
+    "redirect_url": "/dashboard"
+  },
+  {
+    "input_text": "Quiero explorar la aplicación",
+    "expected_category": "Casos ambiguos",
+    "response": "¡Perfecto! Puedes explorar desde varias opciones: ver la presentación inicial, acceder a tu panel para actividades, practicar gestos con la cámara, o revisar cursos disponibles. ¿Qué te interesa más: practicar gestos, ver cursos, o conocer tu progreso?",
+    "keywords": ["explorar", "aplicación", "navegar"],
+    "confidence": 0.80,
+    "source": "user_questions_with_context",
+    "redirect_url": null
+  },
+  {
+    "input_text": "No me reconoce la cámara",
+    "expected_category": "Aritmética y gestos",
+    "response": "Para que la cámara funcione correctamente, verifica: 1) Que tengas buena iluminación, 2) Que hayas dado permisos de cámara al navegador, 3) Que no haya otras aplicaciones usando la cámara. ¿Quieres que te lleve a la sección de práctica para intentar de nuevo?",
+    "keywords": ["cámara", "no reconoce", "problemas", "ayuda"],
+    "confidence": 0.85,
+    "source": "user_questions_with_context",
+    "redirect_url": "/arithmetic"
+  },
+  {
+    "input_text": "¿Para quién está pensada esta plataforma?",
+    "expected_category": "Inicio",
+    "response": "Esta plataforma está diseñada para estudiantes y curiosos de la tecnología que quieran aprender matemáticas de forma interactiva, docentes o padres que buscan herramientas lúdicas para practicar cálculos, y personas que desean experimentar con reconocimiento de manos. ¿Te identificas con alguno de estos perfiles?",
+    "keywords": ["para quién", "pensada", "dirigida", "público"],
+    "confidence": 0.90,
+    "source": "user_questions_with_context",
+    "redirect_url": "/"
+  },
+  {
+    "input_text": "¿Funciona en móvil y escritorio?",
+    "expected_category": "Inicio",
+    "response": "Sí, la plataforma está diseñada para funcionar bien tanto en dispositivos móviles como en escritorio, con un tema oscuro moderno que se adapta a diferentes pantallas. La experiencia está optimizada para ambos tipos de dispositivos. ¿Quieres probar alguna funcionalidad específica?",
+    "keywords": ["móvil", "escritorio", "dispositivos", "compatibilidad"],
+    "confidence": 0.90,
+    "source": "user_questions_with_context",
+    "redirect_url": "/"
+  }
+]

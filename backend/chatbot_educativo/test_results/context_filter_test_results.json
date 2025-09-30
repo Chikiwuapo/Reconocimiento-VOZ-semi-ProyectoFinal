@@ -1,0 +1,195 @@
+{
+  "test_timestamp": "2025-09-29T16:32:31.206438",
+  "total_questions": 13,
+  "results": [
+    {
+      "question": "¿Cómo funciona el reconocimiento de gestos?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Cómo funciona el reconocimiento de gestos?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.05405405405405406,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.207962"
+      }
+    },
+    {
+      "question": "¿Qué cursos de matemáticas tienen disponibles?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Qué cursos de matemáticas tienen disponibles?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.05405405405405406,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.208002"
+      }
+    },
+    {
+      "question": "¿Cómo me registro en la plataforma?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Cómo me registro en la plataforma?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.05405405405405406,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.208024"
+      }
+    },
+    {
+      "question": "¿Puedo ver mi progreso de aprendizaje?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Puedo ver mi progreso de aprendizaje?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.05405405405405406,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.208044"
+      }
+    },
+    {
+      "question": "¿Qué ejercicios de aritmética puedo hacer?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Qué ejercicios de aritmética puedo hacer?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.05405405405405406,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.208064"
+      }
+    },
+    {
+      "question": "¿Qué tiempo hace hoy?",
+      "should_process": false,
+      "response": "Mi función es ayudarte con esta plataforma de matemáticas interactiva. Para otros temas, te recomiendo consultar fuentes especializadas. ¿Qué te gustaría saber sobre nuestros métodos de enseñanza con gestos?",
+      "analysis": {
+        "question": "¿Qué tiempo hace hoy?",
+        "is_in_context": false,
+        "confidence": 0.95,
+        "valid_context_score": 0.0,
+        "invalid_context_score": 0.013157894736842105,
+        "pattern_match": true,
+        "analysis_timestamp": "2025-09-29T16:32:31.208075"
+      }
+    },
+    {
+      "question": "¿Quién ganó el partido de fútbol?",
+      "should_process": false,
+      "response": "Lo siento, soy un asistente especializado en esta plataforma educativa de matemáticas con reconocimiento de gestos. Solo puedo ayudarte con preguntas relacionadas con el uso de la plataforma, cursos de matemáticas, ejercicios con gestos y funcionalidades del sistema. ¿Te gustaría saber algo específico sobre nuestros cursos de matemáticas?",
+      "analysis": {
+        "question": "¿Quién ganó el partido de fútbol?",
+        "is_in_context": false,
+        "confidence": 0.95,
+        "valid_context_score": 0.0,
+        "invalid_context_score": 0.013157894736842105,
+        "pattern_match": true,
+        "analysis_timestamp": "2025-09-29T16:32:31.210818"
+      }
+    },
+    {
+      "question": "¿Cómo cocino pasta?",
+      "should_process": false,
+      "response": "Mi función es ayudarte con esta plataforma de matemáticas interactiva. Para otros temas, te recomiendo consultar fuentes especializadas. ¿Qué te gustaría saber sobre nuestros métodos de enseñanza con gestos?",
+      "analysis": {
+        "question": "¿Cómo cocino pasta?",
+        "is_in_context": false,
+        "confidence": 0.95,
+        "valid_context_score": 0.0,
+        "invalid_context_score": 0.0,
+        "pattern_match": true,
+        "analysis_timestamp": "2025-09-29T16:32:31.210848"
+      }
+    },
+    {
+      "question": "¿Qué película me recomiendas?",
+      "should_process": false,
+      "response": "Mi función es ayudarte con esta plataforma de matemáticas interactiva. Para otros temas, te recomiendo consultar fuentes especializadas. ¿Qué te gustaría saber sobre nuestros métodos de enseñanza con gestos?",
+      "analysis": {
+        "question": "¿Qué película me recomiendas?",
+        "is_in_context": false,
+        "confidence": 0.95,
+        "valid_context_score": 0.0,
+        "invalid_context_score": 0.013157894736842105,
+        "pattern_match": true,
+        "analysis_timestamp": "2025-09-29T16:32:31.210867"
+      }
+    },
+    {
+      "question": "¿Cuál es la capital de Francia?",
+      "should_process": false,
+      "response": "Mi especialidad es ayudarte con esta plataforma educativa de matemáticas. No puedo responder preguntas sobre otros temas. ¿Hay algo sobre los cursos de matemáticas o el reconocimiento de gestos que te gustaría saber?",
+      "analysis": {
+        "question": "¿Cuál es la capital de Francia?",
+        "is_in_context": false,
+        "confidence": 0.95,
+        "valid_context_score": 0.0,
+        "invalid_context_score": 0.0,
+        "pattern_match": true,
+        "analysis_timestamp": "2025-09-29T16:32:31.210890"
+      }
+    },
+    {
+      "question": "¿Cómo funciona esto?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Cómo funciona esto?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.0,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.210920"
+      }
+    },
+    {
+      "question": "¿Puedes ayudarme?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Puedes ayudarme?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.02702702702702703,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.210943"
+      }
+    },
+    {
+      "question": "¿Qué es esto?",
+      "should_process": true,
+      "response": null,
+      "analysis": {
+        "question": "¿Qué es esto?",
+        "is_in_context": true,
+        "confidence": 0.7,
+        "valid_context_score": 0.0,
+        "invalid_context_score": 0.0,
+        "pattern_match": false,
+        "analysis_timestamp": "2025-09-29T16:32:31.210965"
+      }
+    }
+  ],
+  "summary": {
+    "in_context": 8,
+    "out_of_context": 5,
+    "high_confidence": 5,
+    "medium_confidence": 0,
+    "low_confidence": 8
+  }
+}

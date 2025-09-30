@@ -46,20 +46,78 @@ class VoiceLogin {
     }
     
     setupSpeechRecognition() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        // Detección mejorada de compatibilidad del navegador
+        const browserInfo = this.detectBrowser();
+        console.log('VoiceLogin: Navegador detectado:', browserInfo);
+
+        if (!this.isSpeechRecognitionSupported()) {
             console.warn('Reconocimiento de voz no soportado en este navegador');
+            this.showFeedback('❌ Reconocimiento de voz no disponible en este navegador', 'error');
             return;
         }
         
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         this.recognition = new SpeechRecognition();
         
+        this.configureSpeechRecognition();
+        this.setupSpeechEvents();
+    }
+
+    detectBrowser() {
+        const userAgent = navigator.userAgent;
+        const browsers = {
+            chrome: /Chrome/.test(userAgent) && !/Edg/.test(userAgent),
+            edge: /Edg/.test(userAgent),
+            firefox: /Firefox/.test(userAgent),
+            safari: /Safari/.test(userAgent) && !/Chrome/.test(userAgent),
+            brave: navigator.brave && navigator.brave.isBrave
+        };
+        
+        for (const [name, condition] of Object.entries(browsers)) {
+            if (condition) return { name, userAgent };
+        }
+        
+        return { name: 'unknown', userAgent };
+    }
+
+    isSpeechRecognitionSupported() {
+        // Verificación más robusta de soporte
+        if ('webkitSpeechRecognition' in window) {
+            return true;
+        }
+        if ('SpeechRecognition' in window) {
+            return true;
+        }
+        
+        // Verificación adicional para navegadores que pueden tener soporte parcial
+        try {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                return true;
+            }
+        } catch (e) {
+            console.warn('Error verificando soporte de Speech Recognition:', e);
+        }
+        
+        return false;
+    }
+
+    configureSpeechRecognition() {
         // Configuración optimizada para baja latencia y mejor precisión
         this.recognition.continuous = true;
         this.recognition.interimResults = false; // Desactivar resultados intermedios para mayor velocidad
         this.recognition.lang = 'es-ES';
         this.recognition.maxAlternatives = 3; // Más alternativas para mejor precisión
         
+        // Configuraciones adicionales para mejor compatibilidad
+        try {
+            this.recognition.serviceURI = null; // Usar servicio por defecto
+        } catch (e) {
+            // Ignorar si no es compatible
+        }
+    }
+
+    setupSpeechEvents() {
         this.recognition.onstart = () => {
             this.isListening = true;
             this.showFeedback('🎤 Escuchando...', 'listening');
@@ -78,25 +136,7 @@ class VoiceLogin {
         };
         
         this.recognition.onerror = (event) => {
-            console.error('Error de reconocimiento de voz:', event.error);
-            
-            // Manejo optimizado de errores
-            switch (event.error) {
-                case 'no-speech':
-                    // Reintentar silenciosamente sin mostrar error
-                    setTimeout(() => this.startListening(), 500);
-                    break;
-                case 'audio-capture':
-                    this.showFeedback('❌ Error de micrófono. Verifique permisos.', 'error');
-                    break;
-                case 'not-allowed':
-                    this.showFeedback('❌ Permisos de micrófono denegados', 'error');
-                    break;
-                default:
-                    // Reintentar automáticamente para otros errores
-                    setTimeout(() => this.startListening(), 1000);
-            }
-            this.isListening = false;
+            this.handleSpeechError(event);
         };
         
         this.recognition.onend = () => {
@@ -106,6 +146,57 @@ class VoiceLogin {
                 setTimeout(() => this.startListening(), 50);
             }
         };
+    }
+
+    handleSpeechError(event) {
+        console.error('Error de reconocimiento de voz:', event.error);
+        
+        // Manejo mejorado y específico de errores
+        switch (event.error) {
+            case 'no-speech':
+                // Reintentar silenciosamente sin mostrar error
+                setTimeout(() => {
+                    if (this.shouldKeepListening()) {
+                        this.startListening();
+                    }
+                }, 500);
+                break;
+            case 'audio-capture':
+                this.showFeedback('❌ Error de micrófono. Verifique permisos.', 'error');
+                break;
+            case 'not-allowed':
+                this.showFeedback('❌ Permisos de micrófono denegados. Permite el acceso en la configuración del navegador.', 'error');
+                break;
+            case 'network':
+                console.log('Error de red detectado, reintentando...');
+                this.showFeedback('⚠️ Problema de conexión, reintentando...', 'warning');
+                setTimeout(() => {
+                    if (this.shouldKeepListening()) {
+                        this.startListening();
+                    }
+                }, 2000);
+                break;
+            case 'service-not-allowed':
+                this.showFeedback('❌ Servicio de reconocimiento no disponible', 'error');
+                break;
+            case 'bad-grammar':
+                console.warn('Problema de gramática, continuando...');
+                setTimeout(() => {
+                    if (this.shouldKeepListening()) {
+                        this.startListening();
+                    }
+                }, 1000);
+                break;
+            default:
+                console.warn('Error desconocido:', event.error);
+                // Reintentar automáticamente para otros errores
+                setTimeout(() => {
+                    if (this.shouldKeepListening()) {
+                        this.startListening();
+                    }
+                }, 1000);
+        }
+        this.isListening = false;
     }
     
     bindEvents() {
@@ -186,6 +277,8 @@ class VoiceLogin {
             'gmail': 'gmail',
             'gmai': 'gmail',
             'gmeil': 'gmail',
+            'gmaill': 'gmail',
+            'gmall': 'gmail',
             'jmail': 'gmail',
             'gemail': 'gmail',
             'hotmail': 'hotmail',
@@ -281,6 +374,10 @@ class VoiceLogin {
             [/@salti\.p$/i, '@senati.pe'],
             
             // Corregir otros dominios mal transcritos
+            [/@gmaill\.com$/i, '@gmail.com'],
+            [/@gmall\.com$/i, '@gmail.com'],
+            [/@gmaill\.co$/i, '@gmail.com'],
+            [/@gmall\.co$/i, '@gmail.com'],
             [/@gmail\.co$/i, '@gmail.com'],
             [/@hotmail\.co$/i, '@hotmail.com'],
             [/@outlook\.co$/i, '@outlook.com']
@@ -558,11 +655,41 @@ class VoiceLogin {
             return;
         }
         
-        if (this.recognition && !this.isListening) {
-            try {
-                this.recognition.start();
-            } catch (error) {
-                console.error('Error al iniciar reconocimiento:', error);
+        if (!this.recognition) {
+            this.showFeedback('❌ Reconocimiento de voz no disponible', 'error');
+            return;
+        }
+
+        if (this.isListening) {
+            return;
+        }
+        
+        try {
+            // Verificar permisos antes de iniciar
+            if (navigator.permissions) {
+                navigator.permissions.query({ name: 'microphone' }).then((result) => {
+                    if (result.state === 'denied') {
+                        this.showFeedback('❌ Permiso de micrófono denegado. Permite el acceso en la configuración del navegador.', 'error');
+                        return;
+                    }
+                });
+            }
+
+            this.recognition.start();
+        } catch (error) {
+            console.error('Error al iniciar reconocimiento:', error);
+            
+            // Manejo específico de errores comunes
+            if (error.name === 'InvalidStateError') {
+                console.log('Reconocimiento ya en progreso, reiniciando...');
+                this.stopListening();
+                setTimeout(() => {
+                    if (this.shouldKeepListening()) {
+                        this.startListening();
+                    }
+                }, 500);
+            } else {
+                this.showFeedback('❌ Error iniciando reconocimiento de voz. Intenta nuevamente.', 'error');
             }
         }
     }

@@ -1,0 +1,1 @@
+session_id,timestamp,success,training_duration_seconds,total_samples,categories_count,accuracy,loss,val_accuracy,val_loss,model_path,notes
