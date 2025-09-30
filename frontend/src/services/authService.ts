@@ -111,6 +111,55 @@ export async function registerUser(payload: RegisterPayload) {
   throw new Error(msg)
 }
 
+// Voice registration function
+export async function registerVoice(audioBlob: Blob) {
+  try {
+    // Get CSRF token
+    const csrftoken = getCookie('csrftoken')
+    
+    // First, get or create a pending registration token from backend
+    const pendingTokenRes = await fetch('/voz/api/get_pending_token/', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(csrftoken ? { 'X-CSRFToken': csrftoken } : {})
+      },
+    })
+
+    if (!pendingTokenRes.ok) {
+      throw new Error('No se pudo obtener el token de registro')
+    }
+
+    const tokenData = await pendingTokenRes.json()
+    if (!tokenData.success || !tokenData.pending_token) {
+      throw new Error('No se pudo generar el token de registro')
+    }
+
+    // Create FormData with audio
+    const formData = new FormData()
+    formData.append('audio', audioBlob, 'voice_sample.webm')
+    formData.append('pending_token', tokenData.pending_token)
+
+    const res = await fetch('/voz/api/register_audio/', {
+      method: 'POST',
+      body: formData,
+      credentials: 'include',
+      headers: csrftoken ? { 'X-CSRFToken': csrftoken } : undefined,
+    })
+
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data?.success) {
+      throw new Error(data?.error || `No se pudo guardar el audio (${res.status})`)
+    }
+    
+    return data as { success: true; message?: string }
+  } catch (error) {
+    console.error('Error registering voice:', error)
+    throw error
+  }
+}
+
 function getCookie(name: string): string | undefined {
   if (typeof document === 'undefined') return undefined
   const value = `; ${document.cookie}`

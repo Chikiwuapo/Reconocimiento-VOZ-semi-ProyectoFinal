@@ -1,0 +1,63 @@
+<svg width="500" height="400" viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc" role="img">
+  <title id="title">Red Neuronal - AriasDigitalSoft</title>
+  <desc id="desc">Logo de red neuronal con nodos conectados basado en la implementación del frontend</desc>
+
+  <defs>
+    <!-- Gradiente para el fondo (modo oscuro) -->
+    <linearGradient id="gradient-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A7BD5" stop-opacity="0.2" />
+      <stop offset="50%" stop-color="#6A11CB" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#F53844" stop-opacity="0.2" />
+    </linearGradient>
+
+    <!-- Filtro de resplandor -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Filtro de resplandor suave para líneas -->
+    <filter id="lineGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fondo abstracto -->
+  <circle cx="250" cy="200" r="150" fill="url(#gradient-dark)" opacity="0.8" />
+
+  <!-- Líneas de conexión (con resplandor) -->
+  <line x1="180" y1="150" x2="250" y2="120" stroke="#3A7BD5" stroke-width="2" filter="url(#lineGlow)" />
+  <line x1="250" y1="120" x2="320" y2="150" stroke="#6A11CB" stroke-width="2" filter="url(#lineGlow)" />
+  <line x1="180" y1="150" x2="200" y2="220" stroke="#F53844" stroke-width="2" filter="url(#lineGlow)" />
+  <line x1="320" y1="150" x2="300" y2="220" stroke="#3A7BD5" stroke-width="2" filter="url(#lineGlow)" />
+  <line x1="200" y1="220" x2="250" y2="280" stroke="#6A11CB" stroke-width="2" filter="url(#lineGlow)" />
+  <line x1="300" y1="220" x2="250" y2="280" stroke="#F53844" stroke-width="2" filter="url(#lineGlow)" />
+  <line x1="250" y1="120" x2="250" y2="280" stroke="#3A7BD5" stroke-opacity="0.5" stroke-width="1" stroke-dasharray="5 5" filter="url(#lineGlow)" />
+
+  <!-- Nodos circulares (con resplandor) -->
+  <circle cx="180" cy="150" r="10" fill="#3A7BD5" filter="url(#glow)" />
+  <circle cx="250" cy="120" r="15" fill="#6A11CB" filter="url(#glow)" />
+  <circle cx="320" cy="150" r="10" fill="#F53844" filter="url(#glow)" />
+  <circle cx="200" cy="220" r="12" fill="#6A11CB" filter="url(#glow)" />
+  <circle cx="300" cy="220" r="12" fill="#3A7BD5" filter="url(#glow)" />
+  <circle cx="250" cy="280" r="15" fill="#F53844" filter="url(#glow)" />
+
+  <!-- Nodos rectangulares (datos y resultados) -->
+  <rect x="120" y="100" width="40" height="20" rx="5" fill="#3A7BD5" filter="url(#glow)" />
+  <rect x="340" y="100" width="40" height="20" rx="5" fill="#F53844" filter="url(#glow)" />
+  <rect x="120" y="280" width="40" height="20" rx="5" fill="#6A11CB" filter="url(#glow)" />
+  <rect x="340" y="280" width="40" height="20" rx="5" fill="#3A7BD5" filter="url(#glow)" />
+
+  <!-- Efectos adicionales de brillo en nodos principales -->
+  <circle cx="250" cy="120" r="6" fill="#ffffff" opacity="0.3"/>
+  <circle cx="250" cy="280" r="6" fill="#ffffff" opacity="0.3"/>
+</svg>

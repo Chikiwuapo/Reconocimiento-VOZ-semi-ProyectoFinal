@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
+
 try:
     # Carga de variables desde .env si existe
     from dotenv import load_dotenv  # type: ignore
@@ -29,15 +31,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w1ys==++dc1@#cv-^*kl2roku8)b!n!hx883)!y(0o(1o5+y)n'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-w1ys==++dc1@#cv-^*kl2roku8)b!n!hx883)!y(0o(1o5+y)n')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -54,9 +53,17 @@ INSTALLED_APPS = [
     # Local apps
     'login',
     "operaciones",
+    'voz',
+    'corsheaders',
+    "vocales",
+    "abecedario",
+    "palabras",
+    "chatbot_educativo",
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -71,7 +78,10 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'login' / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'login' / 'templates',
+            BASE_DIR / 'voz' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,7 +98,15 @@ WSGI_APPLICATION = "core.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-if os.environ.get('DB_ENGINE') in ("mysql", "MySQL"):
+
+# Configuración de base de datos para producción y desarrollo
+if 'DATABASE_URL' in os.environ:
+    # Configuración para producción (Render con PostgreSQL)
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
+elif os.environ.get('DB_ENGINE') in ("mysql", "MySQL"):
+    # Configuración para MySQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -100,10 +118,14 @@ if os.environ.get('DB_ENGINE') in ("mysql", "MySQL"):
         }
     }
 else:
+    # Configuración para desarrollo (SQLite)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
+            'OPTIONS': {
+                'timeout': 20,
+            }
         }
     }
 
@@ -142,8 +164,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [BASE_DIR / 'login' / 'static']
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Usuario personalizado para autenticación facial
 AUTH_USER_MODEL = 'login.Usuario'
@@ -173,12 +200,24 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CSRF config for local dev behind Vite proxy
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:5173',
-    'http://localhost:5173',
-]
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+# CSRF config for production and development
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://127.0.0.1:5173,http://localhost:5173').split(',')
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:5173,http://localhost:5173').split(',')
+
+# Security settings for production
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
+else:
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'

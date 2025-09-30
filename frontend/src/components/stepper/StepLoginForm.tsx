@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import Modal from './Modal'
 import { validateUserTraditional } from '../../services/authService'
+import VoiceCommandsButton from '../VoiceCommandsButton'
+import { useVoiceCommands } from '../../hooks/useVoiceCommands'
 
 export default function StepLoginForm({
   onNext,
@@ -14,10 +16,41 @@ export default function StepLoginForm({
   const [loading, setLoading] = useState(false)
   const [notFound, setNotFound] = useState(false)
   const [notFoundOpen, setNotFoundOpen] = useState(false)
+  const [voiceActive, setVoiceActive] = useState(false)
 
   const emailValid = useMemo(() => /^[\w.+-]+@[\w-]+\.[\w.-]+$/.test(email), [email])
   const dniValid = useMemo(() => /^\d{8,12}$/.test(dni), [dni])
   const valid = emailValid && dniValid
+
+  // Configuración de comandos de voz
+  const voiceCommands = useVoiceCommands({
+    onFieldUpdate: (field: string, value: string) => {
+      if (field === 'correo' || field === 'email') {
+        setEmail(value)
+      } else if (field === 'dni') {
+        setDni(value)
+      }
+    },
+    onError: (error: string) => {
+      console.error('Error en comandos de voz:', error)
+    },
+    onCommandProcessed: (command: string) => {
+      console.log('Comando procesado:', command)
+    }
+  })
+
+  // Función para manejar el botón de comandos de voz
+  const handleVoiceCommandsClick = () => {
+    if (voiceActive) {
+      // Si ya está activo, desactivar
+      setVoiceActive(false)
+      voiceCommands.stopListening()
+    } else {
+      // Si no está activo, activar comandos
+      setVoiceActive(true)
+      voiceCommands.startListening()
+    }
+  }
 
   function handleLogin() {
     setError(null)
@@ -58,6 +91,15 @@ export default function StepLoginForm({
 
       <div className="mt-6 flex justify-center">
         <button onClick={handleLogin} disabled={!valid || loading} className="w-full max-w-xs sm:max-w-sm rounded-full bg-[#5227FF] text-white px-6 py-3 text-sm md:text-base disabled:opacity-50 transition transform hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(82,39,255,0.35)]">{loading ? 'Verificando…' : 'Iniciar sesión'}</button>
+      </div>
+
+      {/* Botón de comandos de voz */}
+      <div className="mt-4 flex justify-center">
+        <VoiceCommandsButton
+          isActive={voiceActive}
+          onClick={handleVoiceCommandsClick}
+          disabled={loading}
+        />
       </div>
 
       <Modal open={open} onClose={()=>{ if (!loading) setOpen(false) }} title="Verificación de credenciales">

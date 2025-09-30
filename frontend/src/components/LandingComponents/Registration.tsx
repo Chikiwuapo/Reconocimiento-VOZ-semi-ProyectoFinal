@@ -1,19 +1,11 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface RegistrationProps {
   isDarkMode?: boolean;
 }
 
 const Registration = ({ isDarkMode = false }: RegistrationProps) => {
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aquí iría la lógica de envío del formulario
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-  };
 
   return (
     <section 
@@ -91,16 +83,16 @@ const Registration = ({ isDarkMode = false }: RegistrationProps) => {
                     </motion.div>
                   </motion.div>
                   
-                  <button 
-                    onClick={handleSubmit}
+                  <Link 
+                    to="/auth" 
                     className={`py-3 px-8 rounded-lg font-medium transition-all transform hover:scale-105 ${
                       isDarkMode 
                         ? 'bg-[#6A11CB] hover:bg-[#5A0CB8] text-white' 
                         : 'bg-[#1B4965] hover:bg-[#0A3954] text-white'
                     }`}
                   >
-                    {submitted ? '¡Gracias por comenzar!' : 'Pruébalo gratis'}
-                  </button>
+                    Registrate gratis
+                  </Link>
                 </div>
                 
                 <p 
@@ -169,14 +161,14 @@ const Registration = ({ isDarkMode = false }: RegistrationProps) => {
               }`}
             >
               ¿Ya tienes una cuenta? 
-              <a 
-                href="#" 
+              <Link 
+                to="/auth" 
                 className={`ml-2 font-medium ${
                   isDarkMode ? 'text-[#6A11CB] hover:text-[#5A0CB8]' : 'text-[#1B4965] hover:text-[#0A3954]'
                 }`}
               >
                 Inicia sesión
-              </a>
+              </Link>
             </p>
           </div>
         </div>

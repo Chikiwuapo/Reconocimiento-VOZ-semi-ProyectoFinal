@@ -16,9 +16,11 @@ export default function StepLoginFace({ email }: { email?: string }) {
     if (!shot || !email) return
     setSubmitting(true)
     try {
-      await loginFacial({ email, facialFrame: shot.imageB64, position: shot.position })
+      const response = await loginFacial({ email, facialFrame: shot.imageB64, position: shot.position })
       setResult({ ok: true, message: 'Rostro validado con éxito' })
-      setTimeout(() => navigate('/dashboard'), 700)
+      // Usar la URL de redirección del backend o fallback a blackboard
+      const redirectUrl = response.redirect || '/blackboard'
+      setTimeout(() => navigate(redirectUrl), 700)
     } catch (e: any) {
       setResult({ ok: false, message: e?.message || 'Rostro no reconocido. Vuelva a intentarlo' })
     } finally {
@@ -75,7 +77,7 @@ export default function StepLoginFace({ email }: { email?: string }) {
       {/* Ask modal */}
       <Modal open={askOpen} onClose={()=>setAskOpen(false)} title="¿Deseas probar el inicio de sesión facial?">
         <div className="mt-2 flex justify-end gap-2">
-          <button onClick={()=>{ setAskOpen(false); navigate('/dashboard') }} className="px-3 py-1.5 rounded-md border border-white/15">Omitir</button>
+          <button onClick={()=>{ setAskOpen(false); navigate('/blackboard') }} className="px-3 py-1.5 rounded-md border border-white/15">Omitir</button>
           <button onClick={()=> setAskOpen(false)} className="px-3 py-1.5 rounded-md bg-[#5227FF] text-white">Continuar</button>
         </div>
       </Modal>
@@ -85,7 +87,10 @@ export default function StepLoginFace({ email }: { email?: string }) {
         <p>{result?.message}</p>
         <div className="mt-3 flex justify-end gap-2">
           {result?.ok ? (
-            <button onClick={()=> navigate('/dashboard')} className="px-3 py-1.5 rounded-md bg-[#5227FF] text-white">Ir al dashboard</button>
+            <button onClick={()=> {
+              const redirectUrl = '/blackboard' // Por defecto, pero debería usar la URL del backend
+              navigate(redirectUrl)
+            }} className="px-3 py-1.5 rounded-md bg-[#5227FF] text-white">Ir al blackboard</button>
           ) : (
             <button onClick={()=> { setResult(null) }} className="px-3 py-1.5 rounded-md border border-white/15">Volver a intentarlo</button>
           )}

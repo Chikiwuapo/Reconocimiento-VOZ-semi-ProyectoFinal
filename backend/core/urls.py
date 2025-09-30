@@ -20,6 +20,20 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('login.urls')),
-    path("operaciones/", include("operaciones.urls")),
-    path("", include("operaciones.urls")),  # URLs principales en la raíz
+    path('chatbot/', include('chatbot_educativo.urls', namespace='chatbot_educativo')),
+
+    # API endpoints for each app
+    path("api/operaciones/", include("operaciones.urls", namespace="api_operaciones")),
+    path("api/vocales/", include("vocales.urls", namespace="api_vocales")),
+    path("api/abecedario/", include("abecedario.urls", namespace="api_abecedario")),
+    path("api/palabras/", include("palabras.urls", namespace="api_palabras")),
+    
+    # Web endpoints for each app
+    path("operaciones/", include("operaciones.urls", namespace="web_operaciones")),
+    path('voz/', include('voz.urls.urls')),
+    path("vocales/", include("vocales.urls", namespace="web_vocales")),
+    path("abecedario/", include("abecedario.urls", namespace="web_abecedario")),
+    path("palabras/", include("palabras.urls", namespace="web_palabras")),
+    
+    path("", include("operaciones.urls", namespace="root_operaciones")),  # URLs principales en la raíz
 ]

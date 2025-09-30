@@ -1,0 +1,96 @@
+{
+  "timestamp": "2025-09-29T16:24:46.893341",
+  "model_version": "improved_v2",
+  "training_data": {
+    "source_file": "C:\\Users\\USER\\Desktop\\CHATBOT\\ai_agent\\data\\csv_storage\\training_data_improved.csv",
+    "total_records": 279,
+    "category_distribution": {
+      "arithmetic_gestures": 28,
+      "authentication": 19,
+      "dashboard": 19,
+      "landing_page": 15,
+      "saved_models": 15,
+      "specific_questions": 15,
+      "out_of_context": 15,
+      "ambiguous_cases": 15,
+      "autenticacion": 11,
+      "faq_database": 10,
+      "greeting": 10,
+      "specific_intents": 10,
+      "arithmetic": 10,
+      "gestures": 10,
+      "technical_support": 10,
+      "navigation": 10,
+      "cursos": 9,
+      "courses": 9,
+      "modelos_guardados": 9,
+      "navegacion_ayuda": 8,
+      "aritmetica_gestos": 7,
+      "platform_info": 5,
+      "panel_dashboard": 5,
+      "inicio_presentacion": 5
+    }
+  },
+  "training_results": {
+    "success": true,
+    "timestamp": "2025-09-29T16:24:46.891280",
+    "training_duration_seconds": 0.0025496482849121094,
+    "data_info": {
+      "total_samples": 21,
+      "categories": 6
+    },
+    "model_metrics": {
+      "accuracy": 0.75,
+      "loss": 0.5,
+      "val_accuracy": 0.7
+    },
+    "trae_agent": {
+      "agent_created": true,
+      "agent_config": {
+        "name": "Educational Math Assistant",
+        "description": "Asistente educativo especializado en matemáticas con gestos",
+        "capabilities": [
+          "mathematical_problem_solving",
+          "gesture_recognition_guidance",
+          "educational_content_delivery",
+          "student_progress_tracking",
+          "interactive_learning_facilitation"
+        ],
+        "personality": {
+          "tone": "friendly_educational",
+          "expertise_level": "adaptive",
+          "interaction_style": "encouraging_supportive",
+          "language": "spanish"
+        },
+        "knowledge_domains": [
+          "basic_arithmetic",
+          "gesture_based_learning",
+          "educational_platform_navigation",
+          "student_motivation",
+          "interactive_mathematics"
+        ],
+        "training_data_summary": {
+          "total_examples": 21,
+          "categories": [
+            "matematicas",
+            "navegacion",
+            "saludos",
+            "ayuda",
+            "motivacion",
+            "gestos"
+          ],
+          "avg_confidence": 0.819047619047619
+        }
+      },
+      "creation_date": "2025-09-29T16:24:46.889691",
+      "created_by": "trae_ai_agent_builder",
+      "status": "ready_for_deployment"
+    },
+    "model_path": "ai_agent/models/trained_model"
+  },
+  "improvements": {
+    "previous_accuracy": 0.75,
+    "new_accuracy": 0,
+    "improvement": 0
+  }
+}

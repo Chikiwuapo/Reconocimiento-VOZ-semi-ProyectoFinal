@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - AriasDigitalSoft</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/estadistica.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="{% static 'login/images/network-logo.svg' %}" alt="AriasDigitalSoft Logo" class="header-logo">
+                <h1 class="header-title">Panel Administrativo</h1>
+            </div>
+            <div class="user-section">
+                <span class="welcome-text">Bienvenido, Administrador {{ username }}</span>
+                <button class="logout-btn" onclick="logout()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9M16 17L21 12L16 7M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="admin-container">
+            <!-- Dashboard Cards -->
+            <section class="dashboard-section">
+                <h2 class="section-title">Estadísticas del Sistema</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="total-users">0</h3>
+                            <p class="stat-label">Usuarios Registrados</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="total-logins">0</h3>
+                            <p class="stat-label">Inicios de Sesión</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 1L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="voice-commands">0</h3>
+                            <p class="stat-label">Comandos de Voz</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="system-status">Activo</h3>
+                            <p class="stat-label">Estado del Sistema</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Administrators Section -->
+            <section class="administrators-section">
+                <h2 class="section-title">Administradores del Sistema</h2>
+                <div class="administrators-content">
+                    {% if admin_users %}
+                        <div class="admin-cards-grid">
+                            {% for admin in admin_users %}
+                            <div class="admin-card">
+                                <div class="admin-avatar">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <div class="admin-info">
+                                    <h3 class="admin-welcome">Bienvenido, Administrador {{ admin.nombres|default:"Sin nombre" }}</h3>
+                                    <p class="admin-email">{{ admin.email }}</p>
+                                    <p class="admin-details">{{ admin.apellidos|default:"" }}</p>
+                                    <span class="admin-badge">Administrador</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-admins-message">
+                            <p>No se encontraron administradores registrados con dominio @senati.pe</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- User Management Section -->
+            <section class="management-section">
+                <h2 class="section-title">Gestión de Usuarios</h2>
+                <div class="management-content">
+                    <div class="table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha Registro</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <!-- Los datos se cargarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Logs Section -->
+            <section class="logs-section">
+                <h2 class="section-title">Registros del Sistema</h2>
+                <div class="logs-container">
+                    <div class="logs-header">
+                        <button class="refresh-btn" onclick="refreshLogs()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 4V10H7M23 20V14H17M20.49 9C19.9828 7.56678 19.1209 6.28392 17.9845 5.27493C16.8482 4.26595 15.4745 3.56905 13.9917 3.24575C12.5089 2.92246 10.9652 2.98546 9.51691 3.42597C8.06861 3.86649 6.76071 4.66872 5.71 5.75L1 10M23 14L18.29 18.25C17.2393 19.3313 15.9314 20.1335 14.4831 20.574C13.0348 21.0145 11.4911 21.0775 10.0083 20.7542C8.52547 20.431 7.1518 19.734 6.01547 18.7251C4.87913 17.7161 4.01717 16.4332 3.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Actualizar
+                        </button>
+                    </div>
+                    <div class="logs-content" id="system-logs">
+                        <!-- Los logs se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de Bienvenida para Administradores -->
+    <div id="welcome-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>¡Bienvenido al Panel Administrativo!</h2>
+                <button class="close-modal" onclick="closeWelcomeModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Hola <span id="modal-username">Administrador {{ username }}</span>, has accedido exitosamente al panel administrativo de AriasDigitalSoft.</p>
+                <p>Desde aquí puedes gestionar usuarios, revisar estadísticas del sistema y monitorear la actividad.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeWelcomeModal()">Comenzar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Elementos decorativos de fondo -->
+    <div class="background-elements">
+        <div class="floating-element element-1"></div>
+        <div class="floating-element element-2"></div>
+        <div class="floating-element element-3"></div>
+        <div class="floating-element element-4"></div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/estadistica.js' %}"></script>
+</body>
+</html>

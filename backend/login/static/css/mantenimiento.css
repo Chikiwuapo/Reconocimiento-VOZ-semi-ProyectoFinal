@@ -1,0 +1,437 @@
+/* ===== VARIABLES CSS ===== */
+:root {
+    /* Colores principales del logo */
+    --primary-purple: #8b5cf6;
+    --primary-blue: #06b6d4;
+    --primary-red: #ef4444;
+    --primary-orange: #f97316;
+    --primary-indigo: #6366f1;
+    
+    /* Colores de fondo */
+    --bg-black: #000000;
+    --bg-dark: #0f0f0f;
+    --bg-card: #1a1a1a;
+    
+    /* Colores de texto */
+    --text-white: #ffffff;
+    --text-gray: #a1a1aa;
+    --text-light: #f4f4f5;
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, var(--primary-purple), var(--primary-indigo));
+    --gradient-secondary: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+    --gradient-accent: linear-gradient(135deg, var(--primary-red), var(--primary-orange));
+    
+    /* Sombras */
+    --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.3);
+    --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.5);
+    
+    /* Fuentes */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ===== RESET Y BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--bg-black);
+    color: var(--text-white);
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ===== ELEMENTOS DECORATIVOS DE FONDO ===== */
+.background-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.floating-element {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+}
+
+.element-1 {
+    width: 100px;
+    height: 100px;
+    background: var(--gradient-primary);
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.element-2 {
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-secondary);
+    top: 20%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.element-3 {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-accent);
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+.element-4 {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-blue);
+    bottom: 10%;
+    right: 10%;
+    animation-delay: 1s;
+}
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.page {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* ===== TARJETA DE BIENVENIDA AL USUARIO ===== */
+.user-welcome {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.user-welcome::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+.user-welcome h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.user-info p {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    background: rgba(59, 90, 133, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    backdrop-filter: blur(10px);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.user-info strong {
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+/* ===== TARJETA DE MANTENIMIENTO ===== */
+.maintenance-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.maintenance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-accent);
+}
+
+.maintenance-card p {
+    font-size: 1.2rem;
+    color: var(--text-gray);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* ===== BOTONES ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-family: var(--font-family);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn.primary {
+    background: var(--gradient-primary);
+    color: var(--text-white);
+    box-shadow: var(--shadow-card);
+}
+
+.btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
+}
+
+.btn:active {
+    transform: translateY(0px) scale(0.98);
+}
+
+/* ===== LOGO CONTAINER ===== */
+.logo-container {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.maintenance-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.7));
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    animation: logoFloat 4s ease-in-out infinite;
+}
+
+.maintenance-logo:hover {
+    filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.5));
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(5deg);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px);
+    }
+    33% {
+        transform: translateY(-20px) translateX(10px);
+    }
+    66% {
+        transform: translateY(10px) translateX(-10px);
+    }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .page {
+        padding: 1rem;
+    }
+    
+    .user-welcome {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .user-welcome h2 {
+        font-size: 1.5rem;
+    }
+    
+    .user-info {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .user-info p {
+        padding: 0.625rem 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .maintenance-card {
+        padding: 2rem;
+        border-radius: 16px;
+    }
+    
+    .maintenance-card p {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .maintenance-logo {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page {
+        padding: 0.5rem;
+    }
+    
+    .user-welcome {
+        padding: 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .user-welcome h2 {
+        font-size: 1.3rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .user-info p {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .maintenance-card {
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+    
+    .maintenance-card p {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .maintenance-logo {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* ===== UTILIDADES ===== */
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* ===== EFECTOS ADICIONALES ===== */
+.user-welcome:hover {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.maintenance-card:hover {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* ===== ESTADOS ESPECIALES ===== */
+.maintenance-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid var(--primary-red);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.maintenance-status::before {
+    content: '⚠️';
+    font-size: 1.1rem;
+}

@@ -1,0 +1,152 @@
+{
+  "total_tests": 12,
+  "passed_tests": 0,
+  "failed_tests": 12,
+  "success_rate": 0.0,
+  "detailed_results": [
+    {
+      "question": "¿Cómo funciona el reconocimiento de gestos?",
+      "expected_category": "arithmetic_gestures",
+      "actual_category": "arithmetic_gestures",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.39499671197387354,
+      "response": "Te dirijo a la práctica de gestos matemáticos donde podrás entrenar números del 0 al 9 y símbolos de operaciones. La cámara reconocerá tus movimientos y te dará retroalimentación en tiempo real.",
+      "category_match": true,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:20:56.751392"
+    },
+    {
+      "question": "¿Cómo me registro en la plataforma?",
+      "expected_category": "registration",
+      "actual_category": "autenticacion",
+      "expected_confidence": 0.7,
+      "actual_confidence": 0.6335619264160992,
+      "response": "Te llevo a la sección de registro donde podrás crear tu cuenta. Tenemos opciones tradicionales y también reconocimiento facial si tu dispositivo lo permite. Una vez registrado, tendrás acceso a tu panel personalizado.",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:20:59.301196"
+    },
+    {
+      "question": "¿Qué cursos de matemáticas tienen?",
+      "expected_category": "course_info",
+      "actual_category": "cursos",
+      "expected_confidence": 0.7,
+      "actual_confidence": 0.4101088610931627,
+      "response": "Te dirijo a los cursos disponibles donde encontrarás contenido estructurado de matemáticas. Cada curso incluye lecciones teóricas y práctica con gestos para reforzar el aprendizaje.",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:01.887192"
+    },
+    {
+      "question": "¿Cómo hago operaciones aritméticas?",
+      "expected_category": "arithmetic_gestures",
+      "actual_category": "arithmetic",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.48452769405412405,
+      "response": "En la sección de práctica con gestos podrás resolver operaciones usando tus manos frente a la cámara. El sistema reconocerá tus gestos en tiempo real. ¡Vamos a probarlo!",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:04.465999"
+    },
+    {
+      "question": "¿Dónde está el panel principal?",
+      "expected_category": "navigation",
+      "actual_category": "navigation",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.4684841467117118,
+      "response": "Te sugiero algunas opciones: puedes empezar practicando gestos básicos con la cámara, explorar un curso de aritmética, o revisar tu panel para ver actividades recomendadas.",
+      "category_match": true,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:07.045360"
+    },
+    {
+      "question": "Necesito ayuda técnica",
+      "expected_category": "technical_support",
+      "actual_category": "ayuda",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.3995428329994682,
+      "response": "Te ayudo a orientarte. Puedes ir a tu panel para ver actividades recomendadas, practicar gestos con la cámara, o explorar cursos. ¿Qué te interesa más: aprender algo nuevo, practicar con gestos, o ver tu progreso?",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:09.624047"
+    },
+    {
+      "question": "Hola",
+      "expected_category": "greeting",
+      "actual_category": "greeting",
+      "expected_confidence": 0.8,
+      "actual_confidence": 0.605645517994545,
+      "response": "¡Hola! Bienvenido a la plataforma educativa de matemáticas con gestos. Aquí puedes aprender de forma interactiva usando tu cámara para reconocer movimientos de manos. ¿Te gustaría comenzar con un tutorial?",
+      "category_match": true,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:12.205231"
+    },
+    {
+      "question": "¿Cómo puedo ver mi progreso?",
+      "expected_category": "progress",
+      "actual_category": "dashboard",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.5950112019232532,
+      "response": "Te dirijo a tu panel principal donde encontrarás tarjetas con tu progreso, accesos rápidos a cursos, actividades recomendadas y métricas de tu aprendizaje. Es tu centro de control personalizado.",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:14.790816"
+    },
+    {
+      "question": "¿Cómo funciona la cámara para gestos?",
+      "expected_category": "arithmetic_gestures",
+      "actual_category": "aritmetica",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.3100970394090634,
+      "response": "Excelente, te llevo a la sección de Aritmética donde puedes usar la cámara para entrenar y reconocer gestos de números y operaciones. Podrás entrenar nuevos gestos y probar tu precisión resolviendo ejercicios.",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:17.387000"
+    },
+    {
+      "question": "¿Puedo guardar mis entrenamientos?",
+      "expected_category": "models",
+      "actual_category": "saved_models",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.5401568461337252,
+      "response": "En esta sección puedes gestionar todos tus gestos entrenados. Revisa su precisión, actualiza los que necesiten mejoras, o elimina los que ya no uses.",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:19.974163"
+    },
+    {
+      "question": "¿Cómo inicio sesión?",
+      "expected_category": "authentication",
+      "actual_category": "authentication",
+      "expected_confidence": 0.7,
+      "actual_confidence": 0.41462487924051844,
+      "response": "Perfecto, te dirijo al área de autenticación. Puedes iniciar sesión con tus datos o usar reconocimiento facial si está habilitado. Desde ahí accederás a tu panel con todas tus actividades.",
+      "category_match": true,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:22.538763"
+    },
+    {
+      "question": "¿Qué ejercicios de matemáticas hay?",
+      "expected_category": "course_info",
+      "actual_category": "dashboard",
+      "expected_confidence": 0.6,
+      "actual_confidence": 0.2781130475321866,
+      "response": "Te dirijo a tu panel principal donde encontrarás tarjetas con tu progreso, accesos rápidos a cursos, actividades recomendadas y métricas de tu aprendizaje. Es tu centro de control personalizado.",
+      "category_match": false,
+      "confidence_ok": false,
+      "passed": false,
+      "timestamp": "2025-09-29T23:21:25.127654"
+    }
+  ]
+}

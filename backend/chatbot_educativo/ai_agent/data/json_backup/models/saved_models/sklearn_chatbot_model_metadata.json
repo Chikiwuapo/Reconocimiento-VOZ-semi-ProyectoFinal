@@ -1,0 +1,7 @@
+{
+  "model_type": "naive_bayes",
+  "vectorizer_params": {
+    "analyzer": "word",
+    "binary": false,
+    "decode_error": "strict",
+    "dtype": 

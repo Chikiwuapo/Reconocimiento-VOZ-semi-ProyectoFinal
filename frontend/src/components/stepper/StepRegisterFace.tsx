@@ -2,6 +2,12 @@ import { useState } from 'react'
 import Modal from './Modal'
 import { useFaceCapture } from '../../auth/useFaceCapture'
 import { registerUser } from '../../services/authService'
+import VoiceButton from '../VoiceButton'
+import VoiceCommandsButton from '../VoiceCommandsButton'
+import VoiceConsentModal from '../modals/VoiceConsentModal'
+import VoiceRecordingModal from '../modals/VoiceRecordingModal'
+import VoiceActiveModal from '../modals/VoiceActiveModal'
+import { useVoiceCommands } from '../../hooks/useVoiceCommands'
 
 export default function StepRegisterFace({
   baseData,
@@ -14,6 +20,88 @@ export default function StepRegisterFace({
   const [consentOpen, setConsentOpen] = useState(true)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  
+  // Estados para comandos de voz
+  const [voiceActive, setVoiceActive] = useState(true) // Activado por defecto
+  const [voiceRegistered, setVoiceRegistered] = useState(true) // Ya registrado por defecto
+  
+  // Estados para los modales de voz
+  const [showConsentModal, setShowConsentModal] = useState(false)
+  const [showRecordingModal, setShowRecordingModal] = useState(false)
+  const [showActiveModal, setShowActiveModal] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
+  const [recordingCountdown, setRecordingCountdown] = useState(6)
+  const [recordingProgress, setRecordingProgress] = useState(0)
+
+  // Hook para comandos de voz
+  const voiceCommands = useVoiceCommands({
+    onFieldUpdate: (field: string, value: string) => {
+      // En el registro facial no hay campos para actualizar, pero mantenemos la estructura
+      console.log(`Campo ${field} actualizado a: ${value}`)
+    },
+    onError: (error: string) => {
+      console.error('Error en comando de voz:', error)
+    },
+    onCommandProcessed: (command: string) => {
+      console.log('Comando procesado:', command)
+    },
+    onRegisterCommand: handleAutoRegister,
+    onTypingEffect: () => {
+      // En el registro facial no hay efecto de escritura
+      console.log('Efecto de escritura solicitado (no aplicable en registro facial)')
+    }
+  })
+
+  // Función para registro automático por comando de voz
+  async function handleAutoRegister() {
+    if (!ready || !faceReady || submitting) return
+    await onDoRegister()
+  }
+
+  // Función para manejar el click del botón de comandos de voz
+  const handleVoiceCommandsClick = () => {
+    if (voiceActive) {
+      voiceCommands.stopListening()
+      setVoiceActive(false)
+    } else {
+      voiceCommands.startListening()
+      setVoiceActive(true)
+    }
+  }
+
+  // Función para manejar el registro de voz
+  const handleVoiceRegistrationClick = () => {
+    setShowConsentModal(true)
+  }
+
+  // Funciones para manejar los modales de voz
+  const handleConsentAccept = () => {
+    setShowConsentModal(false)
+    setShowRecordingModal(true)
+  }
+
+  const handleConsentCancel = () => {
+    setShowConsentModal(false)
+  }
+
+  const handleRecordingClose = () => {
+    setShowRecordingModal(false)
+  }
+
+  const handleStartRecording = () => {
+    setShowRecordingModal(false)
+    setShowActiveModal(true)
+  }
+
+  const handleActiveModalClose = () => {
+    setShowActiveModal(false)
+    setVoiceRegistered(true)
+  }
+
+  const handleVoiceRecorded = () => {
+    setShowActiveModal(false)
+    setVoiceRegistered(true)
+  }
 
   async function onDoRegister() {
     if (!ready || !faceReady || submitting) return
@@ -31,6 +119,16 @@ export default function StepRegisterFace({
 
   return (
     <div className="text-neutral-200">
+      {/* Indicador de comandos de voz activados */}
+      {voiceActive && (
+        <div className="fixed top-6 right-6 z-40 bg-green-500/20 border border-green-500/40 rounded-lg px-4 py-2 backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-green-300 text-sm font-medium">Comandos de voz activados</span>
+          </div>
+        </div>
+      )}
+
       <h2 className="text-2xl md:text-3xl font-semibold">Registro facial</h2>
       <p className="text-neutral-400 text-sm mt-2">Da tu consentimiento y captura 5 muestras de tu rostro.</p>
 
@@ -73,6 +171,25 @@ export default function StepRegisterFace({
         </aside>
       </div>
 
+      {/* Botones de voz posicionados en la esquina inferior derecha */}
+      <div className="fixed bottom-6 right-6 z-50 flex gap-3 items-end">
+        {/* Botón de comandos de voz - visible cuando está registrado - IZQUIERDA */}
+        {voiceRegistered && (
+          <VoiceCommandsButton 
+            isActive={voiceActive}
+            onClick={handleVoiceCommandsClick}
+            disabled={submitting}
+          />
+        )}
+        
+        {/* Botón de registro de voz - siempre visible - DERECHA */}
+        <VoiceButton 
+          isActive={false}
+          onClick={handleVoiceRegistrationClick}
+          disabled={submitting}
+        />
+      </div>
+
       {/* Consent */}
       <Modal open={consentOpen} onClose={()=>setConsentOpen(false)} title="Consentimiento">
         <p>Necesitamos tu autorización para capturar tu imagen facial con fines de autenticación. Tus datos serán tratados según las mejores prácticas.</p>
@@ -88,6 +205,29 @@ export default function StepRegisterFace({
           <button onClick={()=>{ setConfirmOpen(false); onRegistered() }} className="px-3 py-1.5 rounded-md bg-[#5227FF] text-white">Siguiente</button>
         </div>
       </Modal>
+
+      {/* Modales de voz */}
+      <VoiceConsentModal
+        isOpen={showConsentModal}
+        onClose={handleConsentCancel}
+        onAccept={handleConsentAccept}
+        onCancel={handleConsentCancel}
+      />
+
+      <VoiceRecordingModal
+        isOpen={showRecordingModal}
+        onClose={handleRecordingClose}
+        onStartRecording={handleStartRecording}
+        isRecording={isRecording}
+        countdown={recordingCountdown}
+        progress={recordingProgress}
+      />
+
+      <VoiceActiveModal
+        isOpen={showActiveModal}
+        onClose={handleActiveModalClose}
+        onVoiceRecorded={handleVoiceRecorded}
+      />
     </div>
   )
 }

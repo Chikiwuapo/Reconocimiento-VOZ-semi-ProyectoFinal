@@ -1,0 +1,26 @@
+{
+  "total_records": 229,
+  "valid_records": 229,
+  "cleaned_records": 2,
+  "invalid_records": 0,
+  "categories": {
+    "greeting": 10,
+    "landing_page": 15,
+    "platform_info": 5,
+    "authentication": 20,
+    "dashboard": 20,
+    "arithmetic_gestures": 28,
+    "saved_models": 15,
+    "courses": 10,
+    "ambiguous_cases": 15,
+    "navigation": 11,
+    "out_of_context": 15,
+    "specific_questions": 15,
+    "arithmetic": 10,
+    "gestures": 10,
+    "technical_support": 10,
+    "faq_database": 10,
+    "specific_intents": 10
+  },
+  "errors": []
+}

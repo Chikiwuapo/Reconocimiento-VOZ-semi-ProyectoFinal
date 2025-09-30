@@ -32,3 +32,6 @@ export interface ModelStats {
   totalTrainingSessions: number
   averageAccuracy: number
 }
+
+// Re-export all dashboard types
+export * from './dashboard';

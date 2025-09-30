@@ -1,0 +1,36 @@
+{
+  "total_records": 260,
+  "categories": {
+    "arithmetic_gestures": 28,
+    "authentication": 19,
+    "dashboard": 19,
+    "landing_page": 15,
+    "saved_models": 15,
+    "specific_questions": 15,
+    "out_of_context": 15,
+    "ambiguous_cases": 15,
+    "specific_intents": 10,
+    "gestures": 10,
+    "greeting": 10,
+    "navigation": 10,
+    "arithmetic": 10,
+    "faq_database": 10,
+    "technical_support": 10,
+    "courses": 9,
+    "navegacion_ayuda": 6,
+    "aritmetica_gestos": 6,
+    "platform_info": 5,
+    "inicio_presentacion": 5,
+    "cursos": 5,
+    "autenticacion": 5,
+    "panel_dashboard": 4,
+    "modelos_guardados": 4
+  },
+  "total_categories": 24,
+  "integration_date": "2025-09-29T16:17:11.778879",
+  "sources": [
+    "training_data_converted_fixed.csv",
+    "specialized_training_data.csv"
+  ],
+  "description": "Dataset integrado con datos principales y especializados"
+}

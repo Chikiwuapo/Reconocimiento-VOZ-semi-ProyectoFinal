@@ -1,0 +1,26 @@
+{
+  "backup_date": "2025-09-29T15:57:25.923982",
+  "backed_up_files": [
+    "ai_agent/config/trae_config.json",
+    "ai_agent/config/training_config.json",
+    "ai_agent/data/csv_storage/training_data_converted_stats.json",
+    "ai_agent/data/csv_storage/training_results_export.json",
+    "ai_agent/data/migrated/migration_summary.json",
+    "ai_agent/models/saved_models/sklearn_chatbot_model_metadata.json",
+    "ai_agent/results/test_results.json"
+  ],
+  "redundant_files_to_delete": [
+    "ai_agent/data/migrated/migrated_data.json",
+    "sample_training_data.json",
+    "ai_agent\\results\\training_stats_20250929_015447.json",
+    "ai_agent\\results\\training_stats_20250929_020741.json",
+    "ai_agent\\results\\training_stats_20250929_022338.json",
+    "ai_agent\\results\\training_stats_20250929_033432.json",
+    "ai_agent\\results\\training_stats_20250929_034400.json",
+    "ai_agent\\results\\training_stats_20250929_034915.json",
+    "ai_agent\\results\\training_stats_20250929_035854.json",
+    "ai_agent\\results\\training_stats_20250929_150315.json",
+    "ai_agent\\results\\training_stats_20250929_153754.json",
+    "ai_agent\\results\\training_stats_20250929_153849.json"
+  ]
+}

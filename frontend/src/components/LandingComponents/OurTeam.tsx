@@ -12,28 +12,28 @@ const OurTeam: React.FC<OurTeamProps> = ({ isDarkMode = false }) => {
       name: 'Dev Frontend',  
       handle: 'Chikiwuapo',  
       status: 'Online',  
-      avatar: 'https://cdn.discordapp.com/attachments/1129926951394627785/1419900519576768623/Imagen_de_WhatsApp_2025-09-22_a_las_23.15.37_b4351cd9.jpg?ex=68d370e8&is=68d21f68&hm=0848d1df0bb6d235e73c5bf0fb92535fe6e48472eac01639345c73938c4dc65a&' 
+      avatar: 'https://external-preview.redd.it/how-to-stop-cat-clawing-at-my-monitor-v0-M3J3aHR1cTV0eWNlMdTIZGe0VZoSFCS5tsL98iD3vVUkTn7NP-UYOJY0xTnZ.png?format=pjpg&auto=webp&s=2238162112d8c55a882da38b4c7ffc1a1c910c92' 
     },
     { 
       id: 2, 
       name: 'Dev Frontend',   
       handle: 'ct-leo',  
       status: 'Online',  
-      avatar: 'https://media.discordapp.net/attachments/1129926951394627785/1419905544361087036/AJfQ9KRuR9SQ5ws56XOwwxDvlt80HQRtQduQYsrEhP-UTFGUwy2bnJX835sYPN_Bd_bHw21Rj9-v_05RemRlvkLkfbrauFUC6Q911dOEMOvd5s1_q1HwM0rMgemBeWt9pkT2fJ2EfBlE5bIDw0sP3cMj3P1x8Pb83YkQ8VrjaKeimiHwR3ljngs1024.png?ex=68d37596&is=68d22416&hm=c7cb3d36df70b6e4062795a3b845ba1478209e2a9efcb6248ab38e5985c49806&=&format=webp&quality=lossless&width=728&height=1050'
+      avatar: 'https://i.redd.it/30ddiqj9xh9f1.jpeg'
     },
     { 
       id: 3, 
       name: 'Dev Frontend',  
       handle: 'DanielTX',    
       status: 'Online',    
-      avatar: 'https://cdn.discordapp.com/attachments/1129926951394627785/1419912419597357107/Imagen_de_WhatsApp_2025-09-23_a_las_00.02.11_0ecaec80.jpg?ex=68d37bfd&is=68d22a7d&hm=cfab50e1ffebe77902a7add595bfdc186b5792757c19723159557bba324e82d8&' 
+      avatar: 'https://preview.redd.it/once-a-meowchanic-now-a-purrgrammer-v0-z5262fswbh7e1.png?width=1169&auto=webp&s=41c7ab7e833af1a933949b59442b09c59c695150' 
     },
     { 
       id: 4, 
       name: 'Dev Backend',     
       handle: 'Edduq1', 
       status: 'Online',  
-      avatar: 'https://media.discordapp.net/attachments/1129926951394627785/1419906197833781310/AJfQ9KR9GgW4NqgGTN_wzVd1oYSCcl16UjNQpr9hxvVq7-imdMP0yic2JPll0lXbZh147-asDNnpA4uXdbYdwUq4XzVzGiI8Q3rylSGxvYt5wQtUcs9Khnn1FtGBBZBuk0zKkf_8oQ5vNoz45caZhytNzvZQn98GeXJ2jDKtuFMzzmCEEE1NXgs1024.png?ex=68d37632&is=68d224b2&hm=b6e21bea652f99055cd116e347a0da7fc19dee8fb8834bb3689b5fe95e7b0db2&=&format=webp&quality=lossless&width=728&height=1050' 
+      avatar: 'https://i.redd.it/bshux4pxl0wc1.jpeg' 
     },
     { 
       id: 5, 
