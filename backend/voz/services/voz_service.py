@@ -63,9 +63,10 @@ class VozService:
     def inicializar_audio(self):
         """
         Inicializa PyAudio para captura de audio
+        Solo funciona en entornos locales donde PyAudio está disponible
         """
         if not PYAUDIO_AVAILABLE:
-            print("Error: PyAudio no está disponible")
+            print("PyAudio no está disponible - funcionalidad de audio deshabilitada para deployment")
             return False
             
         try:
@@ -112,14 +113,19 @@ class VozService:
     def escuchar_continuamente(self):
         """
         Escucha continuamente el micrófono y procesa comandos
+        Solo funciona si PyAudio está disponible (entornos locales)
         """
+        if not PYAUDIO_AVAILABLE:
+            print("PyAudio no disponible - funcionalidad de escucha deshabilitada para deployment")
+            return False
+            
         if not self.model or not self.rec:
             print("Error: Modelo no inicializado")
-            return
+            return False
             
         if not self.stream:
             print("Error: Audio no inicializado")
-            return
+            return False
         
         print("Iniciando reconocimiento de voz...")
         print("Comandos válidos: 'encender luz', 'apagar luz'")
@@ -148,11 +154,18 @@ class VozService:
             print(f"Error durante el reconocimiento: {e}")
         finally:
             self.detener_escucha()
+        
+        return True
     
     def iniciar_escucha_async(self):
         """
         Inicia la escucha en un hilo separado
+        Solo funciona si PyAudio está disponible (entornos locales)
         """
+        if not PYAUDIO_AVAILABLE:
+            print("PyAudio no disponible - funcionalidad de escucha async deshabilitada para deployment")
+            return False
+            
         if self.is_listening:
             print("Ya se está escuchando")
             return False
@@ -173,17 +186,24 @@ class VozService:
     def detener_escucha(self):
         """
         Detiene la escucha y libera recursos
+        Funciona tanto con PyAudio disponible como sin él
         """
         self.is_listening = False
         
-        if self.stream:
-            self.stream.stop_stream()
-            self.stream.close()
-            self.stream = None
+        if PYAUDIO_AVAILABLE and self.stream:
+            try:
+                self.stream.stop_stream()
+                self.stream.close()
+                self.stream = None
+            except Exception as e:
+                print(f"Error al cerrar stream: {e}")
         
-        if self.audio:
-            self.audio.terminate()
-            self.audio = None
+        if PYAUDIO_AVAILABLE and self.audio:
+            try:
+                self.audio.terminate()
+                self.audio = None
+            except Exception as e:
+                print(f"Error al terminar audio: {e}")
         
         print("Reconocimiento de voz detenido")
     
