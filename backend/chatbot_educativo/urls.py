@@ -4,7 +4,7 @@ from . import views
 app_name = 'chatbot_educativo'
 
 urlpatterns = [
-    # Interfaz principal del chatbot
+    # Redirección al frontend (mantener solo para compatibilidad)
     path('', views.chat_interface, name='chat_interface'),
     
     # API endpoints

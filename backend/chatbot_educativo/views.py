@@ -5,7 +5,7 @@ Vistas de Django para el Chatbot Educativo
 import json
 import uuid
 import logging
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -22,33 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 def chat_interface(request):
-    """Vista principal para la interfaz del chatbot"""
-    
-    # Obtener o crear sesión de chat
-    session_id = request.session.get('chat_session_id')
-    if not session_id:
-        session_id = str(uuid.uuid4())
-        request.session['chat_session_id'] = session_id
-    
-    # Crear o obtener sesión de chat en la base de datos
-    chat_session, created = ChatSession.objects.get_or_create(
-        session_id=session_id,
-        defaults={
-            'user': request.user if request.user.is_authenticated else None,
-            'is_active': True
-        }
-    )
-    
-    # Obtener historial de mensajes
-    messages = chat_session.messages.all().order_by('timestamp')
-    
-    context = {
-        'session_id': session_id,
-        'messages': messages,
-        'user': request.user if request.user.is_authenticated else None,
-    }
-    
-    return render(request, 'chatbot/chat.html', context)
+    """Redirige al frontend para la interfaz del chatbot"""
+    return redirect('http://localhost:5173/blackboard')
 
 
 @csrf_exempt
@@ -168,17 +143,8 @@ def health_check(request):
 
 @login_required
 def chat_history(request):
-    """Vista para mostrar el historial de chats del usuario"""
-    
-    user_sessions = ChatSession.objects.filter(
-        user=request.user
-    ).prefetch_related('messages').order_by('-updated_at')
-    
-    context = {
-        'sessions': user_sessions
-    }
-    
-    return render(request, 'chatbot/history.html', context)
+    """Redirige al frontend para el historial de chats"""
+    return redirect('http://localhost:5173/blackboard')
 
 
 @csrf_exempt

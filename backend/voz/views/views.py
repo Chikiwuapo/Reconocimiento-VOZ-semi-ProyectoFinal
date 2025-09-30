@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -16,18 +16,8 @@ from ..services.voz_service import voz_service
 from login.views.views import get_redirect_url_by_domain, is_admin_user
 
 def index(request):
-    """
-    Vista principal que muestra la página de reconocimiento de voz
-    """
-    # Obtener los comandos más recientes
-    comandos = Comando.objects.all().order_by('-fecha')[:20]
-    
-    context = {
-        'comandos': comandos,
-        'total_comandos': Comando.objects.count(),
-    }
-    
-    return render(request, 'index.html', context)
+    """Redirige al frontend para la página principal"""
+    return redirect('http://localhost:5173/')
 
 
 @csrf_exempt
@@ -523,13 +513,13 @@ def delete_voice_profile(request, profile_id):
 
 # Vistas para servir páginas HTML
 def registro_page(request):
-    """Vista para servir la página de registro"""
-    return render(request, 'registro.html')
+    """Redirige al frontend para la página de registro"""
+    return redirect('http://localhost:5173/auth')
 
 
 def login_page(request):
-    """Vista para servir la página de login"""
-    return render(request, 'login.html')
+    """Redirige al frontend para la página de login"""
+    return redirect('http://localhost:5173/auth')
 
 
 @csrf_exempt

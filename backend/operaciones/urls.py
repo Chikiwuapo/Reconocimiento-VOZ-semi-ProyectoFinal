@@ -4,12 +4,9 @@ from . import views
 app_name = 'operaciones'
 
 urlpatterns = [
-    # Vistas principales
+    # Redirecciones al frontend (mantener solo para compatibilidad)
     path('', views.index, name='index'),
-    path('ejemplo_frontend.html', views.index, name='ejemplo_frontend'),
     path('entrenamiento/', views.vista_entrenamiento, name='entrenamiento'),
-    path('interaccion/', views.vista_interaccion, name='interaccion'),
-    path('guia/', views.vista_guia, name='guia'),
     path('frontend/', views.frontend_view, name='frontend'),
     
     # APIs para AJAX

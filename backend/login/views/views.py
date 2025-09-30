@@ -23,291 +23,50 @@ except Exception:  # pragma: no cover
     np = None
     cv2 = None
 
-try:
-    import face_recognition
-except Exception:
-    face_recognition = None
+# face_recognition eliminado - ya no se usa
 
 
 def index(request):
-    return redirect('bienvenido')
+    """Redirige al frontend principal"""
+    return redirect('http://localhost:5173/')
 
 
 def bienvenido_view(request):
-    """Vista para la pantalla de bienvenida de AriasDigitalSoft"""
-    html_content = """
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Bienvenido - AriasDigitalSoft</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-            .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            h1 { color: #333; text-align: center; }
-            .welcome-message { text-align: center; margin: 20px 0; }
-            .nav-links { display: flex; justify-content: center; gap: 20px; margin-top: 30px; }
-            .nav-links a { padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
-            .nav-links a:hover { background: #0056b3; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>¡Bienvenido a AriasDigitalSoft!</h1>
-            <div class="welcome-message">
-                <p>Sistema de Reconocimiento de Voz y Gestos</p>
-                <p>Plataforma educativa con tecnología avanzada de IA</p>
-            </div>
-            <div class="nav-links">
-                <a href="http://localhost:5173/">Landing Page</a>
-                <a href="http://localhost:5173/auth">Iniciar Sesión</a>
-                <a href="http://localhost:5173/blackboard">Blackboard</a>
-                <a href="http://localhost:5173/blackboard/models">Modelos</a>
-                <a href="http://localhost:5173/estadistica">Estadísticas</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    return HttpResponse(html_content, content_type='text/html')
+    """Redirige al frontend principal"""
+    return redirect('http://localhost:5173/')
 
 
 def login_view(request):
-    html_content = """
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iniciar Sesión - AriasDigitalSoft</title>
-        <link rel="stylesheet" href="/static/css/login.css">
-        <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-            .container { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            h2 { color: #333; text-align: center; margin-bottom: 30px; }
-            .form-group { margin-bottom: 20px; }
-            label { display: block; margin-bottom: 5px; color: #555; }
-            input[type="email"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-            button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-            button:hover { background: #0056b3; }
-            .links { text-align: center; margin-top: 20px; }
-            .links a { color: #007bff; text-decoration: none; }
-            .links a:hover { text-decoration: underline; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h2>Iniciar Sesión</h2>
-            <form method="post" action="/api/login/">
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" id="btnLogin">Iniciar Sesión</button>
-            </form>
-            <div class="links">
-                <a href="/register/">¿No tienes cuenta? Regístrate</a><br>
-                <a href="/bienvenido/">Volver al inicio</a>
-            </div>
-        </div>
-        <script src="/static/js/login.js"></script>
-        <script src="/static/js/voice_login.js"></script>
-    </body>
-    </html>
-    """
-    return HttpResponse(html_content, content_type='text/html')
+    """Redirige al frontend para login"""
+    return redirect('http://localhost:5173/auth')
 
 
-def generate_register_html(pending_token):
-    """Genera el HTML para la página de registro"""
-    return f"""
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Registro - AriasDigitalSoft</title>
-        <link rel="stylesheet" href="/static/css/register.css">
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }}
-            .container {{ max-width: 500px; margin: 20px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-            h2 {{ color: #333; text-align: center; margin-bottom: 30px; }}
-            .form-group {{ margin-bottom: 20px; }}
-            label {{ display: block; margin-bottom: 5px; color: #555; }}
-            input[type="text"], input[type="email"] {{ width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }}
-            button {{ width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }}
-            button:hover {{ background: #218838; }}
-            .links {{ text-align: center; margin-top: 20px; }}
-            .links a {{ color: #007bff; text-decoration: none; }}
-            .links a:hover {{ text-decoration: underline; }}
-            .camera-section {{ margin: 20px 0; text-align: center; }}
-            #video {{ width: 100%; max-width: 400px; border: 2px solid #ddd; border-radius: 5px; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h2>Registro de Usuario</h2>
-            <form method="post" id="registerForm">
-                <input type="hidden" name="pending_token" value="{pending_token}">
-                <div class="form-group">
-                    <label for="nombres">Nombres:</label>
-                    <input type="text" id="nombres" name="nombres" required>
-                </div>
-                <div class="form-group">
-                    <label for="apellidos">Apellidos:</label>
-                    <input type="text" id="apellidos" name="apellidos" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="dni">DNI:</label>
-                    <input type="text" id="dni" name="dni" required>
-                </div>
-                <div class="camera-section">
-                    <video id="video" autoplay muted></video>
-                    <canvas id="canvas" style="display: none;"></canvas>
-                </div>
-                <button type="submit">Registrarse</button>
-            </form>
-            <div class="links">
-                <a href="/login/">¿Ya tienes cuenta? Inicia sesión</a><br>
-                <a href="/bienvenido/">Volver al inicio</a>
-            </div>
-        </div>
-        <script src="/static/js/register.js"></script>
-        <script src="/static/js/voice_register.js"></script>
-        <script src="/static/js/facemesh.js"></script>
-    </body>
-    </html>
-    """
+
 
 
 def register_view(request):
-    # Importar modelos de voz para pending registration
-    from voz.models.models import PendingRegistration
-    from voz.views.views import get_or_create_pending_registration
-    
-    # Crear o obtener pending registration para esta sesión
-    pending_registration = get_or_create_pending_registration(request)
-    
-    if request.method == 'POST':
-        log = logging.getLogger('facial')
-        nombres = request.POST.get('nombres')
-        apellidos = request.POST.get('apellidos')
-        email = request.POST.get('email')
-        dni = request.POST.get('dni')
-        facial_b64 = request.POST.get('facial_frame')
-        position_json = request.POST.get('position_data')
-        multi_samples = request.POST.get('samples')  # JSON con {frames:[], positions:[]}
-
-        log.debug(f'register_view: email={email}, dni={dni}, has_single={(facial_b64 is not None)}, has_samples={(multi_samples is not None)}')
-
-        if not all([nombres, apellidos, email, dni]):
-            messages.error(request, 'Todos los campos son obligatorios.')
-            html_content = generate_register_html(pending_registration.token)
-            return HttpResponse(html_content, content_type='text/html')
-
-        try:
-            # Buscar usuario ya creado en el paso 1 o crear si no existe
-            try:
-                user = Usuario.objects.get(email=email)
-                created = False
-                # Actualiza datos básicos para mantener consistencia
-                user.nombres = nombres
-                user.apellidos = apellidos
-                user.dni = dni
-                user.save(update_fields=['nombres', 'apellidos', 'dni'])
-                log.debug('register_view: usuario existente actualizado')
-            except Usuario.DoesNotExist:
-                user = Usuario.objects.create_user(
-                    email=email,
-                    dni=dni,
-                    nombres=nombres,
-                    apellidos=apellidos,
-                )
-                created = True
-                log.debug('register_view: usuario creado (no existía)')
-
-            embeddings_list = []
-            positions_list = []
-
-            # Preferimos múltiples muestras si existen
-            if multi_samples:
-                try:
-                    samples = json.loads(multi_samples)
-                    frames = samples.get('frames', [])
-                    pos_list = samples.get('positions', [])
-                    log.debug(f'register_view: muestras recibidas frames={len(frames)} positions={len(pos_list)}')
-                    for idx, fb64 in enumerate(frames):
-                        emb = _compute_embedding_from_b64(fb64)
-                        if emb is not None:
-                            embeddings_list.append(emb.tolist())
-                            if idx < len(pos_list):
-                                positions_list.append(pos_list[idx])
-                        else:
-                            log.debug(f'register_view: emb None en muestra {idx}')
-                except Exception:
-                    pass
-
-            # Compatibilidad: si no hay muestras, usa una
-            if not embeddings_list and facial_b64 and position_json:
-                emb = _compute_embedding_from_b64(facial_b64)
-                if emb is not None:
-                    embeddings_list.append(emb.tolist())
-                    positions_list.append(json.loads(position_json))
-                else:
-                    log.debug('register_view: emb None en modo compatibilidad (una muestra)')
-
-            if not embeddings_list:
-                log.debug('register_view: embeddings_list vacío tras procesamiento; abortando registro (usuario se mantiene)')
-                messages.error(request, 'No se pudo extraer información facial válida. Intenta nuevamente con buena iluminación.')
-                # No eliminar al usuario existente: mantener datos básicos
-                html_content = generate_register_html(pending_registration.token)
-                return HttpResponse(html_content, content_type='text/html')
-
-            # Guarda compatibilidad binaria principal (primer embedding) y posición principal
-            import numpy as _np
-            first = _np.array(embeddings_list[0], dtype=_np.float32)
-            user.facial_data = first.tobytes()
-            user.position_data = positions_list[0] if positions_list else None
-
-            # Guarda la colección completa
-            user.facial_embeddings = embeddings_list
-            user.positions = positions_list
-            user.failed_attempts = 0
-            user.save()
-            log.debug(f'register_view: guardado OK. embeddings={len(embeddings_list)} positions={len(positions_list)}')
-            messages.success(request, 'Registro exitoso. Ahora puedes iniciar sesión facial.')
-            return redirect('login')
-        except Exception as e:
-            log.exception(f'register_view: excepción {e}')
-            messages.error(request, f'Error al registrar: {e}')
-
-    html_content = generate_register_html(pending_registration.token)
-    return HttpResponse(html_content, content_type='text/html')
+    """Redirige al frontend para registro"""
+    return redirect('http://localhost:5173/auth')
 
 
 @require_POST
 @csrf_exempt
 def api_encode(request):
-    """Devuelve embedding facial a partir de un frame base64."""
-    log = logging.getLogger('facial')
-    data = json.loads(request.body.decode('utf-8')) if request.body else request.POST
-    log.debug(f'api_encode: payload_keys={list(data.keys())}')
-    if 'facial_frame' in data:
-        log.debug(f"api_encode: facial_frame length={len(data.get('facial_frame') or '')}")
-    b64 = data.get('facial_frame')
-    emb = _compute_embedding_from_b64(b64)
-    if emb is None:
-        return JsonResponse({'ok': False, 'error': 'No face detected'}, status=400)
-    return JsonResponse({'ok': True, 'embedding': base64.b64encode(emb.tobytes()).decode('utf-8')})
+    """Endpoint para codificar imagen facial (ahora usa solo fallback básico)"""
+    try:
+        data = json.loads(request.body)
+        image_data = data.get('image')
+        if not image_data:
+            return JsonResponse({'error': 'No image data provided'}, status=400)
+        
+        embedding = _compute_embedding_from_b64(image_data)
+        if embedding is None:
+            return JsonResponse({'error': 'No face detected or processing failed'}, status=400)
+        
+        return JsonResponse({'embedding': embedding.tolist()})
+    except Exception as e:
+        logging.getLogger('facial').exception(f'api_encode error: {e}')
+        return JsonResponse({'error': 'Internal server error'}, status=500)
 
 
 @csrf_exempt
@@ -490,50 +249,8 @@ def api_register_basic(request):
 
 @login_required
 def mantenimiento_view(request):
-    # Generar HTML para la página de mantenimiento
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Mantenimiento - AriasDigitalSoft</title>
-        <link rel="stylesheet" href="/static/css/mantenimiento.css">
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }}
-            .container {{ max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-            h1 {{ color: #333; text-align: center; }}
-            .user-info {{ background: #e9ecef; padding: 20px; border-radius: 5px; margin: 20px 0; }}
-            .nav-links {{ display: flex; justify-content: center; gap: 20px; margin-top: 30px; }}
-            .nav-links a {{ padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }}
-            .nav-links a:hover {{ background: #0056b3; }}
-            .logout-btn {{ background: #dc3545; }}
-            .logout-btn:hover {{ background: #c82333; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Panel de Mantenimiento</h1>
-            <div class="user-info">
-                <h3>Usuario Autenticado:</h3>
-                <p><strong>Email:</strong> {request.user.email}</p>
-                <p><strong>Nombres:</strong> {request.user.nombres}</p>
-                <p><strong>Apellidos:</strong> {request.user.apellidos}</p>
-                <p><strong>DNI:</strong> {request.user.dni}</p>
-            </div>
-            <div class="nav-links">
-                <a href="/bienvenido/">Inicio</a>
-                <a href="/operaciones/">Operaciones</a>
-                <a href="/estadistica/">Estadísticas</a>
-                <a href="/admin/">Admin</a>
-                <a href="/logout/" class="logout-btn">Cerrar Sesión</a>
-            </div>
-        </div>
-        <script src="/static/js/mantenimiento.js"></script>
-    </body>
-    </html>
-    """
-    return HttpResponse(html_content, content_type='text/html')
+    """Redirige al frontend para mantenimiento"""
+    return redirect('http://localhost:5173/blackboard')
 
 
 def logout_view(request):
@@ -620,7 +337,7 @@ def api_debug_decode(request):
     info = {
         'has_numpy': bool(np is not None),
         'has_cv2': bool(cv2 is not None),
-        'has_face_recognition': bool(face_recognition is not None),
+        'has_face_recognition': False,  # face_recognition eliminado
         'b64_length': len(b64) if b64 else 0,
     }
     try:
@@ -638,13 +355,7 @@ def api_debug_decode(request):
         info['decoded'] = True
         info['shape'] = {'h': int(h), 'w': int(w)}
         info['mean_pixel'] = float(frame.mean())
-        if face_recognition is not None:
-            rgb = frame[:, :, ::-1]
-            boxes = face_recognition.face_locations(rgb, model='hog')
-            info['boxes'] = len(boxes)
-            if boxes:
-                encs = face_recognition.face_encodings(rgb, boxes)
-                info['encs'] = len(encs)
+        # face_recognition eliminado - no se detectan caras
         return JsonResponse({'ok': True, 'info': info})
     except Exception as e:
         log.exception(f'api_debug_decode: excepción {e}')
@@ -652,12 +363,13 @@ def api_debug_decode(request):
 
 
 def _compute_embedding_from_b64(b64_str) -> Optional['np.ndarray']:
+    """Computa embedding básico usando solo OpenCV (sin face_recognition)"""
     log = logging.getLogger('facial')
     if not b64_str:
         log.debug('compute_embedding: b64_str vacío')
         return None
-    if np is None:
-        log.debug('compute_embedding: numpy no disponible')
+    if np is None or cv2 is None:
+        log.debug('compute_embedding: numpy o cv2 no disponible')
         return None
     try:
         header, encoded = b64_str.split(',') if ',' in b64_str else ('', b64_str)
@@ -667,57 +379,39 @@ def _compute_embedding_from_b64(b64_str) -> Optional['np.ndarray']:
         if frame is None:
             log.debug('compute_embedding: cv2.imdecode devolvió None')
             return None
-        if face_recognition is not None:
-            rgb = frame[:, :, ::-1]
-            boxes = face_recognition.face_locations(rgb, model='hog')
-            log.debug(f'compute_embedding: boxes={len(boxes)}')
-            if not boxes:
-                return None
-            encs = face_recognition.face_encodings(rgb, boxes)
-            log.debug(f'compute_embedding: encs={len(encs)}')
-            if not encs:
-                return None
-            return np.array(encs[0], dtype=np.float32)
-        else:
-            # Fallback: usar promedio de píxeles de la región central como "huella" rudimentaria
-            h, w = frame.shape[:2]
-            cx, cy = w // 2, h // 2
-            crop = frame[max(cy-100,0):cy+100, max(cx-100,0):cx+100]
-            if crop.size == 0:
-                log.debug('compute_embedding: crop vacío en fallback')
-                return None
-            emb = cv2.resize(crop, (16, 16)).astype('float32').reshape(-1)
-            emb = emb / (np.linalg.norm(emb) + 1e-6)
-            return emb
+        
+        # Usar solo el método de fallback básico
+        h, w = frame.shape[:2]
+        cx, cy = w // 2, h // 2
+        crop = frame[max(cy-100,0):cy+100, max(cx-100,0):cx+100]
+        if crop.size == 0:
+            log.debug('compute_embedding: crop vacío en fallback')
+            return None
+        emb = cv2.resize(crop, (16, 16)).astype('float32').reshape(-1)
+        emb = emb / (np.linalg.norm(emb) + 1e-6)
+        return emb
     except Exception as e:
         logging.getLogger('facial').exception(f'compute_embedding: excepción {e}')
         return None
 
 
 def _compare_embeddings(stored_bytes: bytes, live_emb) -> bool:
+    """Compara embeddings usando solo similitud de coseno"""
     if stored_bytes is None or live_emb is None or np is None:
         return False
     try:
         stored = np.frombuffer(stored_bytes, dtype=np.float32)
-        if face_recognition is not None and stored.shape[0] in (128, 129):
-            # distancia euclidiana típica < 0.6
-            dist = np.linalg.norm(stored[:128] - live_emb[:128])
-            return dist < 0.6
-        else:
-            # coseno para el fallback
-            num = float(np.dot(stored, live_emb))
-            den = (np.linalg.norm(stored) * np.linalg.norm(live_emb) + 1e-6)
-            sim = num / den
-            return sim > 0.9
+        # Usar solo similitud de coseno
+        num = float(np.dot(stored, live_emb))
+        den = (np.linalg.norm(stored) * np.linalg.norm(live_emb) + 1e-6)
+        sim = num / den
+        return sim > 0.9
     except Exception:
         return False
 
 
 def _compare_to_collection(user: Usuario, live_emb) -> bool:
-    """Compara el embedding vivo contra la colección de embeddings del usuario.
-    Mantiene la lógica: si no hay colección, usa el método de compatibilidad _compare_embeddings.
-    Usa umbral estricto base 0.45 con leve adaptación hasta 0.55 por intentos fallidos.
-    """
+    """Compara el embedding vivo contra la colección de embeddings del usuario usando solo similitud de coseno"""
     try:
         if live_emb is None:
             return False
@@ -728,15 +422,18 @@ def _compare_to_collection(user: Usuario, live_emb) -> bool:
         if not user.facial_embeddings:
             return _compare_embeddings(user.facial_data, live_emb)
 
-        base_thr = 0.45
-        thr = min(base_thr + (user.failed_attempts or 0) * 0.03, 0.55)
+        # Umbral para similitud de coseno (más alto que distancia euclidiana)
+        base_thr = 0.85
+        thr = max(base_thr - (user.failed_attempts or 0) * 0.02, 0.75)
 
         live = np.array(live_emb, dtype=np.float32)
         for emb_list in user.facial_embeddings:
             stored = np.array(emb_list, dtype=np.float32)
-            # Euclidiana en primeras 128 dims (face_recognition)
-            dist = float(np.linalg.norm(stored[:128] - live[:128]))
-            if dist < thr:
+            # Similitud de coseno
+            num = float(np.dot(stored, live))
+            den = (np.linalg.norm(stored) * np.linalg.norm(live) + 1e-6)
+            sim = num / den
+            if sim > thr:
                 return True
         return False
     except Exception:
@@ -744,90 +441,8 @@ def _compare_to_collection(user: Usuario, live_emb) -> bool:
 
 
 def estadistica_view(request):
-    """
-    Vista para el panel administrativo de estadísticas.
-    Solo accesible para usuarios administradores (@senati.pe).
-    """
-    # Verificar que el usuario esté autenticado
-    if not request.user.is_authenticated:
-        return redirect('login')
-    
-    # Verificar que sea un usuario administrador
-    if not is_admin_user(request.user.email):
-        return redirect('mantenimiento')
-    
-    # Obtener todos los usuarios administradores (con dominio @senati.pe)
-    admin_users = Usuario.objects.filter(email__iendswith='@senati.pe').order_by('nombres', 'apellidos')
-    
-    # Generar HTML para la página de estadísticas
-    admin_users_html = ""
-    for user in admin_users:
-        admin_users_html += f"""
-        <tr>
-            <td>{user.nombres} {user.apellidos}</td>
-            <td>{user.email}</td>
-            <td>{user.dni}</td>
-            <td>{user.date_joined.strftime('%d/%m/%Y')}</td>
-        </tr>
-        """
-    
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Estadísticas - Panel Administrativo</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }}
-            .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-            h1 {{ color: #333; text-align: center; }}
-            .user-info {{ background: #e9ecef; padding: 20px; border-radius: 5px; margin: 20px 0; }}
-            table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
-            th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }}
-            th {{ background-color: #f8f9fa; font-weight: bold; }}
-            .nav-links {{ display: flex; justify-content: center; gap: 20px; margin-top: 30px; }}
-            .nav-links a {{ padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }}
-            .nav-links a:hover {{ background: #0056b3; }}
-            .logout-btn {{ background: #dc3545; }}
-            .logout-btn:hover {{ background: #c82333; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Panel de Estadísticas Administrativas</h1>
-            <div class="user-info">
-                <h3>Administrador: {request.user.nombres or 'Administrador'}</h3>
-                <p><strong>Email:</strong> {request.user.email}</p>
-            </div>
-            
-            <h2>Usuarios Administradores (@senati.pe)</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre Completo</th>
-                        <th>Email</th>
-                        <th>DNI</th>
-                        <th>Fecha de Registro</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {admin_users_html}
-                </tbody>
-            </table>
-            
-            <div class="nav-links">
-                <a href="/bienvenido/">Inicio</a>
-                <a href="/mantenimiento/">Mantenimiento</a>
-                <a href="/admin/">Admin Django</a>
-                <a href="/logout/" class="logout-btn">Cerrar Sesión</a>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    
-    return HttpResponse(html_content, content_type='text/html')
+    """Redirige al frontend para estadísticas"""
+    return redirect('http://localhost:5173/estadistica')
 
 
 def get_redirect_url_by_domain(email):

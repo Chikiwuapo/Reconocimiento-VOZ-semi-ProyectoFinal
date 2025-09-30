@@ -16,6 +16,7 @@ from .views.views import (
 )
 
 urlpatterns = [
+    # Redirecciones al frontend (mantener solo para compatibilidad)
     path('', index, name='index'),
     path('bienvenido/', bienvenido_view, name='bienvenido'),
     path('login/', login_view, name='login'),
@@ -23,8 +24,8 @@ urlpatterns = [
     path('mantenimiento/', mantenimiento_view, name='mantenimiento'),
     path('estadistica/', estadistica_view, name='estadistica'),
     path('logout/', logout_view, name='logout'),
-
-    # APIs
+    
+    # API endpoints
     path('api/encode/', api_encode, name='api_encode'),
     path('api/login/', api_login, name='api_login'),
     path('api/register-basic/', api_register_basic, name='api_register_basic'),

@@ -15,23 +15,16 @@ from .models import GestoMano, HistorialReconocimiento, OperacionMatematica, Tip
 logger = logging.getLogger(__name__)
 
 def index(request):
-    """Vista principal que sirve el archivo HTML"""
-    # Leer el archivo ejemplo_frontend.html
-    html_path = os.path.join(os.path.dirname(__file__), '..', 'ejemplo_frontend.html')
-    try:
-        with open(html_path, 'r', encoding='utf-8') as file:
-            html_content = file.read()
-        return HttpResponse(html_content, content_type='text/html')
-    except FileNotFoundError:
-        return HttpResponse("Archivo HTML no encontrado", status=404)
+    """Redirige al frontend para operaciones"""
+    return redirect('http://localhost:5173/blackboard')
 
 def vista_entrenamiento(request):
-    """Redirige a la vista principal"""
-    return index(request)
+    """Redirige al frontend para entrenamiento"""
+    return redirect('http://localhost:5173/blackboard')
 
 def frontend_view(request):
-    """Vista específica para el frontend de reconocimiento de gestos"""
-    return index(request)
+    """Redirige al frontend para reconocimiento de gestos"""
+    return redirect('http://localhost:5173/blackboard')
 
 @csrf_exempt
 @require_http_methods(["POST"])
