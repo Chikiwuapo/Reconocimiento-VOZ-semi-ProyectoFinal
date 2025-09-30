@@ -5,6 +5,7 @@ import StepRegisterFace from '../components/stepper/StepRegisterFace'
 import StepLoginForm from '../components/stepper/StepLoginForm'
 import StepLoginFace from '../components/stepper/StepLoginFace'
 import DotGrid from '../components/background/DotGrid'
+import VoiceButton from '../components/VoiceButton'
 
 export default function AuthFlowPage() {
   const [step, setStep] = useState(1)
@@ -61,6 +62,18 @@ export default function AuthFlowPage() {
           )}
         </Step>
       </Stepper>
+
+      {/* Botón de voz fijo junto al chat del agente IA (FAB del chat está a right: 20px, width 56px) */}
+      <div
+        style={{
+          position: 'fixed',
+          right: 88, // 20px margen + 56px ancho del chat + 12px de separación aprox
+          bottom: 20,
+          zIndex: 1001,
+        }}
+      >
+        <VoiceButton />
+      </div>
     </div>
   )
 }
