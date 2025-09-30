@@ -20,6 +20,7 @@ import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
 import Dashboard_admin from './pages/Dashboard-admin/UI/Dashboard_admin'
 import { ModelProvider } from './contexts/ModelContext'
+import FloatingChatWidget from './components/FloatingChatWidget'
 
 // Contexto global para tema oscuro profundo
 interface ThemeContextType {
@@ -85,6 +86,7 @@ function App() {
             <Route path="/arithmetic/practice" element={<PracticeOperations />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          <FloatingChatWidget />
         </div>
       </ModelProvider>
     </ThemeContext.Provider>
