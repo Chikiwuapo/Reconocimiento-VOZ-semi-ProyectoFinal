@@ -89,13 +89,13 @@ const ApiMetricsChart: React.FC<ApiMetricsChartProps> = ({ data, isDarkMode = fa
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className={`flex rounded-lg p-1 ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
             <button
               onClick={() => setChartType('line')}
               className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                 chartType === 'line'
                   ? 'bg-blue-500 text-white'
-                  : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  : isDarkMode ? 'text-blue-200 hover:text-white hover:bg-blue-600/50' : 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
               }`}
             >
               Líneas
@@ -105,7 +105,7 @@ const ApiMetricsChart: React.FC<ApiMetricsChartProps> = ({ data, isDarkMode = fa
               className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                 chartType === 'area'
                   ? 'bg-blue-500 text-white'
-                  : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                  : isDarkMode ? 'text-blue-200 hover:text-white hover:bg-blue-600/50' : 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
               }`}
             >
               Área
@@ -217,14 +217,16 @@ const ApiMetricsChart: React.FC<ApiMetricsChartProps> = ({ data, isDarkMode = fa
             <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
               <XAxis 
-                dataKey="time" 
-                stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
-                fontSize={12}
-              />
-              <YAxis 
-                stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
-                fontSize={12}
-              />
+                  dataKey="time" 
+                  stroke={isDarkMode ? '#FFFFFF' : '#000000'}
+                  fontSize={12}
+                  tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
+                />
+                <YAxis 
+                  stroke={isDarkMode ? '#FFFFFF' : '#000000'}
+                  fontSize={12}
+                  tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
+                />
               <Tooltip 
                 contentStyle={{ 
                   backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
@@ -255,12 +257,14 @@ const ApiMetricsChart: React.FC<ApiMetricsChartProps> = ({ data, isDarkMode = fa
               <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
               <XAxis 
                 dataKey="time" 
-                stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                stroke={isDarkMode ? '#FFFFFF' : '#000000'}
                 fontSize={12}
+                tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
               />
               <YAxis 
-                stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                stroke={isDarkMode ? '#FFFFFF' : '#000000'}
                 fontSize={12}
+                tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
               />
               <Tooltip 
                 contentStyle={{ 

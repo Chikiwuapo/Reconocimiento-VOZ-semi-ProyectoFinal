@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts'
 import { Download, Maximize2, FileText, TrendingUp, Users, DollarSign } from 'lucide-react'
 
 interface ReportData {
@@ -78,7 +78,6 @@ const CustomReportsChart: React.FC<CustomReportsChartProps> = ({ data, isDarkMod
               outerRadius={80}
               fill="#8884d8"
               dataKey="value"
-              label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
             >
               {filteredData.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
@@ -92,6 +91,20 @@ const CustomReportsChart: React.FC<CustomReportsChartProps> = ({ data, isDarkMod
                 color: isDarkMode ? '#E5E7EB' : '#1F2937'
               }}
             />
+            <Legend 
+              verticalAlign="bottom" 
+              height={36}
+              wrapperStyle={{
+                paddingTop: '20px',
+                fontSize: '12px',
+                color: isDarkMode ? '#E5E7EB' : '#374151'
+              }}
+              formatter={(value, entry) => (
+                <span style={{ color: isDarkMode ? '#E5E7EB' : '#374151' }}>
+                  {value}
+                </span>
+              )}
+            />
           </PieChart>
         )
       case 'line':
@@ -100,15 +113,17 @@ const CustomReportsChart: React.FC<CustomReportsChartProps> = ({ data, isDarkMod
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
             <XAxis 
               dataKey="name" 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
               angle={-45}
               textAnchor="end"
               height={80}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <YAxis 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <Tooltip 
               contentStyle={{ 
@@ -134,15 +149,17 @@ const CustomReportsChart: React.FC<CustomReportsChartProps> = ({ data, isDarkMod
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
             <XAxis 
               dataKey="name" 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
               angle={-45}
               textAnchor="end"
               height={80}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <YAxis 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <Tooltip 
               contentStyle={{ 
@@ -231,7 +248,7 @@ const CustomReportsChart: React.FC<CustomReportsChartProps> = ({ data, isDarkMod
           <label className={`block text-sm font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
             Tipo de Gráfico
           </label>
-          <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className={`flex rounded-lg p-1 ${isDarkMode ? 'bg-blue-900/30' : 'bg-blue-50'}`}>
             {[
               { key: 'bar', label: 'Barras' },
               { key: 'pie', label: 'Circular' },
@@ -243,7 +260,7 @@ const CustomReportsChart: React.FC<CustomReportsChartProps> = ({ data, isDarkMod
                 className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
                   chartType === key
                     ? 'bg-blue-500 text-white'
-                    : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                    : isDarkMode ? 'text-blue-200 hover:text-white hover:bg-blue-600/50' : 'text-blue-700 hover:text-blue-900 hover:bg-blue-100'
                 }`}
               >
                 {label}

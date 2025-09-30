@@ -72,7 +72,7 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
     <header className={`${isDarkMode ? 'bg-[#0A0A0A]/95 border-b border-gray-900' : 'bg-white/80 border-b border-slate-100'} backdrop-blur sticky top-0 z-40`}>
       <div className="container-page flex items-center justify-between py-2">
         <Link to="/blackboard" className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg">
-          <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary ${isDarkMode ? 'bg-gray-800' : 'bg-primary/10'}`}>
+        <span className={`inline-flex h-9 w-9 items-center justify-center rounded-lg text-primary ${isDarkMode ? 'bg-gray-800' : 'bg-primary/10'}`}>
             {/* Abstract ML icon */}
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
               <path d="M4 7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1h2a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3h-2v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/>

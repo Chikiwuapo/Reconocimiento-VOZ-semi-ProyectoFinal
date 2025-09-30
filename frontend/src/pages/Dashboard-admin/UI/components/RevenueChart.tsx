@@ -119,13 +119,15 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data, isDarkMode = false })
             <XAxis 
               dataKey="date" 
               tickFormatter={formatDate}
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <YAxis 
               tickFormatter={formatCurrency}
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? '#FFFFFF' : '#000000'}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <Tooltip 
               contentStyle={{ 

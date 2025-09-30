@@ -160,12 +160,14 @@ const CohortAnalysisChart: React.FC<CohortAnalysisChartProps> = ({ data, isDarkM
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
             <XAxis 
               dataKey="month" 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? "#FFFFFF" : "#000000"}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <YAxis 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? "#FFFFFF" : "#000000"}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
               tickFormatter={(value) => `${value}%`}
             />
             <Tooltip 
