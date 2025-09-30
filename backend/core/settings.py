@@ -100,10 +100,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Configuración de base de datos para producción y desarrollo
-if 'DATABASE_URL' in os.environ:
+database_url = os.environ.get('DATABASE_URL', '').strip()
+if database_url:
     # Configuración para producción (Render con PostgreSQL)
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        'default': dj_database_url.parse(database_url)
     }
 elif os.environ.get('DB_ENGINE') in ("mysql", "MySQL"):
     # Configuración para MySQL
