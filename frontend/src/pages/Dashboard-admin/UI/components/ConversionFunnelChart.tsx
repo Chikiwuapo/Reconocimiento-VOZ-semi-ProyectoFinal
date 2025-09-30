@@ -15,6 +15,11 @@ interface ConversionFunnelChartProps {
 
 const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({ data, isDarkMode = false }) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  
+  // Función para redondear números decimales a 2 decimales
+  const roundToTwoDecimals = (num: number): number => {
+    return Math.round(num * 100) / 100
+  }
 
   const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
 
@@ -50,7 +55,7 @@ const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({ data, isD
           </h3>
           <div className="flex items-center gap-2 mt-2">
             <TrendingDown className="w-4 h-4 text-orange-500" />
-            <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>
               Tasa de conversión: {conversionRate}%
             </span>
           </div>
@@ -91,7 +96,7 @@ const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({ data, isD
                     {item.stage}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <span className={`text-sm ${isDarkMode ? 'text-gray-500' : 'text-black'}`}>
                       {item.users.toLocaleString()}
                     </span>
                     {dropoff > 0 && (
@@ -110,8 +115,8 @@ const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({ data, isD
                     }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xs font-medium text-white">
-                      {item.percentage}%
+                    <span className={`text-xs font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                      {roundToTwoDecimals(item.percentage)}%
                     </span>
                   </div>
                 </div>
@@ -128,15 +133,17 @@ const ConversionFunnelChart: React.FC<ConversionFunnelChartProps> = ({ data, isD
             <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#E5E7EB'} />
             <XAxis 
               dataKey="stage" 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? "#FFFFFF" : "#000000"}
               fontSize={12}
               angle={-45}
               textAnchor="end"
               height={80}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
             />
             <YAxis 
-              stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+              stroke={isDarkMode ? "#FFFFFF" : "#000000"}
               fontSize={12}
+              tick={{ fill: isDarkMode ? '#FFFFFF' : '#000000' }}
               tickFormatter={(value) => value.toLocaleString()}
             />
             <Tooltip 

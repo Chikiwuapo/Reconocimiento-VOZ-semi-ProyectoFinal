@@ -19,6 +19,7 @@ import TrainModelPalabras from './pages/Blackboard/Palabras/TrainModel'
 import AuthFlowPage from './auth/AuthFlowPage'
 import Landing from './pages/landing/Landing'
 import Dashboard_admin from './pages/Dashboard-admin/UI/Dashboard_admin'
+import { ModelProvider } from './contexts/ModelContext'
 
 // Contexto global para tema oscuro profundo
 interface ThemeContextType {
@@ -55,33 +56,37 @@ function App() {
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
-      <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0A0A] text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/splash" element={<SplashScreen />} />
-          <Route path="/auth" element={<AuthFlowPage />} />
-          {/* Ruta para usuarios @senati.pe - Dashboard Admin */}
-          <Route path="/estadistica" element={<Dashboard_admin />} />
-          {/* Ruta para usuarios @gmail.com y otros - Blackboard */}
-          <Route path="/blackboard" element={<Blackboard />} />
-          <Route path="/models" element={<Models />} />
-          <Route path="/arithmetic/capture" element={<CaptureSamples />} />
-          <Route path="/arithmetic/train" element={<TrainModel />} />
-          <Route path="/arithmetic/practice/operaciones" element={<PracticeOperations />} />
-          <Route path="/arithmetic/practice/vocales" element={<PracticeVocales />} />
-          <Route path="/arithmetic/practice/abecedario" element={<PracticeAbecedario />} />
-          <Route path="/arithmetic/practice/numeros" element={<PracticeNumeros />} />
-          <Route path="/arithmetic/practice/palabras" element={<PracticePalabras />} />
-          {/* Rutas dedicadas por categoría */}
-          <Route path="/vocales/capture" element={<CaptureSamplesVocales />} />
-          <Route path="/vocales/train" element={<TrainModelVocales />} />
-          <Route path="/abecedario/capture" element={<CaptureSamplesAbecedario />} />
-          <Route path="/abecedario/train" element={<TrainModelAbecedario />} />
-          <Route path="/palabras/capture" element={<CaptureSamplesPalabras />} />
-          <Route path="/palabras/train" element={<TrainModelPalabras />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+      <ModelProvider>
+        <div className={`min-h-screen ${isDarkMode ? 'bg-[#0A0A0A] text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/splash" element={<SplashScreen />} />
+            <Route path="/auth" element={<AuthFlowPage />} />
+            <Route path="/estadistica" element={<Dashboard_admin />} />
+            <Route path="/blackboard" element={<Blackboard />} />
+            <Route path="/blackboard/models" element={<Models />} />
+            <Route path="/arithmetic/capture" element={<CaptureSamples />} />
+            <Route path="/arithmetic/train" element={<TrainModel />} />
+            <Route path="/arithmetic/practice/operaciones" element={<PracticeOperations />} />
+            <Route path="/arithmetic/practice/vocales" element={<PracticeVocales />} />
+            <Route path="/arithmetic/practice/abecedario" element={<PracticeAbecedario />} />
+            <Route path="/arithmetic/practice/numeros" element={<PracticeNumeros />} />
+            <Route path="/arithmetic/practice/palabras" element={<PracticePalabras />} />
+            {/* Rutas dedicadas por categoría */}
+            <Route path="/vocales/capture" element={<CaptureSamplesVocales />} />
+            <Route path="/vocales/train" element={<TrainModelVocales />} />
+            <Route path="/vocales/practice" element={<PracticeVocales />} />
+            <Route path="/abecedario/capture" element={<CaptureSamplesAbecedario />} />
+            <Route path="/abecedario/train" element={<TrainModelAbecedario />} />
+            <Route path="/abecedario/practice" element={<PracticeAbecedario />} />
+            <Route path="/palabras/capture" element={<CaptureSamplesPalabras />} />
+            <Route path="/palabras/train" element={<TrainModelPalabras />} />
+            <Route path="/palabras/practice" element={<PracticePalabras />} />
+            <Route path="/arithmetic/practice" element={<PracticeOperations />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </ModelProvider>
     </ThemeContext.Provider>
   )
 }

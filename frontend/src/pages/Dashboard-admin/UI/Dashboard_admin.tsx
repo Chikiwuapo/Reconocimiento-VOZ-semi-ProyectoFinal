@@ -23,7 +23,9 @@ import {
   Database,
   Zap,
   AlertTriangle,
-  AlertCircle
+  AlertCircle,
+  Sun,
+  Moon
 } from 'lucide-react'
 
 import Sidebar from '../../../components/Sidebar/Sidebar.tsx'
@@ -51,7 +53,7 @@ const randomFloat = (min: number, max: number) => Math.random() * (max - min) + 
 type DashboardView = 'overview' | 'analytics' | 'performance' | 'reports'
 
 const Dashboard_admin: React.FC = () => {
-  const { isDarkMode } = useTheme()
+  const { isDarkMode, toggleDarkMode } = useTheme()
   const [activeView, setActiveView] = useState<DashboardView>('overview')
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -233,7 +235,7 @@ const Dashboard_admin: React.FC = () => {
   }, [data])
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300">
+    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-background text-primary' : 'bg-gray-50 text-gray-900'}`} data-theme={isDarkMode ? 'dark' : 'light'}>
       {/* Sidebar Desktop */}
       <Sidebar 
         activeView={activeView}
@@ -278,11 +280,15 @@ const Dashboard_admin: React.FC = () => {
       {/* Main */}
       <div className="ml-0 lg:ml-80 transition-all duration-300">
         {/* Sticky toolbar */}
-        <div className={`sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-gray-900/40 ${isDarkMode ? 'bg-gray-900/60' : 'bg-white/70'} border-b border-gray-700`}> 
+        <div className={`sticky top-0 z-20 backdrop-blur supports-[backdrop-filter]:bg-surface/40 transition-colors duration-300 ${
+          isDarkMode ? 'bg-surface/60 border-theme' : 'bg-white/70 border-gray-200'
+        } border-b`}> 
           {isRefreshing && <div className="h-0.5 w-full bg-gradient-to-r from-blue-500 via-cyan-400 to-emerald-400 animate-pulse" />}
           <div className="px-4 lg:px-8 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 rounded-lg border border-neutral-700 bg-surface text-secondary hover:text-emerald-400">
+              <button onClick={() => setIsMobileMenuOpen(true)} className={`lg:hidden p-2 rounded-lg border transition-colors duration-200 ${
+                isDarkMode ? 'border-theme bg-surface text-secondary hover:text-accent' : 'border-gray-300 bg-white text-gray-600 hover:text-blue-600'
+              }`}>
                 <Menu className="w-5 h-5" />
               </button>
               <div>
@@ -301,13 +307,30 @@ const Dashboard_admin: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="p-2 rounded-lg border border-gray-700 bg-gray-800/50 text-gray-300 hover:bg-gray-700">
+              <motion.button 
+                whileHover={{scale:1.02}} 
+                whileTap={{scale:0.98}} 
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-lg border transition-all duration-200 ${
+                  isDarkMode 
+                    ? 'border-gray-600 bg-gray-700/50 text-yellow-400 hover:bg-gray-600' 
+                    : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+                title={isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </motion.button>
+              <button className={`p-2 rounded-lg border transition-colors duration-200 ${
+                isDarkMode ? 'border-theme bg-surface text-secondary hover:bg-gray-700' : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
+              }`}>
                 <Filter className="w-4 h-4" />
               </button>
               <motion.button whileHover={{scale:1.02}} whileTap={{scale:0.98}} onClick={handleExport} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg flex items-center gap-2">
                 <Download className="w-4 h-4"/> Exportar
               </motion.button>
-              <motion.button whileHover={{scale:1.02}} whileTap={{scale:0.98}} onClick={handleRefresh} className={`px-3 py-1.5 rounded-lg border ${isDarkMode?'border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700':'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'}`}>
+              <motion.button whileHover={{scale:1.02}} whileTap={{scale:0.98}} onClick={handleRefresh} className={`px-3 py-1.5 rounded-lg border transition-colors duration-200 ${
+                isDarkMode ? 'border-theme bg-surface text-secondary hover:bg-gray-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+              }`}>
                 <RefreshCw className="w-4 h-4 inline mr-1"/> Actualizar
               </motion.button>
             </div>
@@ -368,28 +391,36 @@ const Dashboard_admin: React.FC = () => {
 
               {/* Gráficos principales */}
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                <div className={`p-6 rounded-xl border ${isDarkMode?'border-gray-700 bg-gray-800/50':'border-gray-200 bg-white/50'}`}>
+                <div className={`p-6 rounded-xl border transition-colors duration-300 ${
+                  isDarkMode ? 'border-theme bg-surface' : 'border-gray-200 bg-white/50'
+                }`}>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className={`text-lg font-semibold ${isDarkMode?'text-white':'text-gray-900'}`}>Tendencias de Sesiones</h3>
+                    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-primary' : 'text-gray-900'}`}>Tendencias de Sesiones</h3>
                     <div className="flex items-center gap-2">
-                      <button className="p-1 rounded text-gray-400 hover:text-gray-300">
+                      <button className={`p-1 rounded transition-colors duration-200 ${
+                        isDarkMode ? 'text-secondary hover:text-primary' : 'text-gray-400 hover:text-gray-600'
+                      }`}>
                         <Calendar className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-400 mb-4">Análisis temporal detallado</p>
+                  <p className={`text-sm mb-4 ${isDarkMode ? 'text-secondary' : 'text-gray-500'}`}>Análisis temporal detallado</p>
                   <SessionHistoryChart data={data.dailySessionHistory} />
                 </div>
-                <div className={`p-6 rounded-xl border ${isDarkMode?'border-gray-700 bg-gray-800/50':'border-gray-200 bg-white/50'}`}>
+                <div className={`p-6 rounded-xl border transition-colors duration-300 ${
+                  isDarkMode ? 'border-theme bg-surface' : 'border-gray-200 bg-white/50'
+                }`}>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className={`text-lg font-semibold ${isDarkMode?'text-white':'text-gray-900'}`}>Distribución de Modelos</h3>
+                    <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-primary' : 'text-gray-900'}`}>Distribución de Modelos</h3>
                     <div className="flex items-center gap-2">
-                      <button className="p-1 rounded text-gray-400 hover:text-gray-300">
+                      <button className={`p-1 rounded transition-colors duration-200 ${
+                        isDarkMode ? 'text-secondary hover:text-primary' : 'text-gray-400 hover:text-gray-600'
+                      }`}>
                         <Filter className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-400 mb-4">Uso por tipo de modelo</p>
+                  <p className={`text-sm mb-4 ${isDarkMode ? 'text-secondary' : 'text-gray-500'}`}>Uso por tipo de modelo</p>
                   <ModelUsageChart data={data.modelUsage} />
                 </div>
               </div>
@@ -406,29 +437,31 @@ const Dashboard_admin: React.FC = () => {
               </div>
 
               {/* Tabla de análisis de modelos */}
-              <div className={`p-6 rounded-xl border ${isDarkMode?'border-gray-700 bg-gray-800/50':'border-gray-200 bg-white/50'}`}>
-                <h3 className={`text-lg font-semibold ${isDarkMode?'text-white':'text-gray-900'} mb-4`}>Análisis Detallado de Modelos</h3>
+              <div className={`p-6 rounded-xl border transition-colors duration-300 ${
+                isDarkMode ? 'border-theme bg-surface' : 'border-gray-200 bg-white/50'
+              }`}>
+                <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? 'text-primary' : 'text-gray-900'}`}>Análisis Detallado de Modelos</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-700/50">
-                        <th className="text-left py-3 px-4 text-gray-300 font-medium">Modelo</th>
-                        <th className="text-left py-3 px-4 text-gray-300 font-medium">Uso</th>
-                        <th className="text-left py-3 px-4 text-gray-300 font-medium">Precisión</th>
-                        <th className="text-left py-3 px-4 text-gray-300 font-medium">Tendencia</th>
-                        <th className="text-left py-3 px-4 text-gray-300 font-medium">Estado</th>
+                      <tr className={`border-b ${isDarkMode ? 'border-theme' : 'border-gray-200'}`}>
+                        <th className={`text-left py-3 px-4 font-medium ${isDarkMode ? 'text-secondary' : 'text-gray-600'}`}>Modelo</th>
+                        <th className={`text-left py-3 px-4 font-medium ${isDarkMode ? 'text-secondary' : 'text-gray-600'}`}>Uso</th>
+                        <th className={`text-left py-3 px-4 font-medium ${isDarkMode ? 'text-secondary' : 'text-gray-600'}`}>Precisión</th>
+                        <th className={`text-left py-3 px-4 font-medium ${isDarkMode ? 'text-secondary' : 'text-gray-600'}`}>Tendencia</th>
+                        <th className={`text-left py-3 px-4 font-medium ${isDarkMode ? 'text-secondary' : 'text-gray-600'}`}>Estado</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b border-gray-700/50">
+                      <tr className={`border-b ${isDarkMode ? 'border-theme' : 'border-gray-200'}`}>
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                            <span className="text-white font-medium">Voz</span>
+                            <span className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>Voz</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-gray-300">42%</td>
-                        <td className="py-3 px-4 text-gray-300">94.2%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>42%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>94.2%</td>
                         <td className="py-3 px-4">
                           <span className="text-green-400 flex items-center gap-1">
                             <TrendingUp className="w-3 h-3" />
@@ -443,11 +476,11 @@ const Dashboard_admin: React.FC = () => {
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                            <span className="text-white font-medium">Facial</span>
+                            <span className={`${isDarkMode ? 'text-white' : 'text-black'} font-medium`}>Facial</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-gray-300">23%</td>
-                        <td className="py-3 px-4 text-gray-300">91.8%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>23%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>91.8%</td>
                         <td className="py-3 px-4">
                           <span className="text-red-400 flex items-center gap-1">
                             <TrendingUp className="w-3 h-3 rotate-180" />
@@ -462,11 +495,11 @@ const Dashboard_admin: React.FC = () => {
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span className="text-white font-medium">Gestos</span>
+                            <span className={`${isDarkMode ? 'text-white' : 'text-black'} font-medium`}>Gestos</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-gray-300">35%</td>
-                        <td className="py-3 px-4 text-gray-300">87.3%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>35%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>87.3%</td>
                         <td className="py-3 px-4">
                           <span className="text-green-400 flex items-center gap-1">
                             <TrendingUp className="w-3 h-3" />
@@ -481,11 +514,11 @@ const Dashboard_admin: React.FC = () => {
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                            <span className="text-white font-medium">Híbrido</span>
+                            <span className={`${isDarkMode ? 'text-white' : 'text-black'} font-medium`}>Híbrido</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-gray-300">15%</td>
-                        <td className="py-3 px-4 text-gray-300">89.7%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>15%</td>
+                        <td className={`py-3 px-4 ${isDarkMode ? 'text-gray-300' : 'text-black'}`}>89.7%</td>
                         <td className="py-3 px-4">
                           <span className="text-green-400 flex items-center gap-1">
                             <TrendingUp className="w-3 h-3" />
@@ -799,38 +832,38 @@ const Dashboard_admin: React.FC = () => {
                   </div>
                   <p className="text-sm text-gray-400 mb-4">Salud general del sistema</p>
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-700/30">
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-black transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-gray-50/10 cursor-pointer">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
                           <Activity className="w-4 h-4 text-green-400" />
                         </div>
                         <div>
-                          <p className="text-white font-medium">Servidor Principal</p>
-                          <p className="text-gray-400 text-sm">99.9% uptime</p>
+                          <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>Servidor Principal</p>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>99.9% uptime</p>
                         </div>
                       </div>
                       <span className="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded-full">Activo</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-700/30">
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-black transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-gray-50/10 cursor-pointer">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                           <Database className="w-4 h-4 text-blue-400" />
                         </div>
                         <div>
-                          <p className="text-white font-medium">Base de Datos</p>
-                          <p className="text-gray-400 text-sm">Conexiones: 45/100</p>
+                          <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>Base de Datos</p>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Conexiones: 45/100</p>
                         </div>
                       </div>
                       <span className="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded-full">Estable</span>
                     </div>
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-700/30">
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-black transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-gray-50/10 cursor-pointer">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                           <Zap className="w-4 h-4 text-yellow-400" />
                         </div>
                         <div>
-                          <p className="text-white font-medium">API Gateway</p>
-                          <p className="text-gray-400 text-sm">Latencia: 120ms</p>
+                          <p className={`font-medium ${isDarkMode ? 'text-white' : 'text-black'}`}>API Gateway</p>
+                          <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Latencia: 120ms</p>
                         </div>
                       </div>
                       <span className="px-2 py-1 text-xs bg-yellow-500/20 text-yellow-400 rounded-full">Advertencia</span>
@@ -893,7 +926,7 @@ const Dashboard_admin: React.FC = () => {
                     { type: 'success', message: 'API response time improved by 15%', time: '1 hour ago', icon: TrendingUp },
                     { type: 'error', message: 'Failed to connect to external service', time: '2 hours ago', icon: AlertCircle }
                   ].map((alert, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-gray-700/30">
+                    <div key={index} className="flex items-center gap-3 p-3 rounded-lg border border-black transition-all duration-300 hover:shadow-lg hover:scale-105 hover:bg-gray-50/10 cursor-pointer">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
                         alert.type === 'warning' ? 'bg-yellow-500/20' :
                         alert.type === 'error' ? 'bg-red-500/20' :
@@ -906,8 +939,8 @@ const Dashboard_admin: React.FC = () => {
                         }`} />
                       </div>
                       <div className="flex-1">
-                        <p className="text-white text-sm">{alert.message}</p>
-                        <p className="text-gray-400 text-xs">{alert.time}</p>
+                        <p className={`text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>{alert.message}</p>
+                        <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{alert.time}</p>
                       </div>
                     </div>
                   ))}
@@ -1036,19 +1069,19 @@ const Dashboard_admin: React.FC = () => {
                   <h3 className={`text-lg font-semibold ${isDarkMode?'text-white':'text-gray-900'} mb-4`}>Historial de Exportaciones</h3>
                   <div className="space-y-3">
                     {data.exportHistory.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-700/30">
+                      <div key={index} className="flex items-center justify-between p-3 rounded-lg border border-black transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-black/5 cursor-pointer">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                             <Download className="w-4 h-4 text-blue-400" />
                           </div>
                           <div>
-                            <p className="text-white font-medium text-sm">{file.name}</p>
-                            <p className="text-gray-400 text-xs">{file.date} • {file.size}</p>
+                            <p className={`font-medium text-sm ${isDarkMode ? 'text-white' : 'text-black'}`}>{file.name}</p>
+                            <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{file.date} • {file.size}</p>
                           </div>
                         </div>
                         <button 
                           onClick={() => handleDownloadHistoryFile(file.name)}
-                          className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-600"
+                          className={`p-2 rounded-lg transition-all duration-300 ${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-600' : 'text-gray-600 hover:text-black hover:bg-gray-200'}`}
                         >
                           <Download className="w-4 h-4" />
                         </button>

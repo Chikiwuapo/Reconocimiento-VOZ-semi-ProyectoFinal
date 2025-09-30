@@ -61,6 +61,11 @@ export function useArithmetic() {
   const [showChart, setShowChart] = useState(false)
   const [, forceRender] = useState(0)
 
+  // Nuevos estados para reconocimiento automático y secuencia
+  const [currentSequence, setCurrentSequence] = useState<string[]>([])
+  const [autoRecognition, setAutoRecognition] = useState(false)
+  const [lastGestureTime, setLastGestureTime] = useState<number>(0)
+
   // Sincroniza la pestaña con el query param ?tab=train|test
   const location = useLocation()
   useEffect(() => {
@@ -402,6 +407,7 @@ export function useArithmetic() {
   const clearOperation = () => {
     currentOperationRef.current = []
     currentGestureIdsRef.current = []
+    setCurrentSequence([])
     forceRender(x => x + 1)
   }
 
@@ -411,10 +417,21 @@ export function useArithmetic() {
       setError('La operación debe ser del tipo: número operador número')
       return
     }
+    
+    // Validar que la secuencia tenga el formato correcto: número, operador, número
+    const [num1, op, num2] = seq
+    const isValidNumber = (val: string) => !isNaN(Number(val)) && val !== ''
+    const isValidOperator = (val: string) => ['+', '-', '×', '÷', '*', '/'].includes(val)
+    
+    if (!isValidNumber(num1) || !isValidOperator(op) || !isValidNumber(num2)) {
+      setError('Formato de operación inválido. Debe ser: número → operador → número')
+      return
+    }
+    
     // Actualiza UI
-    setOperando1(seq[0])
-    setOperador(seq[1])
-    setOperando2(seq[2])
+    setOperando1(num1)
+    setOperador(op)
+    setOperando2(num2)
 
     // Ejecuta cálculo directamente con los valores actuales para evitar condición de carrera
     setLoadingCalc(true)
@@ -423,10 +440,16 @@ export function useArithmetic() {
     setExpresion(null)
     try {
       const ids = currentGestureIdsRef.current.filter(id => typeof id === 'number' && id > 0).slice(0, 3)
-      const data = await calculateAPI({ operando1: seq[0], operador: seq[1], operando2: seq[2], gestos_utilizados: ids })
+      const data = await calculateAPI({ operando1: num1, operador: op, operando2: num2, gestos_utilizados: ids })
       if (!data?.success) throw new Error(data?.error || 'Error al calcular')
       setResultado(data.resultado)
       setExpresion(data.expresion)
+      
+      // Limpiar la operación después del cálculo exitoso
+      setTimeout(() => {
+        clearOperation()
+      }, 3000) // Esperar 3 segundos para mostrar el resultado
+      
     } catch (err: any) {
       setError(err.message || 'Error inesperado')
     } finally {
@@ -462,10 +485,12 @@ export function useArithmetic() {
     samplesTarget, samplesCaptured, gestureMode, numeroVinculado, operacionVinculada,
     operando1, operador, operando2, loadingCalc, resultado, expresion, error,
     activeTab, trainedGestures, chartData, showChart,
+    currentSequence, autoRecognition, lastGestureTime,
     // setters
     setGestureMode, setNumeroVinculado, setOperacionVinculada,
     setOperando1, setOperador, setOperando2,
     setActiveTab, setShowChart, setError,
+    setCurrentSequence, setAutoRecognition, setLastGestureTime,
     // acciones
     startCamera, stopCamera, toggleRecording, saveGesture, saveGestureTwoHands, recognizeCurrent,
     clearOperation, calculateFromOperation, calcular,

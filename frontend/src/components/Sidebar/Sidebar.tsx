@@ -49,8 +49,29 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, isDarkMode
         {/* Header con logo y reloj */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-blue-600' : 'bg-blue-500'} shadow-lg`}>
-              <span className="text-white font-bold text-lg">A</span>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+              <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
+                <defs>
+                  <linearGradient id="grad-sidebar" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3A7BD5"/>
+                    <stop offset="50%" stopColor="#6A11CB"/>
+                    <stop offset="100%" stopColor="#F53844"/>
+                  </linearGradient>
+                  <filter id="glow-sidebar" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur1"/>
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur2"/>
+                    <feMerge>
+                      <feMergeNode in="blur2"/>
+                      <feMergeNode in="blur1"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+                <path d="M128 400 L256 96 L384 400" stroke="url(#grad-sidebar)" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow-sidebar)"/>
+                <path d="M176 300 L336 300" stroke="url(#grad-sidebar)" strokeWidth="26" strokeLinecap="round" filter="url(#glow-sidebar)"/>
+                <path d="M138 396 L256 116 L374 396" stroke="#FFFFFF10" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M184 300 L328 300" stroke="#FFFFFF18" strokeWidth="4" strokeLinecap="round"/>
+              </svg>
             </div>
             <div>
               <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Ares Digital</h1>

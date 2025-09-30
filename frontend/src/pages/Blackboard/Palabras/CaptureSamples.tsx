@@ -150,15 +150,11 @@ export default function CaptureSamplesPalabras() {
                 </div>
               </div>
 
-              {/* Tipo de modelo (chips como en la imagen, activo: Palabras) */}
+              {/* Tipo de modelo (solo Palabras) */}
               <div className={`rounded-lg p-3 ${isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-slate-50 border border-slate-200'}`}>
                 <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Tipo de modelo</div>
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <button disabled className={`px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-white text-slate-400 border-slate-200'}`}>Vocales</button>
-                  <button className={`px-3 py-2 rounded-lg text-sm border bg-indigo-600 text-white border-indigo-600`}>Palabras</button>
-                  <button disabled className={`px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-white text-slate-400 border-slate-200'}`}>Abecedario</button>
-                  <button disabled className={`px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-white text-slate-400 border-slate-200'}`}>Números</button>
-                  <button disabled className={`px-3 py-2 rounded-lg text-sm border ${isDarkMode ? 'bg-gray-800 text-gray-400 border-gray-700' : 'bg-white text-slate-400 border-slate-200'} col-span-2`}>Operaciones Básicas</button>
+                <div className="mt-2">
+                  <button className={`px-4 py-2 rounded-lg text-sm border bg-indigo-600 text-white border-indigo-600 w-full`}>Palabras</button>
                 </div>
               </div>
 

@@ -2,7 +2,7 @@
 
 export const apiFetch = async (path: string, init?: RequestInit) => {
   const p = path.startsWith('/') ? path.slice(1) : path
-  const primary = `/api/${p}`
+  const primary = `/api/operaciones/${p}`
   const resPrimary = await fetch(primary, init)
   // Always rely on Vite proxy for local dev to avoid CORS.
   // If the backend returns non-2xx, let the caller handle the JSON/error.
@@ -63,7 +63,7 @@ export async function recognizeTwoHandsAPI(payload: { left?: any; right?: any })
 // Eliminar gesto específico (intenta rutas con y sin prefijo /api)
 export async function deleteGestureAPI(gestoId: number) {
   const candidates = [
-    `/api/eliminar-gesto/${gestoId}/`,
+    `/api/operaciones/eliminar-gesto/${gestoId}/`,
     `/operaciones/eliminar-gesto/${gestoId}/`,
   ]
   for (const url of candidates) {
