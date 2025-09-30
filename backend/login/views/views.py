@@ -60,10 +60,11 @@ def bienvenido_view(request):
                 <p>Plataforma educativa con tecnología avanzada de IA</p>
             </div>
             <div class="nav-links">
-                <a href="/login/">Iniciar Sesión</a>
-                <a href="/register/">Registrarse</a>
-                <a href="/operaciones/">Operaciones</a>
-                <a href="/admin/">Administración</a>
+                <a href="http://localhost:5173/">Landing Page</a>
+                <a href="http://localhost:5173/auth">Iniciar Sesión</a>
+                <a href="http://localhost:5173/blackboard">Blackboard</a>
+                <a href="http://localhost:5173/blackboard/models">Modelos</a>
+                <a href="http://localhost:5173/estadistica">Estadísticas</a>
             </div>
         </div>
     </body>
