@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import ProfileModal from './ProfileModal'
 import { useUserStore } from '../../auth/userStore'
+import { useModelContext } from '../../contexts/ModelContext'
 
 export default function Navbar({ notifications = 0, isDarkMode = false, toggleDarkMode }: { notifications?: number, isDarkMode?: boolean, toggleDarkMode?: () => void }) {
   const { user } = useUserStore()
+  const { selectedModel, isModelSelected } = useModelContext()
   const navigate = useNavigate()
-  const location = useLocation()
   const [notifCount, setNotifCount] = useState(notifications)
   const [lastMessage, setLastMessage] = useState<string>('')
   const hasNotifications = useMemo(() => notifCount > 0, [notifCount])
@@ -16,32 +17,26 @@ export default function Navbar({ notifications = 0, isDarkMode = false, toggleDa
   const [openLogout, setOpenLogout] = useState(false)
   const [items, setItems] = useState<{ id: string; message: string; ts: number }[]>([])
 
-  // Determinar rutas dinámicamente basado en la ubicación actual
+  // Determinar rutas dinámicamente basado en el modelo seleccionado
   const navItems = useMemo(() => {
-    const currentPath = location.pathname
-    
-    // Determinar las rutas de captura y entrenamiento basadas en el contexto actual
-    let captureRoute = '/arithmetic/capture'
-    let trainRoute = '/arithmetic/train'
-    
-    if (currentPath.includes('/vocales/')) {
-      captureRoute = '/vocales/capture'
-      trainRoute = '/vocales/train'
-    } else if (currentPath.includes('/abecedario/')) {
-      captureRoute = '/abecedario/capture'
-      trainRoute = '/abecedario/train'
-    } else if (currentPath.includes('/palabras/')) {
-      captureRoute = '/palabras/capture'
-      trainRoute = '/palabras/train'
+    // Si no hay modelo seleccionado, mostrar solo Inicio y Modelos
+    if (!isModelSelected || !selectedModel) {
+      return [
+        { to: '/blackboard', label: 'Inicio' },
+        { to: '/blackboard/models', label: 'Modelos' },
+      ]
     }
-    
+
+    // Si hay modelo seleccionado, mostrar todas las opciones
+    const basePath = selectedModel.basePath
     return [
       { to: '/blackboard', label: 'Inicio' },
-      { to: '/models', label: 'Modelos' },
-      { to: captureRoute, label: 'Capturar' },
-      { to: trainRoute, label: 'Entrenar' },
+      { to: '/blackboard/models', label: 'Modelos' },
+      { to: `${basePath}/capture`, label: 'Capturar' },
+      { to: `${basePath}/train`, label: 'Entrenar' },
+      { to: `${basePath}/practice`, label: 'Probar' },
     ]
-  }, [location.pathname])
+  }, [isModelSelected, selectedModel])
 
   const STORAGE_KEY = 'appNotifications'
 

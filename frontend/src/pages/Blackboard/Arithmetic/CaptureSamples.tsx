@@ -28,7 +28,8 @@ export default function CaptureSamples() {
     videoRef, canvasRef,
     cameraActive, recording, rightDetected, leftDetected,
     startCamera, stopCamera, toggleRecording, saveGesture,
-    mpReady,
+    mpReady, samplesCaptured,
+    setGestureMode, setNumeroVinculado, setOperacionVinculada,
   } = useArithmetic()
 
   // Estado de UI
@@ -36,7 +37,6 @@ export default function CaptureSamples() {
   const [selectedLabel, setSelectedLabel] = useState<string>('A')
   const [word, setWord] = useState('')
   const [dbCount, setDbCount] = useState<number>(0)
-  const [localSaved, setLocalSaved] = useState<number>(0)
   const [showSavedModal, setShowSavedModal] = useState(false)
   const [showLimitModal, setShowLimitModal] = useState(false)
   const LIMIT = 300
@@ -91,7 +91,7 @@ export default function CaptureSamples() {
 
   // Manejo de captura
   const onCaptureClick = () => {
-    if (localSaved >= LIMIT) {
+    if (samplesCaptured >= LIMIT) {
       setShowLimitModal(true)
       return
     }
@@ -101,15 +101,15 @@ export default function CaptureSamples() {
   const onSaveToDB = async () => {
     // Guardar gesto con etiqueta seleccionada; asumimos saveGesture persistirá
     await saveGesture()
-    setLocalSaved((n) => Math.min(LIMIT, n + 1))
     setShowSavedModal(true)
-    if (localSaved + 1 >= LIMIT && recording) {
+    if (samplesCaptured >= LIMIT && recording) {
       toggleRecording()
     }
   }
 
   const onClearLocal = () => {
-    setLocalSaved(0)
+    // La limpieza del contador ahora se maneja en el hook useArithmetic
+    // No necesitamos hacer nada aquí ya que samplesCaptured se resetea automáticamente
   }
 
   const statCard = (title: string, value: string | number, icon: string, extra?: string) => (
@@ -140,7 +140,7 @@ export default function CaptureSamples() {
             {/* Stats superiores - Movidas arriba de la cámara */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               {statCard('Registros totales (BD)', dbCount, '🗂️')}
-              {statCard('Capturados (sesión)', `${localSaved}/${LIMIT}`, '📸', localSaved >= LIMIT ? 'Límite alcanzado' : undefined)}
+              {statCard('Capturados (sesión)', `${samplesCaptured}/${LIMIT}`, '📸', samplesCaptured >= LIMIT ? 'Límite alcanzado' : undefined)}
               {statCard('Capturando', category === 'palabras' ? (word || '—') : selectedLabel, '🎯')}
             </div>
             
@@ -179,13 +179,18 @@ export default function CaptureSamples() {
                 <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Tipo de modelo</div>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   {([
-                    { key: 'vocales', label: 'Vocales' },
-                    { key: 'abecedario', label: 'Abecedario' },
-                    { key: 'palabras', label: 'Palabras' },
                     { key: 'numeros', label: 'Números' },
                     { key: 'operaciones', label: 'Operaciones Básicas' },
                   ] as { key: Category; label: string }[]).map(({ key, label }) => (
-                    <button key={key} onClick={() => setCategory(key)} className={`px-3 py-2 rounded-lg text-sm border transition ${category === key ? 'bg-indigo-600 text-white border-indigo-600' : (isDarkMode ? 'bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700' : 'bg-white text-header border-slate-200 hover:bg-slate-50')}`}>{label}</button>
+                    <button key={key} onClick={() => {
+                      setCategory(key)
+                      // Actualizar el estado del hook useArithmetic
+                      if (key === 'numeros') {
+                        setGestureMode('numero')
+                      } else if (key === 'operaciones') {
+                        setGestureMode('operacion')
+                      }
+                    }} className={`px-3 py-2 rounded-lg text-sm border transition ${category === key ? 'bg-indigo-600 text-white border-indigo-600' : (isDarkMode ? 'bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700' : 'bg-white text-header border-slate-200 hover:bg-slate-50')}`}>{label}</button>
                   ))}
                 </div>
               </div>
@@ -203,7 +208,28 @@ export default function CaptureSamples() {
                     <div className={`text-xs mb-2 ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>Etiqueta</div>
                     <div className="grid grid-cols-10 gap-2">
                       {keys.map(k => (
-                        <button key={k} onClick={() => setSelectedLabel(k)} className={`h-10 rounded-md text-sm border ${selectedLabel === k ? 'bg-indigo-600 text-white border-indigo-600' : (isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700' : 'bg-white border-slate-200 text-header hover:bg-slate-50')}`}>{k}</button>
+                        <button key={k} onClick={() => {
+                          setSelectedLabel(k)
+                          // Actualizar el estado del hook useArithmetic según la categoría
+                          if (category === 'numeros') {
+                            const numero = parseInt(k)
+                            if (!isNaN(numero)) {
+                              setNumeroVinculado(numero)
+                            }
+                          } else if (category === 'operaciones') {
+                            // Mapear símbolos a operaciones
+                            const operacionMap: Record<string, string> = {
+                              '+': 'suma',
+                              '-': 'resta',
+                              '×': 'multiplicacion',
+                              '÷': 'division'
+                            }
+                            const operacion = operacionMap[k]
+                            if (operacion) {
+                              setOperacionVinculada(operacion)
+                            }
+                          }
+                        }} className={`h-10 rounded-md text-sm border ${selectedLabel === k ? 'bg-indigo-600 text-white border-indigo-600' : (isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700' : 'bg-white border-slate-200 text-header hover:bg-slate-50')}`}>{k}</button>
                       ))}
                     </div>
                     <div className={`text-xs mt-2 ${isDarkMode ? 'text-gray-500' : 'text-slate-500'}`}>Etiqueta actual: <span className="font-semibold">{selectedLabel}</span></div>
