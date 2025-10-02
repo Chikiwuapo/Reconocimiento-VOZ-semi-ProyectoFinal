@@ -78,10 +78,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'login' / 'templates',
-            BASE_DIR / 'voz' / 'templates',
-        ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,10 +97,11 @@ WSGI_APPLICATION = "core.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Configuración de base de datos para producción y desarrollo
-if 'DATABASE_URL' in os.environ:
+database_url = os.environ.get('DATABASE_URL', '').strip()
+if database_url:
     # Configuración para producción (Render con PostgreSQL)
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        'default': dj_database_url.parse(database_url)
     }
 elif os.environ.get('DB_ENGINE') in ("mysql", "MySQL"):
     # Configuración para MySQL
@@ -166,7 +164,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [BASE_DIR / 'login' / 'static']
+STATICFILES_DIRS = []
 
 # Media files
 MEDIA_URL = '/media/'

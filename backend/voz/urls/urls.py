@@ -4,12 +4,8 @@ from ..views import views
 app_name = 'voz'
 
 urlpatterns = [
-    # Vista principal
+    # Redirecciones al frontend (mantener solo para compatibilidad)
     path('', views.index, name='index'),
-    
-    # Páginas HTML
-    path('registro.html', views.registro_page, name='registro_page'),
-    path('login.html', views.login_page, name='login_page'),
     
     # APIs para reconocimiento de voz
     path('iniciar/', views.iniciar_reconocimiento, name='iniciar_reconocimiento'),
